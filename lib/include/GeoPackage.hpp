@@ -54,6 +54,16 @@ namespace geopackage {
 
             void addExtension(const Extension& e);
 
+            void updateExtension(const Extension& e);
+
+            void setExtension(const Extension& e);
+
+            void deleteExtension(const Extension& e);
+
+            std::optional<Extension> getExtension(std::string extensionName);   
+
+            void extensions(std::function<void(Extension& e)> f);
+
             // Tile Matrix Set
 
             void addTileMatrixSet(const TileMatrixSet& t);

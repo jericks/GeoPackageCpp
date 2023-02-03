@@ -374,3 +374,110 @@ TEST(GeoPackageLibTests, GeoPackage_TileMatrices_Layer) {
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
+
+// Extension
+
+TEST(GeoPackageLibTests, Extension_ToString) {
+    geopackage::Extension extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"};
+    std::stringstream str;
+    str << extension;
+    EXPECT_EQ("EXTENSION (tableName = basemap, columnName = index, extensionName = Spatial Index, definition = R-TREE, scope = read-write)", str.str());
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Add_Extension) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    std::optional<geopackage::Extension> m = gpkg.getExtension("Spatial Index");
+    EXPECT_TRUE(m.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Update_Extension) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    std::optional<geopackage::Extension> e = geopackage.getExtension("Spatial Index");
+    EXPECT_TRUE(e.has_value());
+    EXPECT_EQ("basemap", e.value().getTableName());
+
+    geopackage.updateExtension(geopackage::Extension{"cities", "geom", "Spatial Index", "R-TREE", "read-write"});
+    std::optional<geopackage::Extension> e2 = geopackage.getExtension("Spatial Index");
+    EXPECT_TRUE(e2.has_value());
+    EXPECT_EQ("cities", e2.value().getTableName());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Set_Extension) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.setExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    std::optional<geopackage::Extension> e = geopackage.getExtension("Spatial Index");
+    EXPECT_TRUE(e.has_value());
+    EXPECT_EQ("basemap", e.value().getTableName());
+
+    geopackage.setExtension(geopackage::Extension{"cities", "geom", "Spatial Index", "R-TREE", "read-write"});
+    std::optional<geopackage::Extension> e2 = geopackage.getExtension("Spatial Index");
+    EXPECT_TRUE(e2.has_value());
+    EXPECT_EQ("cities", e2.value().getTableName());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Delete_Extension) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    std::optional<geopackage::Extension> e1 = geopackage.getExtension("Spatial Index");
+    EXPECT_TRUE(e1.has_value());
+    EXPECT_EQ("basemap", e1.value().getTableName());
+
+    geopackage.deleteExtension(e1.value());
+    std::optional<geopackage::Extension> e2 = geopackage.getExtension("Spatial Index");
+    EXPECT_FALSE(e2.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Get_Extension) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::optional<geopackage::Extension> e1 = geopackage.getExtension("Spatial Index");
+    EXPECT_FALSE(e1.has_value());
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    std::optional<geopackage::Extension> e2 = geopackage.getExtension("Spatial Index");
+    EXPECT_TRUE(e2.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Extensions) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addExtension(geopackage::Extension{"cities", "index", "Point Index", "R-TREE", "read-write"});
+    geopackage.addExtension(geopackage::Extension{"rivers", "index", "Line Index", "R-TREE", "read-write"});
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Polygon Index", "R-TREE", "read-write"});
+    
+    int counter = 0;    
+    geopackage.extensions([&](geopackage::Extension& e) {
+        counter++;
+    });
+    EXPECT_EQ(3, counter);
+
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}

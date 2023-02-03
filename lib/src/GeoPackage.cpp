@@ -251,20 +251,97 @@ namespace geopackage {
 
     // Extension
 
-    void GeoPackage::addExtension(const Extension& ex) {
+    void GeoPackage::addExtension(const Extension& extension) {
         try {
             SQLite::Transaction transaction(db);
             SQLite::Statement insert(db, "INSERT INTO gpkg_extensions (table_name, column_name, extension_name, definition, scope) VALUES (?,?,?,?,?)");
-            insert.bind(1, ex.getTableName());
-            insert.bind(2, ex.getColumnName());
-            insert.bind(3, ex.getExtensionName());
-            insert.bind(4, ex.getDefinition());
-            insert.bind(5, ex.getScope());
+            insert.bind(1, extension.getTableName());
+            insert.bind(2, extension.getColumnName());
+            insert.bind(3, extension.getExtensionName());
+            insert.bind(4, extension.getDefinition());
+            insert.bind(5, extension.getScope());
             insert.exec();
             transaction.commit();
         }
         catch (std::exception& e) {
-            std::cout << "Error adding a Extension " << ex << ": " << e.what() << std::endl;
+            std::cout << "Error adding a Extension " << extension << ": " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::updateExtension(const Extension& extension) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement update(db, "UPDATE gpkg_extensions SET table_name = ?, column_name = ?, definition = ?, scope = ? WHERE extension_name = ?");
+            update.bind(1, extension.getTableName());
+            update.bind(2, extension.getColumnName());
+            update.bind(3, extension.getDefinition());
+            update.bind(4, extension.getScope());
+            update.bind(5, extension.getExtensionName());
+            update.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error updating a Extensions " << extension << ": " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::setExtension(const Extension& e) {
+        auto extension = getExtension(e.getExtensionName());
+        if (extension) {
+            updateExtension(e);
+        } else {
+            addExtension(e);
+        }
+    }
+
+    void GeoPackage::deleteExtension(const Extension& extension) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement statement(db, "DELETE FROM gpkg_extensions WHERE extension_name = ?");
+            statement.bind(1, extension.getExtensionName());
+            statement.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error deleting a Extension: " << e.what() << std::endl;
+        }    
+    }
+
+    std::optional<Extension> GeoPackage::getExtension(std::string extensionName) {
+        try {
+            SQLite::Database db(fileName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+            SQLite::Statement query(db, "SELECT table_name, column_name, extension_name, definition, scope FROM gpkg_extensions WHERE extension_name = ?");
+            query.bind(1, extensionName);
+            if (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string column_name = query.getColumn(1).getString();
+                std::string extension_name = query.getColumn(2).getString();
+                std::string definition = query.getColumn(3).getString();
+                std::string scope = query.getColumn(4).getString();
+                return Extension{table_name, column_name, extension_name, definition, scope};
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting a Extension: " << e.what() << std::endl;
+        }    
+        return std::nullopt;
+    }
+
+    void  GeoPackage::extensions(std::function<void(Extension& s)> func) {
+        try {
+            SQLite::Statement query(db, "SELECT table_name, column_name, extension_name, definition, scope FROM gpkg_extensions ORDER BY extension_name");
+            while (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string column_name = query.getColumn(1).getString();
+                std::string extension_name = query.getColumn(2).getString();
+                std::string definition = query.getColumn(3).getString();
+                std::string scope = query.getColumn(4).getString();
+                Extension extension{table_name, column_name, extension_name, definition, scope};
+                func(extension);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting Extensions: " << e.what() << std::endl;
         }    
     }
 
