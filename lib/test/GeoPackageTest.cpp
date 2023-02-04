@@ -481,3 +481,181 @@ TEST(GeoPackageLibTests, GeoPackage_Extensions) {
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
+
+// Tile
+
+TEST(GeoPackageLibTests, GeoPackage_Tile_Str) {
+    geopackage::Tile t{0,1,2};
+    std::stringstream str;
+    str << t;
+    EXPECT_EQ("TILE (0, 1, 2)", str.str());
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Min_Max_Zoom) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::string name = "basemap";
+    geopackage.createTileTable(name);
+    geopackage.addTile(name, geopackage::Tile(0,0,0,"../../../data/tms/0/0/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,0,0,"../../../data/tms/1/0/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,0,1,"../../../data/tms/1/0/1.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,1,0,"../../../data/tms/1/1/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,1,1,"../../../data/tms/1/1/1.jpeg"));
+
+    EXPECT_EQ(0, geopackage.getMinZoom(name));
+    EXPECT_EQ(1, geopackage.getMaxZoom(name));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Count_Tiles) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::string name = "basemap";
+    geopackage.createTileTable(name);
+    geopackage.addTile(name, geopackage::Tile(0,0,0,"../../../data/tms/0/0/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,0,0,"../../../data/tms/1/0/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,0,1,"../../../data/tms/1/0/1.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,1,0,"../../../data/tms/1/1/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,1,1,"../../../data/tms/1/1/1.jpeg"));
+
+    EXPECT_EQ(1, geopackage.countTiles(name, 0));
+    EXPECT_EQ(4, geopackage.countTiles(name, 1));
+    EXPECT_EQ(5, geopackage.countTiles(name));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Add_Tile) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::string name = "basemap";
+    geopackage.createTileTable(name);
+    EXPECT_FALSE(geopackage.getTile(name, 0,1,2));
+    geopackage.addTile(name, geopackage::Tile{0,1,2,std::vector<geopackage::byte>{'a','b','c'}});
+    EXPECT_TRUE(geopackage.getTile(name, 0,1,2));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Set_Tile) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::string name = "basemap";
+    geopackage.createTileTable(name);
+    EXPECT_FALSE(geopackage.getTile(name, 0,1,2));
+    geopackage.setTile(name, geopackage::Tile{0,1,2,std::vector<geopackage::byte>{'a','b','c'}});
+    EXPECT_TRUE(geopackage.getTile(name, 0,1,2));
+    EXPECT_EQ(1, geopackage.countTiles(name, 0));
+
+    geopackage.setTile(name, geopackage::Tile{0,1,2,std::vector<geopackage::byte>{'a','b','c'}});
+    EXPECT_TRUE(geopackage.getTile(name, 0,1,2));
+    EXPECT_EQ(1, geopackage.countTiles(name, 0));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Add_Tile_File) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::string name = "basemap";
+    geopackage.createTileTable(name);
+
+    geopackage.addTile(name, geopackage::Tile(0,0,0,"../../../data/tms/0/0/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,0,0,"../../../data/tms/1/0/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,0,1,"../../../data/tms/1/0/1.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,1,0,"../../../data/tms/1/1/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,1,1,"../../../data/tms/1/1/1.jpeg"));
+    
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Update_Tile) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::string name = "basemap";
+    geopackage.createTileTable(name);
+
+    EXPECT_FALSE(geopackage.getTile(name, 0,1,2));
+    geopackage.addTile(name, geopackage::Tile{0,1,2,std::vector<geopackage::byte>{'a','b','c'}});
+    EXPECT_TRUE(geopackage.getTile(name, 0,1,2));
+
+    geopackage.updateTile(name, geopackage::Tile{0,1,2,std::vector<geopackage::byte>{'a','b','c','e','f','g'}});
+    EXPECT_TRUE(geopackage.getTile(name, 0,1,2));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Delete_Tile) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::string name = "basemap";
+    geopackage.createTileTable(name);
+
+    EXPECT_FALSE(geopackage.getTile(name, 0,1,2));
+    geopackage.addTile(name, geopackage::Tile{0,1,2,std::vector<geopackage::byte>{'a','b','c'}});
+    EXPECT_TRUE(geopackage.getTile(name, 0,1,2));
+
+    geopackage.deleteTile(name, geopackage::Tile{0,1,2,std::vector<geopackage::byte>{}});  
+    EXPECT_FALSE(geopackage.getTile(name, 0,1,2));    
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Get_Tile) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::string name = "basemap";
+    geopackage.createTileTable(name);
+
+    EXPECT_FALSE(geopackage.getTile(name, 0,1,2));
+    geopackage.addTile(name, geopackage::Tile{0,1,2,std::vector<geopackage::byte>{'a','b','c'}});
+    EXPECT_TRUE(geopackage.getTile(name, 0,1,2));
+    EXPECT_EQ(0, geopackage.getTile(name, 0,1,2).value().zoom);
+    EXPECT_EQ(1, geopackage.getTile(name, 0,1,2).value().column);
+    EXPECT_EQ(2, geopackage.getTile(name, 0,1,2).value().row);
+    EXPECT_EQ('a', geopackage.getTile(name, 0,1,2).value().data[0]);
+    EXPECT_EQ('b', geopackage.getTile(name, 0,1,2).value().data[1]);
+    EXPECT_EQ('c', geopackage.getTile(name, 0,1,2).value().data[2]);
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Tiles_For_Zoom) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::string name = "basemap";
+    geopackage.createTileTable(name);
+
+    geopackage.addTile(name, geopackage::Tile(0,0,0,"../../../data/tms/0/0/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,0,0,"../../../data/tms/1/0/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,0,1,"../../../data/tms/1/0/1.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,1,0,"../../../data/tms/1/1/0.jpeg"));
+    geopackage.addTile(name, geopackage::Tile(1,1,1,"../../../data/tms/1/1/1.jpeg"));
+
+    int counter = 0;    
+    geopackage.tiles(name, 1, [&](geopackage::Tile& t) {
+        counter++;
+    });
+    EXPECT_EQ(4, counter);
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}

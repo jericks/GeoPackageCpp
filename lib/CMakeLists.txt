@@ -5,6 +5,7 @@ set(GeoPackageCppLib_SOURCES
 	src/Bounds.cpp
 	src/Extension.cpp
 	src/SpatialRef.cpp
+	src/Tile.cpp
 	src/TileMatrix.cpp
 	src/TileMatrixSet.cpp
 )

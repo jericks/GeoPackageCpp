@@ -5,6 +5,7 @@
 #include "SQLiteCpp/SQLiteCpp.h"
 #include "Extension.hpp"
 #include "SpatialRef.hpp"
+#include "Tile.hpp"
 #include "TileMatrix.hpp"
 #include "TileMatrixSet.hpp"
 
@@ -97,6 +98,26 @@ namespace geopackage {
             // Tile
 
             void createTileTable(std::string name);
+
+            int getMinZoom(std::string name);
+
+            int getMaxZoom(std::string name);
+            
+            int countTiles(std::string name);
+
+            int countTiles(std::string name, int zoom);
+
+            void addTile(std::string name, const Tile& t);
+
+            void updateTile(std::string name, const Tile& t);
+
+            void setTile(std::string name, const Tile& t);
+
+            void deleteTile(std::string name, const Tile& t);
+
+            std::optional<Tile> getTile(std::string name, int z, int c, int r);    
+
+            void tiles(std::string name, int zoom, std::function<void(Tile& t)> f);
 
             // Feature
 

@@ -584,9 +584,9 @@ namespace geopackage {
             SQLite::Transaction transaction(db);
             SQLite::Statement create(db, "CREATE TABLE IF NOT EXISTS " + name + " (\n" +
                 "   id           INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                "   zoom_level   INTEGER NOT NULL\n" +
-                "   tile_column  INTEGER NOT NULL\n" +
-                "   tile_row     INTEGER NOT NULL\n" +
+                "   zoom_level   INTEGER NOT NULL,\n" +
+                "   tile_column  INTEGER NOT NULL,\n" +
+                "   tile_row     INTEGER NOT NULL,\n" +
                 "   tile_data    BLOB\n" +
                 ");"
             );
@@ -596,6 +596,132 @@ namespace geopackage {
         catch (std::exception& e) {
             std::cout << "Error creating tile table " << name << ": " << e.what() << std::endl;
         }    
+    }
+
+    int GeoPackage::getMinZoom(std::string name) {
+        SQLite::Statement query(db, "select min(zoom_level) as min_zoom_level from " + name);
+        query.executeStep();
+        return query.getColumn(0).getInt();
+    }
+
+    int GeoPackage::getMaxZoom(std::string name) {
+        SQLite::Statement query(db, "select max(zoom_level) as max_zoom_level from " + name);
+        query.executeStep();
+        return query.getColumn(0).getInt();    
+    }
+
+    int GeoPackage::countTiles(std::string name, int zoom) {
+        SQLite::Statement query(db, "select count(*) as tile_count from " + name + " where zoom_level = ?");
+        query.bind(1, zoom);
+        query.executeStep();
+        return query.getColumn(0).getInt();    
+    }
+
+    int GeoPackage::countTiles(std::string name) {
+        SQLite::Statement query(db, "select count(*) as tile_count from " + name);
+        query.executeStep();
+        return query.getColumn(0).getInt();    
+    }
+
+    void  GeoPackage::addTile(std::string name, const Tile& t) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement insert(db, "INSERT INTO " + name + " (zoom_level, tile_column, tile_row, tile_data) VALUES (?,?,?,?)");
+            insert.bind(1, t.zoom);
+            insert.bind(2, t.column);
+            insert.bind(3, t.row);
+            insert.bind(4, std::data(t.data), t.data.size());
+            insert.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "exception: " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::updateTile(std::string name, const Tile& t) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement update(db, "UPDATE " + name + " SET tile_data = ? WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?");
+            update.bind(1, std::data(t.data), t.data.size());
+            update.bind(2, t.zoom);
+            update.bind(3, t.column);
+            update.bind(4, t.row);
+            update.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "exception: " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::setTile(std::string name, const Tile& t) {
+        auto tile = getTile(name, t.zoom, t.column, t.row);
+        if (tile) {
+            updateTile(name, t);
+        } else {
+            addTile(name, t);
+        }
+    }
+
+    void GeoPackage::deleteTile(std::string name, const Tile& t) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement insert(db, "DELETE FROM " + name + " WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?");
+            insert.bind(1, t.zoom);
+            insert.bind(2, t.column);
+            insert.bind(3, t.row);
+            insert.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "exception: " << e.what() << std::endl;
+        }    
+    }
+
+    std::optional<Tile> GeoPackage::getTile(std::string name, int z, int c, int r) {
+        try {
+            SQLite::Statement query(db, "SELECT zoom_level, tile_column, tile_row, tile_data FROM " + name + " WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?");
+            query.bind(1, z);
+            query.bind(2, c);
+            query.bind(3, r);
+            if (query.executeStep()) {
+                int zoom = query.getColumn(0).getInt();
+                int column = query.getColumn(1).getInt();
+                int row = query.getColumn(2).getInt();
+                auto blobColumn = query.getColumn(3);
+                const byte* bytes = static_cast<const byte*>(blobColumn.getBlob());
+                size_t numberOfBytes = blobColumn.getBytes();
+                std::vector<byte> data(bytes, bytes + numberOfBytes);
+                return Tile{zoom, column, row, data};
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "exception: " << e.what() << std::endl;
+        }    
+        return std::nullopt;
+    }
+
+    void  GeoPackage::tiles(std::string name, int zoom, std::function<void(Tile& t)> func) {
+        try {
+            SQLite::Statement query(db, "SELECT zoom_level, tile_column, tile_row, tile_data FROM " + name + " WHERE zoom_level = ?");
+            query.bind(1, zoom);
+            while (query.executeStep()) {
+                int zoom = query.getColumn(0).getInt();
+                int column = query.getColumn(1).getInt();
+                int row = query.getColumn(2).getInt();
+                auto blobColumn = query.getColumn(3);
+                const byte* bytes = static_cast<const byte*>(blobColumn.getBlob());
+                size_t numberOfBytes = blobColumn.getBytes();
+                std::vector<byte> data(bytes, bytes + numberOfBytes);
+                Tile tile {zoom, column, row, data};
+                func(tile);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "exception: " << e.what() << std::endl;
+        }    
+    
     }
 
     // Feature
