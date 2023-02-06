@@ -247,6 +247,120 @@ namespace geopackage {
 
     // Content
 
+    void GeoPackage::addContent(const Content& extension) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement insert(db, "INSERT INTO gpkg_contents (table_name, data_type, identifier, description, last_change, min_x, min_y, max_x, max_y, srs_id) VALUES (?,?,?,?,?,?,?,?,?,?)");
+            insert.bind(1, extension.getTableName());
+            insert.bind(2, extension.getDataType());
+            insert.bind(3, extension.getIdentifier());
+            insert.bind(4, extension.getDescription());
+            insert.bind(5, extension.getLastChange());
+            insert.bind(6, extension.getBounds().getMinX());
+            insert.bind(7, extension.getBounds().getMinY());
+            insert.bind(8, extension.getBounds().getMaxX());
+            insert.bind(9, extension.getBounds().getMaxY());
+            insert.bind(10, extension.getSrsId());
+            insert.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error adding a Content " << extension << ": " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::updateContent(const Content& extension) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement update(db, "UPDATE gpkg_contents SET data_type = ?, identifier = ?, description = ?, last_change = ?, min_x = ?, min_y = ?, max_x = ?, max_y = ?, srs_id = ? WHERE table_name = ?");
+            update.bind(1, extension.getDataType());
+            update.bind(2, extension.getIdentifier());
+            update.bind(3, extension.getDescription());
+            update.bind(4, extension.getLastChange());
+            update.bind(5, extension.getBounds().getMinX());
+            update.bind(6, extension.getBounds().getMinY());
+            update.bind(7, extension.getBounds().getMaxX());
+            update.bind(8, extension.getBounds().getMaxY());
+            update.bind(9, extension.getSrsId());
+            update.bind(10, extension.getTableName());
+            update.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error updating a Contents " << extension << ": " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::setContent(const Content& e) {
+        auto extension = getContent(e.getTableName());
+        if (extension) {
+            updateContent(e);
+        } else {
+            addContent(e);
+        }
+    }
+
+    void GeoPackage::deleteContent(const Content& extension) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement statement(db, "DELETE FROM gpkg_contents WHERE table_name = ?");
+            statement.bind(1, extension.getTableName());
+            statement.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error deleting a Content: " << e.what() << std::endl;
+        }    
+    }
+
+    std::optional<Content> GeoPackage::getContent(std::string tableName) {
+        try {
+            SQLite::Database db(fileName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+            SQLite::Statement query(db, "SELECT table_name, data_type, identifier, description, last_change, min_x, min_y, max_x, max_y, srs_id FROM gpkg_contents WHERE table_name = ?");
+            query.bind(1, tableName);
+            if (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string data_type = query.getColumn(1).getString();
+                std::string identifier = query.getColumn(2).getString();
+                std::string description = query.getColumn(3).getString();
+                std::string last_change = query.getColumn(4).getString();
+                double min_x = query.getColumn(5).getDouble();
+                double min_y = query.getColumn(6).getDouble();
+                double max_x = query.getColumn(7).getDouble();
+                double max_y = query.getColumn(8).getDouble();
+                int srs_id = query.getColumn(9).getInt();
+                return Content{table_name, data_type, identifier, description, last_change, Bounds{min_x, min_y, max_x, max_y}, srs_id};
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting a Content: " << e.what() << std::endl;
+        }    
+        return std::nullopt;
+    }
+
+    void  GeoPackage::contents(std::function<void(Content& s)> func) {
+        try {
+            SQLite::Statement query(db, "SELECT table_name, data_type, identifier, description, last_change, min_x, min_y, max_x, max_y, srs_id FROM gpkg_contents ORDER BY table_name");
+            while (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string data_type = query.getColumn(1).getString();
+                std::string identifier = query.getColumn(2).getString();
+                std::string description = query.getColumn(3).getString();
+                std::string last_change = query.getColumn(4).getString();
+                double min_x = query.getColumn(5).getDouble();
+                double min_y = query.getColumn(6).getDouble();
+                double max_x = query.getColumn(7).getDouble();
+                double max_y = query.getColumn(8).getDouble();
+                int srs_id = query.getColumn(9).getInt();
+                Content content{table_name, data_type, identifier, description, last_change, Bounds{min_x, min_y, max_x, max_y}, srs_id};
+                func(content);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting Contents: " << e.what() << std::endl;
+        }    
+    }
+
     // Geometry Columns
 
     // Extension

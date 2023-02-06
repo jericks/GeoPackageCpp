@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include "SQLiteCpp/SQLiteCpp.h"
+#include "Content.hpp"
 #include "Extension.hpp"
 #include "SpatialRef.hpp"
 #include "Tile.hpp"
@@ -48,6 +49,18 @@ namespace geopackage {
             void spatialRefs(std::function<void(SpatialRef& s)> f);
 
             // Content
+
+            void addContent(const Content& c);
+
+            void updateContent(const Content& c);
+
+            void setContent(const Content& c);
+
+            void deleteContent(const Content& c);
+
+            std::optional<Content> getContent(std::string tableName);   
+
+            void contents(std::function<void(Content& e)> f);
 
             // Geometry Columns
 

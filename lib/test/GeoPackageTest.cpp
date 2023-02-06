@@ -659,3 +659,110 @@ TEST(GeoPackageLibTests, GeoPackage_Tiles_For_Zoom) {
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
+
+// Content
+
+TEST(GeoPackageLibTests, Content_ToString) {
+    geopackage::Content content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326};
+    std::stringstream str;
+    str << content;
+    EXPECT_EQ("CONTENT (tableName = cities, dataType = features, identifier = cities, description = A Layer of cities, lastChange = 2022-01-29T18:38:34.649Z, bounds = BOUNDS (-180, -180, 180, 90), srsId = 4326)", str.str());
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Add_Content) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    std::optional<geopackage::Content> c = gpkg.getContent("cities");
+    EXPECT_TRUE(c.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Update_Content) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    std::optional<geopackage::Content> c = geopackage.getContent("cities");
+    EXPECT_TRUE(c.has_value());
+    EXPECT_EQ("cities", c.value().getTableName());
+
+    geopackage.updateContent(geopackage::Content{"cities", "features", "cities", "World wide cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    std::optional<geopackage::Content> c2 = geopackage.getContent("cities");
+    EXPECT_TRUE(c2.has_value());
+    EXPECT_EQ("cities", c2.value().getTableName());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Set_Content) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.setContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    std::optional<geopackage::Content> c = geopackage.getContent("cities");
+    EXPECT_TRUE(c.has_value());
+    EXPECT_EQ("cities", c.value().getTableName());
+
+    geopackage.setContent(geopackage::Content{"cities", "features", "cities", "World wide cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    std::optional<geopackage::Content> c2 = geopackage.getContent("cities");
+    EXPECT_TRUE(c2.has_value());
+    EXPECT_EQ("cities", c2.value().getTableName());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Delete_Content) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    std::optional<geopackage::Content> c1 = geopackage.getContent("cities");
+    EXPECT_TRUE(c1.has_value());
+    EXPECT_EQ("cities", c1.value().getTableName());
+
+    geopackage.deleteContent(c1.value());
+    std::optional<geopackage::Content> c2 = geopackage.getContent("cities");
+    EXPECT_FALSE(c2.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Get_Content) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::optional<geopackage::Content> c1 = geopackage.getContent("Spatial Index");
+    EXPECT_FALSE(c1.has_value());
+    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    std::optional<geopackage::Content> c2 = geopackage.getContent("cities");
+    EXPECT_TRUE(c2.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Contents) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"rivers", "features", "rivers", "A Layer of rivers", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"pacels", "features", "parcels", "A Layer of parcels", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    
+    int counter = 0;    
+    geopackage.contents([&](geopackage::Content& e) {
+        counter++;
+    });
+    EXPECT_EQ(3, counter);
+
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
