@@ -361,6 +361,31 @@ namespace geopackage {
         }    
     }
 
+    void GeoPackage::contents(DataType dataType, std::function<void(Content& e)> func) {
+        try {
+            std::string type = getStringFromDataType(dataType);
+            SQLite::Statement query(db, "SELECT table_name, data_type, identifier, description, last_change, min_x, min_y, max_x, max_y, srs_id FROM gpkg_contents WHERE data_type = ? ORDER BY table_name");
+            query.bind(1, type);
+            while (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string data_type = query.getColumn(1).getString();
+                std::string identifier = query.getColumn(2).getString();
+                std::string description = query.getColumn(3).getString();
+                std::string last_change = query.getColumn(4).getString();
+                double min_x = query.getColumn(5).getDouble();
+                double min_y = query.getColumn(6).getDouble();
+                double max_x = query.getColumn(7).getDouble();
+                double max_y = query.getColumn(8).getDouble();
+                int srs_id = query.getColumn(9).getInt();
+                Content content{table_name, data_type, identifier, description, last_change, Bounds{min_x, min_y, max_x, max_y}, srs_id};
+                func(content);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting Contents: " << e.what() << std::endl;
+        }    
+    }
+
     // Geometry Columns
 
     // Extension

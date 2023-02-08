@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include "Bounds.hpp"
+#include "DataType.hpp"
 
 namespace geopackage {
 

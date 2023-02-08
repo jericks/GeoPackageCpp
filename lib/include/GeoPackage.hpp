@@ -4,6 +4,7 @@
 #include <string>
 #include "SQLiteCpp/SQLiteCpp.h"
 #include "Content.hpp"
+#include "DataType.hpp"
 #include "Extension.hpp"
 #include "SpatialRef.hpp"
 #include "Tile.hpp"
@@ -59,6 +60,8 @@ namespace geopackage {
             void deleteContent(const Content& c);
 
             std::optional<Content> getContent(std::string tableName);   
+
+            void contents(DataType dataType, std::function<void(Content& e)> f);
 
             void contents(std::function<void(Content& e)> f);
 

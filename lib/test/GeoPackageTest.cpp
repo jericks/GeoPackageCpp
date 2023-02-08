@@ -766,3 +766,30 @@ TEST(GeoPackageLibTests, GeoPackage_Contents) {
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
+
+TEST(GeoPackageLibTests, GeoPackage_Contents_By_Type) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"rivers", "features", "rivers", "A Layer of rivers", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"pacels", "features", "parcels", "A Layer of parcels", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"basemap", "tiles", "basemap", "A Basemap", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"tiles", "tiles", "tiles", "A Tiles Basemap", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    
+    int counter = 0;    
+    geopackage.contents(geopackage::DataType::TILES, [&](geopackage::Content& e) {
+        counter++;
+    });
+    EXPECT_EQ(2, counter);
+
+    counter = 0;    
+    geopackage.contents(geopackage::DataType::FEATURES, [&](geopackage::Content& e) {
+        counter++;
+    });
+    EXPECT_EQ(3, counter);
+
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}

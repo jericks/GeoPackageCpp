@@ -4,6 +4,7 @@ set(GeoPackageCppLib_SOURCES
 	src/GeoPackage.cpp
 	src/Bounds.cpp
 	src/Content.cpp
+	src/DataType.cpp
 	src/Extension.cpp
 	src/SpatialRef.cpp
 	src/Tile.cpp
