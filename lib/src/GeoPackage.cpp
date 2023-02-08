@@ -252,7 +252,7 @@ namespace geopackage {
             SQLite::Transaction transaction(db);
             SQLite::Statement insert(db, "INSERT INTO gpkg_contents (table_name, data_type, identifier, description, last_change, min_x, min_y, max_x, max_y, srs_id) VALUES (?,?,?,?,?,?,?,?,?,?)");
             insert.bind(1, extension.getTableName());
-            insert.bind(2, extension.getDataType());
+            insert.bind(2, datatype::toString(extension.getDataType()));
             insert.bind(3, extension.getIdentifier());
             insert.bind(4, extension.getDescription());
             insert.bind(5, extension.getLastChange());
@@ -273,7 +273,7 @@ namespace geopackage {
         try {
             SQLite::Transaction transaction(db);
             SQLite::Statement update(db, "UPDATE gpkg_contents SET data_type = ?, identifier = ?, description = ?, last_change = ?, min_x = ?, min_y = ?, max_x = ?, max_y = ?, srs_id = ? WHERE table_name = ?");
-            update.bind(1, extension.getDataType());
+            update.bind(1, datatype::toString(extension.getDataType()));
             update.bind(2, extension.getIdentifier());
             update.bind(3, extension.getDescription());
             update.bind(4, extension.getLastChange());
@@ -329,7 +329,7 @@ namespace geopackage {
                 double max_x = query.getColumn(7).getDouble();
                 double max_y = query.getColumn(8).getDouble();
                 int srs_id = query.getColumn(9).getInt();
-                return Content{table_name, data_type, identifier, description, last_change, Bounds{min_x, min_y, max_x, max_y}, srs_id};
+                return Content{table_name, datatype::getDataType(data_type), identifier, description, last_change, Bounds{min_x, min_y, max_x, max_y}, srs_id};
             }
         }
         catch (std::exception& e) {
@@ -352,7 +352,7 @@ namespace geopackage {
                 double max_x = query.getColumn(7).getDouble();
                 double max_y = query.getColumn(8).getDouble();
                 int srs_id = query.getColumn(9).getInt();
-                Content content{table_name, data_type, identifier, description, last_change, Bounds{min_x, min_y, max_x, max_y}, srs_id};
+                Content content{table_name, datatype::getDataType(data_type), identifier, description, last_change, Bounds{min_x, min_y, max_x, max_y}, srs_id};
                 func(content);
             }
         }
@@ -363,7 +363,7 @@ namespace geopackage {
 
     void GeoPackage::contents(DataType dataType, std::function<void(Content& e)> func) {
         try {
-            std::string type = getStringFromDataType(dataType);
+            std::string type = datatype::toString(dataType);
             SQLite::Statement query(db, "SELECT table_name, data_type, identifier, description, last_change, min_x, min_y, max_x, max_y, srs_id FROM gpkg_contents WHERE data_type = ? ORDER BY table_name");
             query.bind(1, type);
             while (query.executeStep()) {
@@ -377,7 +377,7 @@ namespace geopackage {
                 double max_x = query.getColumn(7).getDouble();
                 double max_y = query.getColumn(8).getDouble();
                 int srs_id = query.getColumn(9).getInt();
-                Content content{table_name, data_type, identifier, description, last_change, Bounds{min_x, min_y, max_x, max_y}, srs_id};
+                Content content{table_name, datatype::getDataType(data_type), identifier, description, last_change, Bounds{min_x, min_y, max_x, max_y}, srs_id};
                 func(content);
             }
         }
@@ -398,7 +398,7 @@ namespace geopackage {
             insert.bind(2, extension.getColumnName());
             insert.bind(3, extension.getExtensionName());
             insert.bind(4, extension.getDefinition());
-            insert.bind(5, extension.getScope());
+            insert.bind(5, scope::toString(extension.getScope()));
             insert.exec();
             transaction.commit();
         }
@@ -414,7 +414,7 @@ namespace geopackage {
             update.bind(1, extension.getTableName());
             update.bind(2, extension.getColumnName());
             update.bind(3, extension.getDefinition());
-            update.bind(4, extension.getScope());
+            update.bind(4, scope::toString(extension.getScope()));
             update.bind(5, extension.getExtensionName());
             update.exec();
             transaction.commit();
@@ -457,7 +457,7 @@ namespace geopackage {
                 std::string extension_name = query.getColumn(2).getString();
                 std::string definition = query.getColumn(3).getString();
                 std::string scope = query.getColumn(4).getString();
-                return Extension{table_name, column_name, extension_name, definition, scope};
+                return Extension{table_name, column_name, extension_name, definition, scope::getScope(scope)};
             }
         }
         catch (std::exception& e) {
@@ -475,7 +475,7 @@ namespace geopackage {
                 std::string extension_name = query.getColumn(2).getString();
                 std::string definition = query.getColumn(3).getString();
                 std::string scope = query.getColumn(4).getString();
-                Extension extension{table_name, column_name, extension_name, definition, scope};
+                Extension extension{table_name, column_name, extension_name, definition, scope::getScope(scope)};
                 func(extension);
             }
         }

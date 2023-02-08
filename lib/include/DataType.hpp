@@ -8,8 +8,12 @@ namespace geopackage {
         FEATURES, TILES
     };
 
-    std::string getStringFromDataType(DataType dataType);
+    namespace datatype {
 
-    DataType getDataTypeFromString (std::string str);
+        std::string toString(DataType dataType);
+
+        DataType getDataType(std::string str);
+
+    }
 
 }

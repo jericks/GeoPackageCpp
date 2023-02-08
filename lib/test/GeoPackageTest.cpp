@@ -378,7 +378,7 @@ TEST(GeoPackageLibTests, GeoPackage_TileMatrices_Layer) {
 // Extension
 
 TEST(GeoPackageLibTests, Extension_ToString) {
-    geopackage::Extension extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"};
+    geopackage::Extension extension{"basemap", "index", "Spatial Index", "R-TREE", geopackage::Scope::READ_WRITE};
     std::stringstream str;
     str << extension;
     EXPECT_EQ("EXTENSION (tableName = basemap, columnName = index, extensionName = Spatial Index, definition = R-TREE, scope = read-write)", str.str());
@@ -389,7 +389,7 @@ TEST(GeoPackageLibTests, GeoPackage_Add_Extension) {
     geopackage::GeoPackage gpkg { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    gpkg.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    gpkg.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", geopackage::Scope::READ_WRITE});
     std::optional<geopackage::Extension> m = gpkg.getExtension("Spatial Index");
     EXPECT_TRUE(m.has_value());
 
@@ -401,12 +401,12 @@ TEST(GeoPackageLibTests, GeoPackage_Update_Extension) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", geopackage::Scope::READ_WRITE});
     std::optional<geopackage::Extension> e = geopackage.getExtension("Spatial Index");
     EXPECT_TRUE(e.has_value());
     EXPECT_EQ("basemap", e.value().getTableName());
 
-    geopackage.updateExtension(geopackage::Extension{"cities", "geom", "Spatial Index", "R-TREE", "read-write"});
+    geopackage.updateExtension(geopackage::Extension{"cities", "geom", "Spatial Index", "R-TREE", geopackage::Scope::READ_WRITE});
     std::optional<geopackage::Extension> e2 = geopackage.getExtension("Spatial Index");
     EXPECT_TRUE(e2.has_value());
     EXPECT_EQ("cities", e2.value().getTableName());
@@ -419,12 +419,12 @@ TEST(GeoPackageLibTests, GeoPackage_Set_Extension) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.setExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    geopackage.setExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", geopackage::Scope::READ_WRITE});
     std::optional<geopackage::Extension> e = geopackage.getExtension("Spatial Index");
     EXPECT_TRUE(e.has_value());
     EXPECT_EQ("basemap", e.value().getTableName());
 
-    geopackage.setExtension(geopackage::Extension{"cities", "geom", "Spatial Index", "R-TREE", "read-write"});
+    geopackage.setExtension(geopackage::Extension{"cities", "geom", "Spatial Index", "R-TREE", geopackage::Scope::READ_WRITE});
     std::optional<geopackage::Extension> e2 = geopackage.getExtension("Spatial Index");
     EXPECT_TRUE(e2.has_value());
     EXPECT_EQ("cities", e2.value().getTableName());
@@ -437,7 +437,7 @@ TEST(GeoPackageLibTests, GeoPackage_Delete_Extension) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", geopackage::Scope::READ_WRITE});
     std::optional<geopackage::Extension> e1 = geopackage.getExtension("Spatial Index");
     EXPECT_TRUE(e1.has_value());
     EXPECT_EQ("basemap", e1.value().getTableName());
@@ -456,7 +456,7 @@ TEST(GeoPackageLibTests, GeoPackage_Get_Extension) {
 
     std::optional<geopackage::Extension> e1 = geopackage.getExtension("Spatial Index");
     EXPECT_FALSE(e1.has_value());
-    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", "read-write"});
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", geopackage::Scope::READ_WRITE});
     std::optional<geopackage::Extension> e2 = geopackage.getExtension("Spatial Index");
     EXPECT_TRUE(e2.has_value());
 
@@ -468,9 +468,9 @@ TEST(GeoPackageLibTests, GeoPackage_Extensions) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addExtension(geopackage::Extension{"cities", "index", "Point Index", "R-TREE", "read-write"});
-    geopackage.addExtension(geopackage::Extension{"rivers", "index", "Line Index", "R-TREE", "read-write"});
-    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Polygon Index", "R-TREE", "read-write"});
+    geopackage.addExtension(geopackage::Extension{"cities", "index", "Point Index", "R-TREE", geopackage::Scope::READ_WRITE});
+    geopackage.addExtension(geopackage::Extension{"rivers", "index", "Line Index", "R-TREE", geopackage::Scope::READ_WRITE});
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Polygon Index", "R-TREE", geopackage::Scope::WRITE_ONLY});
     
     int counter = 0;    
     geopackage.extensions([&](geopackage::Extension& e) {
@@ -663,7 +663,7 @@ TEST(GeoPackageLibTests, GeoPackage_Tiles_For_Zoom) {
 // Content
 
 TEST(GeoPackageLibTests, Content_ToString) {
-    geopackage::Content content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326};
+    geopackage::Content content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326};
     std::stringstream str;
     str << content;
     EXPECT_EQ("CONTENT (tableName = cities, dataType = features, identifier = cities, description = A Layer of cities, lastChange = 2022-01-29T18:38:34.649Z, bounds = BOUNDS (-180, -180, 180, 90), srsId = 4326)", str.str());
@@ -674,7 +674,7 @@ TEST(GeoPackageLibTests, GeoPackage_Add_Content) {
     geopackage::GeoPackage gpkg { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    gpkg.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    gpkg.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
     std::optional<geopackage::Content> c = gpkg.getContent("cities");
     EXPECT_TRUE(c.has_value());
 
@@ -686,12 +686,12 @@ TEST(GeoPackageLibTests, GeoPackage_Update_Content) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
     std::optional<geopackage::Content> c = geopackage.getContent("cities");
     EXPECT_TRUE(c.has_value());
     EXPECT_EQ("cities", c.value().getTableName());
 
-    geopackage.updateContent(geopackage::Content{"cities", "features", "cities", "World wide cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.updateContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "World wide cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
     std::optional<geopackage::Content> c2 = geopackage.getContent("cities");
     EXPECT_TRUE(c2.has_value());
     EXPECT_EQ("cities", c2.value().getTableName());
@@ -704,12 +704,12 @@ TEST(GeoPackageLibTests, GeoPackage_Set_Content) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.setContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.setContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
     std::optional<geopackage::Content> c = geopackage.getContent("cities");
     EXPECT_TRUE(c.has_value());
     EXPECT_EQ("cities", c.value().getTableName());
 
-    geopackage.setContent(geopackage::Content{"cities", "features", "cities", "World wide cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.setContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "World wide cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
     std::optional<geopackage::Content> c2 = geopackage.getContent("cities");
     EXPECT_TRUE(c2.has_value());
     EXPECT_EQ("cities", c2.value().getTableName());
@@ -722,7 +722,7 @@ TEST(GeoPackageLibTests, GeoPackage_Delete_Content) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
     std::optional<geopackage::Content> c1 = geopackage.getContent("cities");
     EXPECT_TRUE(c1.has_value());
     EXPECT_EQ("cities", c1.value().getTableName());
@@ -741,7 +741,7 @@ TEST(GeoPackageLibTests, GeoPackage_Get_Content) {
 
     std::optional<geopackage::Content> c1 = geopackage.getContent("Spatial Index");
     EXPECT_FALSE(c1.has_value());
-    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
     std::optional<geopackage::Content> c2 = geopackage.getContent("cities");
     EXPECT_TRUE(c2.has_value());
 
@@ -753,9 +753,9 @@ TEST(GeoPackageLibTests, GeoPackage_Contents) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
-    geopackage.addContent(geopackage::Content{"rivers", "features", "rivers", "A Layer of rivers", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
-    geopackage.addContent(geopackage::Content{"pacels", "features", "parcels", "A Layer of parcels", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"rivers", geopackage::DataType::FEATURES, "rivers", "A Layer of rivers", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"pacels", geopackage::DataType::FEATURES, "parcels", "A Layer of parcels", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
     
     int counter = 0;    
     geopackage.contents([&](geopackage::Content& e) {
@@ -772,11 +772,11 @@ TEST(GeoPackageLibTests, GeoPackage_Contents_By_Type) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addContent(geopackage::Content{"cities", "features", "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
-    geopackage.addContent(geopackage::Content{"rivers", "features", "rivers", "A Layer of rivers", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
-    geopackage.addContent(geopackage::Content{"pacels", "features", "parcels", "A Layer of parcels", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
-    geopackage.addContent(geopackage::Content{"basemap", "tiles", "basemap", "A Basemap", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
-    geopackage.addContent(geopackage::Content{"tiles", "tiles", "tiles", "A Tiles Basemap", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"rivers", geopackage::DataType::FEATURES, "rivers", "A Layer of rivers", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"pacels", geopackage::DataType::FEATURES, "parcels", "A Layer of parcels", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"basemap", geopackage::DataType::TILES, "basemap", "A Basemap", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+    geopackage.addContent(geopackage::Content{"tiles", geopackage::DataType::TILES, "tiles", "A Tiles Basemap", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
     
     int counter = 0;    
     geopackage.contents(geopackage::DataType::TILES, [&](geopackage::Content& e) {

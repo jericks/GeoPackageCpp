@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include "Scope.hpp"
 
 namespace geopackage {
 
@@ -12,11 +13,11 @@ namespace geopackage {
             std::string columnName;
             std::string extensionName;
             std::string definition;
-            std::string scope;
+            Scope scope;
                 
         public:
 
-            Extension(std::string tableName, std::string columnName, std::string extensionName, std::string definition, std::string scope);
+            Extension(std::string tableName, std::string columnName, std::string extensionName, std::string definition, Scope scope);
 
             std::string getTableName() const;
 
@@ -26,7 +27,7 @@ namespace geopackage {
 
             std::string getDefinition() const;
 
-            std::string getScope() const;
+            Scope getScope() const;
 
     };
 
