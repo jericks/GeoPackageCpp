@@ -6,6 +6,7 @@
 #include "Content.hpp"
 #include "DataType.hpp"
 #include "Extension.hpp"
+#include "GeometryColumn.hpp"
 #include "SpatialRef.hpp"
 #include "Tile.hpp"
 #include "TileMatrix.hpp"
@@ -66,6 +67,18 @@ namespace geopackage {
             void contents(std::function<void(Content& e)> f);
 
             // Geometry Columns
+
+            void addGeometryColumn(const GeometryColumn& e);
+
+            void updateGeometryColumn(const GeometryColumn& e);
+
+            void setGeometryColumn(const GeometryColumn& e);
+
+            void deleteGeometryColumn(const GeometryColumn& e);
+
+            std::optional<GeometryColumn> getGeometryColumn(std::string tableName);   
+
+            void geometryColumns(std::function<void(GeometryColumn& e)> f);
 
             // Extension
 

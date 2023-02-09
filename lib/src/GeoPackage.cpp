@@ -12,6 +12,8 @@ namespace geopackage {
     void  GeoPackage::createTables() {
         try {
             SQLite::Transaction transaction(db);
+            db.exec("PRAGMA application_id=1196444487;");
+            db.exec("PRAGMA user_version=10300");
             db.exec(R"(CREATE TABLE IF NOT EXISTS gpkg_spatial_ref_sys (
                 srs_name TEXT NOT NULL,
                 srs_id INTEGER PRIMARY KEY,
@@ -387,6 +389,104 @@ namespace geopackage {
     }
 
     // Geometry Columns
+
+    void GeoPackage::addGeometryColumn(const GeometryColumn& geometryColumn) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement insert(db, "INSERT INTO gpkg_geometry_columns (table_name, column_name, geometry_type_name, srs_id, z, m) VALUES (?,?,?,?,?,?)");
+            insert.bind(1, geometryColumn.getTableName());
+            insert.bind(2, geometryColumn.getColumnName());
+            insert.bind(3, geometrytype::toString(geometryColumn.getGeometryType()));
+            insert.bind(4, geometryColumn.getSrsId());
+            insert.bind(5, geometryColumn.hasZ());
+            insert.bind(6, geometryColumn.hasM());
+            insert.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error adding a GeometryColumn " << geometryColumn << ": " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::updateGeometryColumn(const GeometryColumn& geometryColumn) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement update(db, "UPDATE gpkg_geometry_columns SET column_name = ?, geometry_type_name = ?, srs_id = ?, z = ?, m = ? WHERE table_name = ?");
+            update.bind(1, geometryColumn.getColumnName());
+            update.bind(2, geometrytype::toString(geometryColumn.getGeometryType()));
+            update.bind(3, geometryColumn.getSrsId());
+            update.bind(4, geometryColumn.hasZ());
+            update.bind(5, geometryColumn.hasM());
+            update.bind(6, geometryColumn.getTableName());
+            update.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error updating a GeometryColumns " << geometryColumn << ": " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::setGeometryColumn(const GeometryColumn& g) {
+        auto extension = getGeometryColumn(g.getTableName());
+        if (extension) {
+            updateGeometryColumn(g);
+        } else {
+            addGeometryColumn(g);
+        }
+    }
+
+    void GeoPackage::deleteGeometryColumn(const GeometryColumn& extension) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement statement(db, "DELETE FROM gpkg_geometry_columns WHERE table_name = ?");
+            statement.bind(1, extension.getTableName());
+            statement.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error deleting a GeometryColumn: " << e.what() << std::endl;
+        }    
+    }
+
+    std::optional<GeometryColumn> GeoPackage::getGeometryColumn(std::string tableName) {
+        try {
+            SQLite::Database db(fileName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+            SQLite::Statement query(db, "SELECT table_name, column_name, geometry_type_name, srs_id, z, m FROM gpkg_geometry_columns WHERE table_name = ?");
+            query.bind(1, tableName);
+            if (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string column_name = query.getColumn(1).getString();
+                std::string geometry_type_name = query.getColumn(2).getString();
+                int srs_id = query.getColumn(3).getInt();
+                bool z = query.getColumn(4).getInt();
+                bool m = query.getColumn(5).getInt();
+                return GeometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, m, z};
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting a GeometryColumn: " << e.what() << std::endl;
+        }    
+        return std::nullopt;
+    }
+
+    void  GeoPackage::geometryColumns(std::function<void(GeometryColumn& s)> func) {
+        try {
+            SQLite::Statement query(db, "SELECT table_name, column_name, geometry_type_name, srs_id, z, m FROM gpkg_geometry_columns ORDER BY table_name, column_name");
+            while (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string column_name = query.getColumn(1).getString();
+                std::string geometry_type_name = query.getColumn(2).getString();
+                int srs_id = query.getColumn(3).getInt();
+                bool z = query.getColumn(4).getInt();
+                bool m = query.getColumn(5).getInt();
+                GeometryColumn geometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, m, z};
+                func(geometryColumn);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting GeometryColumns: " << e.what() << std::endl;
+        }    
+    }
 
     // Extension
 

@@ -482,6 +482,121 @@ TEST(GeoPackageLibTests, GeoPackage_Extensions) {
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
 
+// Geometry Column
+
+TEST(GeoPackageLibTests, GeometryColumn_ToString) {
+    geopackage::GeometryColumn geometryColumn {"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false};
+    std::stringstream str;
+    str << geometryColumn;
+    EXPECT_EQ("GEOMETRYCOLUMN (tableName = cities, columnName = the_geom, geometryType = point, srsId = 4326, hasM = 1, hasZ = 0)", str.str());
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Add_GeometryColumn) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    std::optional<geopackage::GeometryColumn> gc = gpkg.getGeometryColumn("cities");
+    EXPECT_TRUE(gc.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Update_GeometryColumn) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    std::optional<geopackage::GeometryColumn> gc = geopackage.getGeometryColumn("cities");
+    EXPECT_TRUE(gc.has_value());
+    EXPECT_EQ("cities", gc.value().getTableName());
+    EXPECT_EQ(1, gc.value().hasM());
+    EXPECT_EQ(0, gc.value().hasZ());
+
+    geopackage.updateGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 2927, false, true});
+    std::optional<geopackage::GeometryColumn> gc2 = geopackage.getGeometryColumn("cities");
+    EXPECT_TRUE(gc2.has_value());
+    EXPECT_EQ("cities", gc2.value().getTableName());
+    EXPECT_EQ(0, gc2.value().hasM());
+    EXPECT_EQ(1, gc2.value().hasZ());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Set_GeometryColumn) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.setGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    std::optional<geopackage::GeometryColumn> gc = geopackage.getGeometryColumn("cities");
+    EXPECT_TRUE(gc.has_value());
+    EXPECT_EQ("cities", gc.value().getTableName());
+    EXPECT_EQ(1, gc.value().hasM());
+    EXPECT_EQ(0, gc.value().hasZ());
+
+    geopackage.setGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 2927, false, true});
+    std::optional<geopackage::GeometryColumn> gc2 = geopackage.getGeometryColumn("cities");
+    EXPECT_TRUE(gc2.has_value());
+    EXPECT_EQ("cities", gc2.value().getTableName());
+    EXPECT_EQ(0, gc2.value().hasM());
+    EXPECT_EQ(1, gc2.value().hasZ());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Delete_GeometryColumn) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    std::optional<geopackage::GeometryColumn> e1 = geopackage.getGeometryColumn("cities");
+    EXPECT_TRUE(e1.has_value());
+    EXPECT_EQ("cities", e1.value().getTableName());
+
+    geopackage.deleteGeometryColumn(e1.value());
+    std::optional<geopackage::GeometryColumn> e2 = geopackage.getGeometryColumn("cities");
+    EXPECT_FALSE(e2.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Get_GeometryColumn) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::optional<geopackage::GeometryColumn> e1 = geopackage.getGeometryColumn("cities");
+    EXPECT_FALSE(e1.has_value());
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    std::optional<geopackage::GeometryColumn> e2 = geopackage.getGeometryColumn("cities");
+    EXPECT_TRUE(e2.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_GeometryColumns) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, false, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"rivers", "the_geom", geopackage::GeometryType::LINESTRING, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"parcels", "the_geom", geopackage::GeometryType::MULTIPOLYGON, 4326, false, false});
+    
+    int counter = 0;    
+    geopackage.geometryColumns([&](geopackage::GeometryColumn& e) {
+        counter++;
+    });
+    EXPECT_EQ(3, counter);
+
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
 // Tile
 
 TEST(GeoPackageLibTests, GeoPackage_Tile_Str) {
