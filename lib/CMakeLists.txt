@@ -6,8 +6,12 @@ set(GeoPackageCppLib_SOURCES
 	src/Content.cpp
 	src/DataType.cpp
 	src/Extension.cpp
+	src/Field.cpp
+	src/FieldType.cpp
 	src/GeometryColumn.cpp
+	src/GeometryField.cpp
 	src/GeometryType.cpp
+	src/Schema.cpp
 	src/Scope.cpp
 	src/SpatialRef.cpp
 	src/Tile.cpp

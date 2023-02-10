@@ -24,4 +24,9 @@ namespace geopackage {
 
     }
 
+    std::ostream& operator << (std::ostream& os, const DataType& dataType) {
+        os << datatype::toString(dataType);
+        return os;
+    }
+
 }

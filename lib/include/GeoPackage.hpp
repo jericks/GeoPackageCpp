@@ -2,11 +2,13 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include "SQLiteCpp/SQLiteCpp.h"
 #include "Content.hpp"
 #include "DataType.hpp"
 #include "Extension.hpp"
 #include "GeometryColumn.hpp"
+#include "Schema.hpp"
 #include "SpatialRef.hpp"
 #include "Tile.hpp"
 #include "TileMatrix.hpp"
@@ -149,6 +151,8 @@ namespace geopackage {
             void tiles(std::string name, int zoom, std::function<void(Tile& t)> f);
 
             // Feature
+
+            void createFeatureTable(const Schema& schema);
 
     };
 

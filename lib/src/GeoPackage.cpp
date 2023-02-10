@@ -460,7 +460,7 @@ namespace geopackage {
                 int srs_id = query.getColumn(3).getInt();
                 bool z = query.getColumn(4).getInt();
                 bool m = query.getColumn(5).getInt();
-                return GeometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, m, z};
+                return GeometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, z, m};
             }
         }
         catch (std::exception& e) {
@@ -479,7 +479,7 @@ namespace geopackage {
                 int srs_id = query.getColumn(3).getInt();
                 bool z = query.getColumn(4).getInt();
                 bool m = query.getColumn(5).getInt();
-                GeometryColumn geometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, m, z};
+                GeometryColumn geometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, z, m};
                 func(geometryColumn);
             }
         }
@@ -874,7 +874,7 @@ namespace geopackage {
             transaction.commit();
         }
         catch (std::exception& e) {
-            std::cout << "exception: " << e.what() << std::endl;
+            std::cout << "Error adding Tile " << t << ": " << e.what() << std::endl;
         }    
     }
 
@@ -890,7 +890,7 @@ namespace geopackage {
             transaction.commit();
         }
         catch (std::exception& e) {
-            std::cout << "exception: " << e.what() << std::endl;
+            std::cout << "Error updating Tile " << t << ": " << e.what() << std::endl;
         }    
     }
 
@@ -914,7 +914,7 @@ namespace geopackage {
             transaction.commit();
         }
         catch (std::exception& e) {
-            std::cout << "exception: " << e.what() << std::endl;
+            std::cout << "Error deleting Tile " << t << ": " << e.what() << std::endl;
         }    
     }
 
@@ -936,7 +936,7 @@ namespace geopackage {
             }
         }
         catch (std::exception& e) {
-            std::cout << "exception: " << e.what() << std::endl;
+            std::cout << "Error getting tile for " << name << " at " << z << "/" << c << "/" << r << ": " << e.what() << std::endl;
         }    
         return std::nullopt;
     }
@@ -958,12 +958,29 @@ namespace geopackage {
             }
         }
         catch (std::exception& e) {
-            std::cout << "exception: " << e.what() << std::endl;
+            std::cout << "Error getting tiles for " << name << " at " << zoom << ": " << e.what() << std::endl;
         }    
     
     }
 
     // Feature
 
+    void GeoPackage::createFeatureTable(const Schema& schema) {
+        std::stringstream sql;
+        sql << "CREATE TABLE " << schema.getName() << " (\n";
+        sql << "   id INTEGER PRIMARY KEY AUTOINCREMENT,\n";
+        sql << "   " << schema.getGeometryField().getName() << " BLOB";
+        for(const auto& fld : schema.getFields()) {
+           sql << ",\n   " << fld.getName() << " " << fld.getType();
+        }
+        sql << "\n)\n";
+        try {
+            SQLite::Statement query(db, sql.str());
+            query.exec();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error creating feature table for " << schema << ": " << e.what() << std::endl;
+        }
+    }
 
 }

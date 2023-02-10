@@ -24,4 +24,9 @@ namespace geopackage {
 
     }
 
+    std::ostream& operator << (std::ostream& os, const Scope& scope) {
+        os << scope::toString(scope);
+        return os;
+    }
+
 }

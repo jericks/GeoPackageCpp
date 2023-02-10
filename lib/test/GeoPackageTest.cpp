@@ -488,7 +488,7 @@ TEST(GeoPackageLibTests, GeometryColumn_ToString) {
     geopackage::GeometryColumn geometryColumn {"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false};
     std::stringstream str;
     str << geometryColumn;
-    EXPECT_EQ("GEOMETRYCOLUMN (tableName = cities, columnName = the_geom, geometryType = point, srsId = 4326, hasM = 1, hasZ = 0)", str.str());
+    EXPECT_EQ("GEOMETRYCOLUMN (tableName = cities, columnName = the_geom, geometryType = point, srsId = 4326, hasZ = 1, hasM = 0)", str.str());
 }
 
 TEST(GeoPackageLibTests, GeoPackage_Add_GeometryColumn) {
@@ -512,15 +512,15 @@ TEST(GeoPackageLibTests, GeoPackage_Update_GeometryColumn) {
     std::optional<geopackage::GeometryColumn> gc = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(gc.has_value());
     EXPECT_EQ("cities", gc.value().getTableName());
-    EXPECT_EQ(1, gc.value().hasM());
-    EXPECT_EQ(0, gc.value().hasZ());
+    EXPECT_EQ(1, gc.value().hasZ());
+    EXPECT_EQ(0, gc.value().hasM());
 
     geopackage.updateGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 2927, false, true});
     std::optional<geopackage::GeometryColumn> gc2 = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(gc2.has_value());
     EXPECT_EQ("cities", gc2.value().getTableName());
-    EXPECT_EQ(0, gc2.value().hasM());
-    EXPECT_EQ(1, gc2.value().hasZ());
+    EXPECT_EQ(0, gc2.value().hasZ());
+    EXPECT_EQ(1, gc2.value().hasM());
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
@@ -534,15 +534,15 @@ TEST(GeoPackageLibTests, GeoPackage_Set_GeometryColumn) {
     std::optional<geopackage::GeometryColumn> gc = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(gc.has_value());
     EXPECT_EQ("cities", gc.value().getTableName());
-    EXPECT_EQ(1, gc.value().hasM());
-    EXPECT_EQ(0, gc.value().hasZ());
+    EXPECT_EQ(1, gc.value().hasZ());
+    EXPECT_EQ(0, gc.value().hasM());
 
     geopackage.setGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 2927, false, true});
     std::optional<geopackage::GeometryColumn> gc2 = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(gc2.has_value());
     EXPECT_EQ("cities", gc2.value().getTableName());
-    EXPECT_EQ(0, gc2.value().hasM());
-    EXPECT_EQ(1, gc2.value().hasZ());
+    EXPECT_EQ(0, gc2.value().hasZ());
+    EXPECT_EQ(1, gc2.value().hasM());
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
@@ -905,6 +905,26 @@ TEST(GeoPackageLibTests, GeoPackage_Contents_By_Type) {
     });
     EXPECT_EQ(3, counter);
 
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+// Feature
+
+TEST(GeoPackageLibTests, GeoPackage_Feature_Table_Create) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage::Schema schema{
+        "cities",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    };
+    geopackage.createFeatureTable(schema);
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }

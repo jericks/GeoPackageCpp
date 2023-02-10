@@ -44,4 +44,9 @@ namespace geopackage {
 
     }
 
+    std::ostream& operator << (std::ostream& os, const GeometryType& geometryType) {
+        os << geometrytype::toString(geometryType);
+        return os;
+    }
+
 }

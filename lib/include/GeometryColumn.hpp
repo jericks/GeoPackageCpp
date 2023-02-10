@@ -13,12 +13,12 @@ namespace geopackage {
             std::string columnName;
             GeometryType geometryType;
             int srsId;
-            bool m;
             bool z;
+            bool m;
                 
         public:
 
-            GeometryColumn(std::string tableName, std::string columnName, GeometryType geometryType, int srsId, bool hasM, bool hasZ);
+            GeometryColumn(std::string tableName, std::string columnName, GeometryType geometryType, int srsId, bool hasZ, bool hasM);
 
             std::string getTableName() const;
 
@@ -28,9 +28,9 @@ namespace geopackage {
 
             int getSrsId() const;
 
-            bool hasM() const;
-
             bool hasZ() const;
+
+            bool hasM() const;
 
     };
 

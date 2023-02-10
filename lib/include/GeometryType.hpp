@@ -16,4 +16,6 @@ namespace geopackage {
 
     }
 
+    std::ostream& operator << (std::ostream& os, const GeometryType& geometryType);
+
 }
