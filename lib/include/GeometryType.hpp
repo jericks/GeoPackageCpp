@@ -1,11 +1,12 @@
 #pragma once
 
 #include <string>
+#include <type_traits>
 
 namespace geopackage {
 
     enum class GeometryType {
-        GEOMETRY, POINT, LINESTRING, POLYGON, MULTIPOINT, MULTILINESTRING, MULTIPOLYGON, GEOMETRYCOLLECTION
+        GEOMETRY, POINT, LINESTRING, POLYGON, MULTIPOINT, MULTILINESTRING, MULTIPOLYGON, GEOMETRYCOLLECTION, LINEARRING
     };
 
     namespace geometrytype {
@@ -13,6 +14,8 @@ namespace geopackage {
         std::string toString(GeometryType geometryType);
 
         GeometryType getGeometryType(std::string str);
+
+        int getValue(GeometryType geometryType);
 
     }
 

@@ -1,5 +1,19 @@
 add_executable(tests 
+    BoundsTest.cpp
+    FeatureTest.cpp
+    FieldTest.cpp
+    FieldTypeTest.cpp
     GeoPackageTest.cpp
+    GeometryCollectionTest.cpp
+    LineStringTest.cpp
+    LinearRingTest.cpp
+    MultiLineStringTest.cpp
+    MultiPointTest.cpp
+    MultiPolygonTest.cpp
+    PointTest.cpp
+    PolygonTest.cpp
+    SchemaTest.cpp
+    WKBWriterTest.cpp
 )
 target_link_libraries(tests 
     GeoPackageCppLib

@@ -21,6 +21,14 @@ namespace geopackage {
         return maxY;
     }
 
+    std::unique_ptr<Polygon> Bounds::toPolygon() const {
+        LinearRing ring {{
+            {minX,minY}, {maxX, minY}, {maxX,maxY}, {minX, minY}
+        }};
+        Polygon polygon {{ring}};
+        return std::make_unique<Polygon>(polygon);
+    }
+
     std::ostream& operator << (std::ostream& os, const Bounds& b) {
         os << "BOUNDS (" << b.getMinX() << ", " << b.getMinX()  << ", " << b.getMaxX() << ", " << b.getMaxY() << ")";
         return os;

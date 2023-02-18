@@ -6,17 +6,28 @@ set(GeoPackageCppLib_SOURCES
 	src/Content.cpp
 	src/DataType.cpp
 	src/Extension.cpp
+	src/Feature.cpp
 	src/Field.cpp
 	src/FieldType.cpp
+	src/Geometry.cpp
 	src/GeometryColumn.cpp
+	src/GeometryCollection.cpp
 	src/GeometryField.cpp
 	src/GeometryType.cpp
+	src/LineString.cpp
+	src/LinearRing.cpp
+	src/MultiLineString.cpp
+	src/MultiPoint.cpp
+	src/MultiPolygon.cpp
+	src/Point.cpp
+	src/Polygon.cpp
 	src/Schema.cpp
 	src/Scope.cpp
 	src/SpatialRef.cpp
 	src/Tile.cpp
 	src/TileMatrix.cpp
 	src/TileMatrixSet.cpp
+	src/WKBWriter.cpp
 )
 
 add_library(GeoPackageCppLib STATIC ${GeoPackageCppLib_SOURCES})

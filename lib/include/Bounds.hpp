@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <memory>
+#include "Polygon.hpp"
 
 namespace geopackage {
 
@@ -25,6 +26,8 @@ namespace geopackage {
             double getMaxX() const;
 
             double getMaxY() const;
+
+            std::unique_ptr<Polygon> toPolygon() const;
 
     };
 
