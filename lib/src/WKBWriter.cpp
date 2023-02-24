@@ -2,30 +2,55 @@
 
 namespace geopackage {
     
-    std::vector<std::byte> WKBWriter::write(Geometry* geometry) {
-        std::vector<std::byte> bytes {};
+    WKBWriter::WKBWriter() : type(wkb::Type::WKB), endian(Endian::BIG) {}
+
+    WKBWriter::WKBWriter(wkb::Type type, Endian endian) : type(type), endian(endian) {}
+
+    Bytes WKBWriter::writeToBytes(Geometry* geometry) {
+        Bytes bytes {endian};
         putByteOrder(endian, bytes);
-        putGeometryType(geometry->getType(), bytes);
+        putGeometryType(geometry->getType(), geometry->getDimension(), geometry->getSrid(), bytes);
+        putSrid(geometry->getSrid(), bytes);
         putGeometry(geometry, bytes);
         return bytes;
     }
 
+    std::vector<std::byte> WKBWriter::write(Geometry* geometry) {
+        return writeToBytes(geometry).getBytes();
+    }
+
     std::string WKBWriter::writeToHex(Geometry* geometry) {
-         std::vector<std::byte> bytes = write(geometry);
-        return toHexString(bytes);
+        return writeToBytes(geometry).toHexString();
     }
 
-    void WKBWriter::putByteOrder(wkb::Endian byteOrder, std::vector<std::byte>& bytes) {
-        std::byte endianByte = endian == wkb::Endian::BIG ? std::byte{0} : std::byte{1};
-        bytes.push_back(endianByte);
+    void WKBWriter::putByteOrder(Endian byteOrder, Bytes& bytes) {
+        std::byte endianByte = endian == Endian::BIG ? std::byte{0} : std::byte{1};
+        bytes.putByte(endianByte);
     }
 
-    void WKBWriter::putGeometryType(GeometryType geometryType, std::vector<std::byte>& bytes) {
+    void WKBWriter::putGeometryType(GeometryType geometryType, Dimension dimension, std::string srid, Bytes& bytes) {
         int geometryTypeValue = geometrytype::getValue(geometryType);
-        putInt(geometryTypeValue, bytes);
+        if (type == wkb::Type::EWKB) {
+            if (dimension == Dimension::Three || dimension == Dimension::ThreeMeasured) {
+                geometryTypeValue = geometryTypeValue | 0x80000000;
+            }
+            if (dimension == Dimension::TwoMeasured || dimension == Dimension::ThreeMeasured) {
+                geometryTypeValue = geometryTypeValue | 0x40000000;
+            } 
+            if (!srid.empty()) {
+                geometryTypeValue = geometryTypeValue | 0x20000000;
+            }
+        }
+        bytes.putInt(geometryTypeValue);
     }
 
-    void WKBWriter::putGeometry(Geometry* geometry, std::vector<std::byte>& bytes) {
+    void WKBWriter::putSrid(std::string srid, Bytes& bytes) {
+        if (type == wkb::Type::EWKB && !srid.empty()) {
+            bytes.putInt(std::stoi(srid));
+        }
+    }
+
+    void WKBWriter::putGeometry(Geometry* geometry, Bytes& bytes) {
         GeometryType geometryType = geometry->getType();
         if (geometryType == GeometryType::POINT) {
             Point* pt = static_cast<Point *>(geometry);
@@ -51,115 +76,75 @@ namespace geopackage {
         }
     }
 
-    void WKBWriter::putPoint(const Point* point, std::vector<std::byte>& bytes) {
-        putDouble(point->getX(), bytes);
-        putDouble(point->getY(), bytes);
+    void WKBWriter::putPoint(const Point* point, Bytes& bytes) {
+        bytes.putDouble(point->getX());
+        bytes.putDouble(point->getY());
+        Dimension dimension = point->getDimension();
+        if (dimension == Dimension::Three || dimension == Dimension::ThreeMeasured) {
+            bytes.putDouble(point->getZ());
+        }
+        if (dimension == Dimension::TwoMeasured || dimension == Dimension::ThreeMeasured) {
+            bytes.putDouble(point->getM());
+        }
     }
 
-    void WKBWriter::putPoints(const std::vector<Point> points, std::vector<std::byte>& bytes) {
-        putInt(points.size(), bytes);
+    void WKBWriter::putPoints(const std::vector<Point> points, Bytes& bytes) {
+        bytes.putInt(points.size());
         for(const Point& point : points) {
             putPoint(&point, bytes);
         }
     }
 
-    void WKBWriter::putLineString(const LineString* line, std::vector<std::byte>& bytes) {
+    void WKBWriter::putLineString(const LineString* line, Bytes& bytes) {
         putPoints(line->getPoints(), bytes);
     }
 
-    void WKBWriter::putPolygon(const Polygon* polygon, std::vector<std::byte>& bytes) {
-        putInt(polygon->getLinearRings().size(), bytes);
+    void WKBWriter::putPolygon(const Polygon* polygon, Bytes& bytes) {
+        bytes.putInt(polygon->getLinearRings().size());
         for(const LinearRing& ring : polygon->getLinearRings()) {
             putPoints(ring.getPoints(), bytes);
         }
     }
 
-    void WKBWriter::putMultiPoint(const MultiPoint* multiPoint, std::vector<std::byte>& bytes) {
-        putInt(multiPoint->getPoints().size(), bytes);
+    void WKBWriter::putMultiPoint(const MultiPoint* multiPoint, Bytes& bytes) {
+        bytes.putInt(multiPoint->getPoints().size());
         for(const Point& point : multiPoint->getPoints()) {
             putByteOrder(endian, bytes);
-            putGeometryType(point.getType(), bytes);
+            putGeometryType(point.getType(), point.getDimension(), point.getSrid(), bytes);
+            putSrid(point.getSrid(), bytes);
             putPoint(&point, bytes);
         }
     }
 
-    void WKBWriter::putMultiLineString(const MultiLineString* multiLineString, std::vector<std::byte>& bytes) {
-        putInt(multiLineString->getLineStrings().size(), bytes);
+    void WKBWriter::putMultiLineString(const MultiLineString* multiLineString, Bytes& bytes) {
+        bytes.putInt(multiLineString->getLineStrings().size());
         for(const LineString& lineString : multiLineString->getLineStrings()) {
             putByteOrder(endian, bytes);
-            putGeometryType(lineString.getType(), bytes);
+            putGeometryType(lineString.getType(), lineString.getDimension(), lineString.getSrid(), bytes);
+            putSrid(lineString.getSrid(), bytes);
             putLineString(&lineString, bytes);
         }
     }
 
-    void WKBWriter::putMultiPolygon(const MultiPolygon* multiPolygon, std::vector<std::byte>& bytes) {
-        putInt(multiPolygon->getPolygons().size(), bytes);
+    void WKBWriter::putMultiPolygon(const MultiPolygon* multiPolygon, Bytes& bytes) {
+        bytes.putInt(multiPolygon->getPolygons().size());
         for(const Polygon& polygon : multiPolygon->getPolygons()) {
             putByteOrder(endian, bytes);
-            putGeometryType(polygon.getType(), bytes);
+            putGeometryType(polygon.getType(), polygon.getDimension(), polygon.getSrid(), bytes);
+            putSrid(polygon.getSrid(), bytes);
             putPolygon(&polygon, bytes);
         }
     }
 
-    void WKBWriter::putGeometryCollection(GeometryCollection* geometryCollection, std::vector<std::byte>& bytes) {
+    void WKBWriter::putGeometryCollection(GeometryCollection* geometryCollection, Bytes& bytes) {
         int numberOfGeometries = geometryCollection->getNumberOfGeometries();
-        putInt(numberOfGeometries, bytes);
+        bytes.putInt(numberOfGeometries);
         for(std::unique_ptr<Geometry>& geometry : geometryCollection->getGeometries()) {
             putByteOrder(endian, bytes);
-            putGeometryType(geometry->getType(), bytes);
+            putGeometryType(geometry->getType(), geometry->getDimension(), geometry->getSrid(), bytes);
+            putSrid(geometry->getSrid(), bytes);
             putGeometry(geometry.get(), bytes);
         }
-    }
-
-    void WKBWriter::putInt(int value, std::vector<std::byte>& bytes) {
-        if(endian == wkb::Endian::BIG) {
-            bytes.push_back(static_cast<std::byte>(value >> 24));
-            bytes.push_back(static_cast<std::byte>(value >> 16));
-            bytes.push_back(static_cast<std::byte>(value >> 8));
-            bytes.push_back(static_cast<std::byte>(value));
-        } else { 
-            bytes.push_back(static_cast<std::byte>(value));
-            bytes.push_back(static_cast<std::byte>(value >> 8));
-            bytes.push_back(static_cast<std::byte>(value >> 16));
-            bytes.push_back(static_cast<std::byte>(value >> 24));
-        }
-    }
-
-    void WKBWriter::putLong(long value, std::vector<std::byte>& bytes) {
-        if(endian == wkb::Endian::BIG) {
-            bytes.push_back(static_cast<std::byte>(value >> 56));
-            bytes.push_back(static_cast<std::byte>(value >> 48));
-            bytes.push_back(static_cast<std::byte>(value >> 40));
-            bytes.push_back(static_cast<std::byte>(value >> 32));
-            bytes.push_back(static_cast<std::byte>(value >> 24));
-            bytes.push_back(static_cast<std::byte>(value >> 16));
-            bytes.push_back(static_cast<std::byte>(value >> 8));
-            bytes.push_back(static_cast<std::byte>(value));
-        } else { 
-            bytes.push_back(static_cast<std::byte>(value));
-            bytes.push_back(static_cast<std::byte>(value >> 8));
-            bytes.push_back(static_cast<std::byte>(value >> 16));
-            bytes.push_back(static_cast<std::byte>(value >> 24));
-            bytes.push_back(static_cast<std::byte>(value >> 32));
-            bytes.push_back(static_cast<std::byte>(value >> 40));
-            bytes.push_back(static_cast<std::byte>(value >> 48));
-            bytes.push_back(static_cast<std::byte>(value >> 56));
-        }
-    }
-
-    void WKBWriter::putDouble(double value, std::vector<std::byte>& bytes) {
-        int64_t longValue;
-        std::memcpy(&longValue, &value, sizeof(double));
-        putLong(longValue, bytes);
-    }
-
-    std::string WKBWriter::toHexString(std::vector<std::byte>& bytes) {
-        std::stringstream ss;
-        ss << std::hex << std::uppercase;
-        for (int i = 0; i < bytes.size(); ++i) {
-            ss << std::setw(2) << std::setfill('0') << (int)bytes[i];
-        }
-        return ss.str();
     }
 
 }

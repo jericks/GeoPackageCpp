@@ -12,6 +12,18 @@ namespace geopackage {
         return GeometryType::LINESTRING;
     }
 
+    Dimension LineString::getDimension() const {
+        if (points.size() == 0) {
+            return Dimension::Two;
+        } else {
+            return points[0].getDimension();
+        }
+    }
+
+     bool LineString::isEmpty() const {
+        return points.empty();
+    }
+
     std::string LineString::wkt() const {
         std::stringstream str;
         str << "LINESTRING ";

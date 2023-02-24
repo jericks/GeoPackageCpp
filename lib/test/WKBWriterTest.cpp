@@ -8,15 +8,48 @@
 #include "LineString.hpp"
 #include "Polygon.hpp"
 
-// std::cout << "# of bytes = " << bytes.size() << "\n";
-// std::ofstream outfile("point.wkb", std::ios::out | std::ios::binary);
-// outfile.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
-
 TEST(GeoPackageLibTests, WKBWrite_Point) {
     geopackage::WKBWriter writer{};
     geopackage::Point pt {2,4};
     std::string wkbHexString = writer.writeToHex(&pt);
     EXPECT_EQ("000000000140000000000000004010000000000000", wkbHexString);
+}
+
+TEST(GeoPackageLibTests, WKBWrite_Point_Srid) {
+    geopackage::WKBWriter writer{geopackage::wkb::Type::EWKB, geopackage::Endian::BIG};
+    geopackage::Point pt {2,4};
+    pt.setSrid("4326");
+    std::string wkbHexString = writer.writeToHex(&pt);
+    EXPECT_EQ("0020000001000010E640000000000000004010000000000000", wkbHexString);
+}
+
+TEST(GeoPackageLibTests, WKBWrite_Point_M) {
+    geopackage::WKBWriter writer{geopackage::wkb::Type::EWKB, geopackage::Endian::BIG};
+    geopackage::Point pt = geopackage::Point::xym(1,2,3);
+    std::string wkbHexString = writer.writeToHex(&pt);
+    EXPECT_EQ("00400000013FF000000000000040000000000000004008000000000000", wkbHexString);
+}
+
+TEST(GeoPackageLibTests, WKBWrite_Point_Z) {
+    geopackage::WKBWriter writer{geopackage::wkb::Type::EWKB, geopackage::Endian::BIG};
+    geopackage::Point pt = geopackage::Point::xyz(1,2,3);
+    std::string wkbHexString = writer.writeToHex(&pt);
+    EXPECT_EQ("00800000013FF000000000000040000000000000004008000000000000", wkbHexString);
+}
+
+TEST(GeoPackageLibTests, WKBWrite_Point_ZM) {
+    geopackage::WKBWriter writer{geopackage::wkb::Type::EWKB, geopackage::Endian::BIG};
+    geopackage::Point pt = geopackage::Point::xyzm(1,2,3,4);
+    std::string wkbHexString = writer.writeToHex(&pt);
+    EXPECT_EQ("00C00000013FF0000000000000400000000000000040080000000000004010000000000000", wkbHexString);
+}
+
+TEST(GeoPackageLibTests, WKBWrite_Point_ZM_Srid) {
+    geopackage::WKBWriter writer{geopackage::wkb::Type::EWKB, geopackage::Endian::BIG};
+    geopackage::Point pt = geopackage::Point::xyzm(1,2,3,4);
+    pt.setSrid("4326");
+    std::string wkbHexString = writer.writeToHex(&pt);
+    EXPECT_EQ("00E0000001000010E63FF0000000000000400000000000000040080000000000004010000000000000", wkbHexString);
 }
 
 TEST(GeoPackageLibTests, WKBWrite_LineString) {

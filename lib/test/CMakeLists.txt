@@ -14,6 +14,7 @@ add_executable(tests
     PolygonTest.cpp
     SchemaTest.cpp
     WKBWriterTest.cpp
+    GeoPackageGeometryWriterTest.cpp
 )
 target_link_libraries(tests 
     GeoPackageCppLib

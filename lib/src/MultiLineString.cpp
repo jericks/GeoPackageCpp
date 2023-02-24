@@ -12,6 +12,18 @@ namespace geopackage {
         return GeometryType::MULTILINESTRING;
     }
 
+    Dimension MultiLineString::getDimension() const {
+        if (lines.size() == 0) {
+            return Dimension::Two;
+        } else {
+            return lines[0].getDimension();
+        }
+    }
+
+     bool MultiLineString::isEmpty() const {
+        return lines.empty();
+    }
+
     std::string MultiLineString::wkt() const {
         std::stringstream str;
         str << "MULTILINESTRING ";

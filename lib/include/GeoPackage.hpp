@@ -7,7 +7,9 @@
 #include "Content.hpp"
 #include "DataType.hpp"
 #include "Extension.hpp"
+#include "Feature.hpp"
 #include "GeometryColumn.hpp"
+#include "GeoPackageGeometryWriter.hpp"
 #include "Schema.hpp"
 #include "SpatialRef.hpp"
 #include "Tile.hpp"
@@ -153,6 +155,8 @@ namespace geopackage {
             // Feature
 
             void createFeatureTable(const Schema& schema);
+
+            void addFeature(std::string name, const Feature& feature);
 
     };
 

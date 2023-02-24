@@ -12,6 +12,18 @@ namespace geopackage {
         return GeometryType::MULTIPOINT;
     }
 
+    Dimension MultiPoint::getDimension() const {
+        if (points.size() == 0) {
+            return Dimension::Two;
+        } else {
+            return points[0].getDimension();
+        }
+    }
+
+     bool MultiPoint::isEmpty() const {
+        return points.empty();
+    }
+
     std::string MultiPoint::wkt() const {
         std::stringstream str;
         str << "MULTIPOINT ";

@@ -16,6 +16,8 @@ namespace geopackage {
 
             GeometryCollection(std::vector<std::unique_ptr<Geometry>> && geoms);
 
+            virtual Dimension getDimension() const override;
+
             virtual std::string wkt() const override;
 
             virtual std::unique_ptr<Geometry> clone() const override;
@@ -25,6 +27,8 @@ namespace geopackage {
             int getNumberOfGeometries() const;
 
             virtual GeometryType getType() const override;
+
+            virtual bool isEmpty() const override;
 
     };
 

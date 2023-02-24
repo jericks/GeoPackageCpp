@@ -16,6 +16,18 @@ namespace geopackage {
         return GeometryType::GEOMETRYCOLLECTION;
     }
 
+    Dimension GeometryCollection::getDimension() const {
+        if (geometries.size() == 0) {
+            return Dimension::Two;
+        } else {
+            return geometries[0].get()->getDimension();
+        }
+    }
+
+    bool GeometryCollection::isEmpty() const {
+        return geometries.empty();
+    }
+
     std::string GeometryCollection::wkt() const {
         std::stringstream str;
         str << "GEOMETRYCOLLECTION ";

@@ -14,6 +14,14 @@ namespace geopackage {
         return GeometryType::POLYGON;
     }
 
+    Dimension Polygon::getDimension() const {
+        if (rings.size() == 0) {
+            return Dimension::Two;
+        } else {
+            return rings[0].getDimension();
+        }
+    }
+
     std::string Polygon::wkt() const {
         std::stringstream str;
         str << "POLYGON ";
@@ -41,6 +49,10 @@ namespace geopackage {
             str <<  ")";
         }
         return str.str();
+    }
+
+    bool Polygon::isEmpty() const {
+        return rings.empty();
     }
 
     std::vector<LinearRing> Polygon::getLinearRings() const {

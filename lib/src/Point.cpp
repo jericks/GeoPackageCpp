@@ -30,6 +30,22 @@ namespace geopackage {
         return GeometryType::POINT;
     }
 
+    Dimension Point::getDimension() const {
+        if (!isnan(z) && !isnan(m)) {
+            return Dimension::ThreeMeasured;
+        } else if (!isnan(z)) {
+            return Dimension::Three;
+        } else if (!isnan(m)) {
+            return Dimension::TwoMeasured;
+        } else {
+            return Dimension::Two;
+        }
+    }
+
+    bool Point::isEmpty() const {
+        return isnan(x) && isnan(y);
+    }
+
     std::string Point::wkt() const {
         std::stringstream str;
         if (isnan(x) && isnan(y)) {

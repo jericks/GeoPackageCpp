@@ -16,6 +16,8 @@ namespace geopackage {
 
             MultiLineString(std::vector<LineString> lines);
 
+            virtual Dimension getDimension() const override;
+
             virtual std::string wkt() const override;
 
             virtual std::unique_ptr<Geometry> clone() const override;
@@ -23,6 +25,8 @@ namespace geopackage {
             std::vector<LineString> getLineStrings() const;
 
             virtual GeometryType getType() const override;
+
+            virtual bool isEmpty() const override;
 
     };
 

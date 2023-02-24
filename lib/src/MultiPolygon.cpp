@@ -12,6 +12,18 @@ namespace geopackage {
         return GeometryType::MULTIPOLYGON;
     }
 
+    Dimension MultiPolygon::getDimension() const {
+        if (polygons.size() == 0) {
+            return Dimension::Two;
+        } else {
+            return polygons[0].getDimension();
+        }
+    }
+
+     bool MultiPolygon::isEmpty() const {
+        return polygons.empty();
+    }
+
     std::string MultiPolygon::wkt() const {
         std::stringstream str;
         str << "MULTIPOLYGON ";

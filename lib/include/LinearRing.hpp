@@ -16,6 +16,8 @@ namespace geopackage {
 
             LinearRing(std::vector<Point> points);
 
+            virtual Dimension getDimension() const override;
+
             virtual std::string wkt() const override;
 
             virtual std::unique_ptr<Geometry> clone() const override;
@@ -23,6 +25,9 @@ namespace geopackage {
             std::vector<Point> getPoints() const;
 
             virtual GeometryType getType() const override;
+
+            virtual bool isEmpty() const override;
+            
     };
 
 

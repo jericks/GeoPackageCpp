@@ -16,6 +16,8 @@ namespace geopackage {
 
             MultiPolygon(std::vector<Polygon> polygons);
 
+            virtual Dimension getDimension() const override;
+
             virtual std::string wkt() const override;
 
             virtual std::unique_ptr<Geometry> clone() const override;
@@ -23,6 +25,8 @@ namespace geopackage {
             std::vector<Polygon> getPolygons() const;
 
             virtual GeometryType getType() const override;
+
+            virtual bool isEmpty() const override;
 
     };
 

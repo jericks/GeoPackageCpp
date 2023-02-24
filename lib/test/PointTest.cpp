@@ -9,6 +9,14 @@ TEST(GeoPackageLibTests, point_create_test) {
   ASSERT_EQ(5, pt.getY());
 }
 
+TEST(GeoPackageLibTests, point_srid_test) {
+  geopackage::Point pt {4,5};
+  pt.setSrid("4326");
+  ASSERT_EQ(4, pt.getX());
+  ASSERT_EQ(5, pt.getY());
+  ASSERT_EQ("4326", pt.getSrid());
+}
+
 TEST(GeoPackageLibTests, point_empty_test) {
   geopackage::Point pt = geopackage::Point::empty();
   ASSERT_TRUE(isnan(pt.getX()));
@@ -41,6 +49,7 @@ TEST(GeoPackageLibTests, point_create_xy_test) {
   geopackage::Point pt = geopackage::Point::xy(1.23, 3.45);
   str << pt;
   ASSERT_EQ("POINT (1.23 3.45)", str.str());
+  ASSERT_EQ(geopackage::Dimension::Two, pt.getDimension());
 }
 
 TEST(GeoPackageLibTests, point_create_xyz_test) {
@@ -48,6 +57,7 @@ TEST(GeoPackageLibTests, point_create_xyz_test) {
   geopackage::Point pt = geopackage::Point::xyz(1.23, 3.45, 10.89);
   str << pt;
   ASSERT_EQ("POINT Z (1.23 3.45 10.89)", str.str());
+  ASSERT_EQ(geopackage::Dimension::Three, pt.getDimension());
 }
 
 TEST(GeoPackageLibTests, point_create_xym_test) {
@@ -55,6 +65,7 @@ TEST(GeoPackageLibTests, point_create_xym_test) {
   geopackage::Point pt = geopackage::Point::xym(1.23, 3.45, 10.89);
   str << pt;
   ASSERT_EQ("POINT M (1.23 3.45 10.89)", str.str());
+  ASSERT_EQ(geopackage::Dimension::TwoMeasured, pt.getDimension());
 }
 
 TEST(GeoPackageLibTests, point_create_xyzm_test) {
@@ -62,4 +73,5 @@ TEST(GeoPackageLibTests, point_create_xyzm_test) {
   geopackage::Point pt = geopackage::Point::xyzm(1.23, 3.45, 10.89, 22.32);
   str << pt;
   ASSERT_EQ("POINT ZM (1.23 3.45 10.89 22.32)", str.str());
+  ASSERT_EQ(geopackage::Dimension::ThreeMeasured, pt.getDimension());
 }

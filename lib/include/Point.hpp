@@ -29,11 +29,15 @@ namespace geopackage {
 
             double getM() const;
 
+            virtual Dimension getDimension() const override;
+
             virtual GeometryType getType() const override;
 
             virtual std::string wkt() const override;
 
             virtual std::unique_ptr<Geometry> clone() const override;
+
+            virtual bool isEmpty() const override;
             
             static Point xy(double x, double y);
             static Point xym(double x, double y, double m);

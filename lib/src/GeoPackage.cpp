@@ -983,4 +983,50 @@ namespace geopackage {
         }
     }
 
+    void GeoPackage::addFeature(std::string name, const Feature& feature) {
+        std::stringstream sql;
+        Geometry* geometry = feature.getGeometry();
+        GeoPackageGeometryWriter geometryWriter{};
+        std::vector<std::byte> geometryBytes = geometryWriter.write(geometry);
+        sql << "INSERT INTO " << name << " (";
+        sql << "geometry";
+        for(const auto& attribute : feature.getAttributes()) {
+           sql << ", ";
+           sql << attribute.first;
+        }
+        sql << ") VALUES (";
+        sql << "?";
+        for(int i = 0; i < feature.getAttributes().size(); ++i) {
+           sql << ", "; 
+           sql << "?";
+        }
+        sql << ")";
+        try {
+            SQLite::Statement query(db, sql.str());
+            query.bind(1, geometryBytes.data(), geometryBytes.size());
+            int counter = 2;
+            for(const auto& attribute : feature.getAttributes()) {
+                std::any value = attribute.second;
+                if (value.type() == typeid(std::string)) {
+                    std::string stringValue = std::any_cast<std::string>(value);
+                    query.bind(counter, stringValue);
+                } else if (value.type() == typeid(double)) {
+                    double doubleValue = std::any_cast<double>(value);
+                    query.bind(counter, doubleValue);
+                } else if (value.type() == typeid(int)) {
+                    int doubleValue = std::any_cast<int>(value);
+                    query.bind(counter, doubleValue);
+                } else if (value.type() == typeid(bool)) {
+                    bool boolValue = std::any_cast<bool>(value);
+                    query.bind(counter, boolValue);
+                }
+                counter++;
+            }
+            query.exec();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error adding feature " << feature << " table to " << name << ": " << e.what() << std::endl;
+        }
+    }
+
 }

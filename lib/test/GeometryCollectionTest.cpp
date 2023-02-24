@@ -11,4 +11,5 @@ TEST(GeoPackageLibTests, GeometryCollection_Create_Test) {
    geopackage::GeometryCollection gc {std::move(geoms)};
    ASSERT_EQ(2, gc.getGeometries().size());
    ASSERT_EQ("GEOMETRYCOLLECTION (POINT (4 5), LINESTRING (1 1, 5 5))", gc.wkt()); 
+   ASSERT_EQ(geopackage::Dimension::Two, gc.getDimension());
 }

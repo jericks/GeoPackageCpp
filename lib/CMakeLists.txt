@@ -2,9 +2,15 @@ project(GeoPackageCppLib)
 
 set(GeoPackageCppLib_SOURCES 
 	src/GeoPackage.cpp
+	src/Bytes.cpp
+	src/GeoPackageGeometryWriter.cpp
+	src/BinaryType.cpp
+	src/EnvelopeType.cpp
+	src/Flag.cpp
 	src/Bounds.cpp
 	src/Content.cpp
 	src/DataType.cpp
+	src/Dimension
 	src/Extension.cpp
 	src/Feature.cpp
 	src/Field.cpp

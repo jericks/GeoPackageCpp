@@ -12,6 +12,18 @@ namespace geopackage {
         return GeometryType::LINEARRING;
     }
 
+    Dimension LinearRing::getDimension() const {
+        if (points.size() == 0) {
+            return Dimension::Two;
+        } else {
+            return points[0].getDimension();
+        }
+    }
+
+    bool LinearRing::isEmpty() const {
+        return points.empty();
+    }
+
     std::string LinearRing::wkt() const {
         std::stringstream str;
         str << "LINEARRING ";
