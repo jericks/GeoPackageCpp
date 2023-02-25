@@ -968,7 +968,7 @@ namespace geopackage {
     void GeoPackage::createFeatureTable(const Schema& schema) {
         std::stringstream sql;
         sql << "CREATE TABLE " << schema.getName() << " (\n";
-        sql << "   id INTEGER PRIMARY KEY AUTOINCREMENT,\n";
+        sql << "   " << schema.getKey() << " INTEGER PRIMARY KEY AUTOINCREMENT,\n";
         sql << "   " << schema.getGeometryField().getName() << " BLOB";
         for(const auto& fld : schema.getFields()) {
            sql << ",\n   " << fld.getName() << " " << fld.getType();
@@ -1067,7 +1067,7 @@ namespace geopackage {
 
     std::string GeoPackage::getPrimaryKey(std::string tableName) {
         try {
-            SQLite::Statement query(db, "SELECT name FROM PRAGMA_TABLE_INFO('" + tableName + "') WHERE pk = 1 AND name ='TESDASA'");
+            SQLite::Statement query(db, "SELECT name FROM PRAGMA_TABLE_INFO('" + tableName + "') WHERE pk = 1");
             bool foundRow = query.executeStep();
             if (foundRow) {
                 std::string name = query.getColumn(0).getString();
@@ -1080,6 +1080,12 @@ namespace geopackage {
             std::cout << "Error getting primary key for " << tableName << ": " << e.what() << std::endl;
         }
         return "id";
+    }
+
+    int GeoPackage::countFeatures(std::string name) {
+        SQLite::Statement query(db, "select count(*) as feature_count from " + name);
+        query.executeStep();
+        return query.getColumn(0).getInt();    
     }
 
 }

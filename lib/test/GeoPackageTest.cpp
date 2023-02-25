@@ -951,10 +951,12 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Add) {
     };
     geopackage.createFeatureTable(schema);
 
+    EXPECT_EQ(0, geopackage.countFeatures("cities"));
     geopackage.addFeature("cities", geopackage::Feature{
         std::make_unique<geopackage::Point>(-122, 47),
         std::map<std::string, std::any> {{"population", 737000}, {"name", std::string{"One"}}}
     });
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }

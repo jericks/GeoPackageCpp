@@ -162,6 +162,8 @@ namespace geopackage {
 
             Schema getSchema(std::string name);
 
+            int countFeatures(std::string name);
+
     };
 
     std::ostream& operator << (std::ostream& os, const GeoPackage& g);
