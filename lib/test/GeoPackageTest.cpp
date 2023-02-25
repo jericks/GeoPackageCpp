@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 #include <filesystem>
 #include "gtest/gtest.h"
 #include "GeoPackage.hpp"
@@ -918,7 +919,8 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Table_Create) {
 
     geopackage::Schema schema{
         "cities",
-        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT},
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
         std::vector{
             geopackage::Field{"name", geopackage::FieldType::String},
             geopackage::Field{"population", geopackage::FieldType::Double}
@@ -940,7 +942,8 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Add) {
 
     geopackage::Schema schema{
         "cities",
-        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT},
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
         std::vector{
             geopackage::Field{"name", geopackage::FieldType::String},
             geopackage::Field{"population", geopackage::FieldType::Double}
@@ -952,6 +955,45 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Add) {
         std::make_unique<geopackage::Point>(-122, 47),
         std::map<std::string, std::any> {{"population", 737000}, {"name", std::string{"One"}}}
     });
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Get_Schema) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+
+    geopackage.createFeatureTable(geopackage::Schema{
+        "cities",
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    });
+
+    geopackage::Schema schema = geopackage.getSchema("cities");
+    EXPECT_EQ("cities", schema.getName());
+    EXPECT_EQ("id", schema.getKey());
+    EXPECT_EQ("geometry", schema.getGeometryField().getName());
+    EXPECT_EQ(geopackage::GeometryType::POINT, schema.getGeometryField().getType());
+    EXPECT_EQ(4326, schema.getGeometryField().getSrsId());
+    EXPECT_EQ(2, schema.getFields().size());
+
+    for(auto fld : schema.getFields()) {
+        if (fld.getName() == "name") {
+            EXPECT_EQ(geopackage::FieldType::String, fld.getType());
+        } else {
+            EXPECT_EQ("population", fld.getName());
+            EXPECT_EQ(geopackage::FieldType::Double, fld.getType());
+        }
+    }
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }

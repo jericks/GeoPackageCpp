@@ -1029,4 +1029,57 @@ namespace geopackage {
         }
     }
 
+    Schema GeoPackage::getSchema(std::string name) {
+        
+        std::string key = "id";
+        std::vector<Field> fields;
+        GeometryType geometryType = GeometryType::GEOMETRY;
+        std::string geometryName = "geom";
+        int srsId = -1;
+
+        std::optional<GeometryColumn> geometryColumn = getGeometryColumn(name);
+        if (geometryColumn.has_value()) {
+            GeometryColumn gc = geometryColumn.value();
+            geometryName = gc.getColumnName();
+            geometryType = gc.getGeometryType();
+            srsId = gc.getSrsId();
+        }
+
+        try {
+            SQLite::Statement query(db, "PRAGMA table_info('" + name + "') ");
+            while (query.executeStep()) {
+                std::string name = query.getColumn(1).getString();
+                std::string type = query.getColumn(2).getString();
+                int primaryKey = query.getColumn(5).getInt();
+                if (primaryKey == 1) {
+                    key = name;
+                } else if (name != geometryName) {
+                    fields.push_back(Field{name, fieldtype::getFieldType(type)});
+                }
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting fields for " << name << ": " << e.what() << std::endl;
+        }
+
+        return Schema{name, key, GeometryField{geometryName, geometryType, srsId}, fields};
+    }
+
+    std::string GeoPackage::getPrimaryKey(std::string tableName) {
+        try {
+            SQLite::Statement query(db, "SELECT name FROM PRAGMA_TABLE_INFO('" + tableName + "') WHERE pk = 1 AND name ='TESDASA'");
+            bool foundRow = query.executeStep();
+            if (foundRow) {
+                std::string name = query.getColumn(0).getString();
+                return name;
+            } else {
+                return "id";
+            }
+        } 
+        catch (std::exception& e) {
+            std::cout << "Error getting primary key for " << tableName << ": " << e.what() << std::endl;
+        }
+        return "id";
+    }
+
 }

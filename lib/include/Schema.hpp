@@ -9,11 +9,13 @@ namespace geopackage {
     class Schema {
         private:
             std::string name;
+            std::string key;
             GeometryField geometryField;
             std::vector<Field> fields;
         public:
-            Schema(std::string name, GeometryField geometryField, std::vector<Field> fields);
+            Schema(std::string name, std::string key, GeometryField geometryField, std::vector<Field> fields);
             std::string getName() const;
+            std::string getKey() const;
             GeometryField getGeometryField() const;
             std::vector<Field> getFields() const;
     };

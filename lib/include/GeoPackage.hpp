@@ -30,6 +30,8 @@ namespace geopackage {
 
             void insertDefaultSpatialRefs();
 
+            std::string getPrimaryKey(std::string tableName);
+
         public:
 
             GeoPackage(std::string fileName);
@@ -157,6 +159,8 @@ namespace geopackage {
             void createFeatureTable(const Schema& schema);
 
             void addFeature(std::string name, const Feature& feature);
+
+            Schema getSchema(std::string name);
 
     };
 
