@@ -15,6 +15,14 @@ TEST(GeoPackageLibTests, WKBWrite_Point) {
     EXPECT_EQ("000000000140000000000000004010000000000000", wkbHexString);
 }
 
+TEST(GeoPackageLibTests, WKBWrite_Point_LatLon) {
+    geopackage::WKBWriter writer{};
+    geopackage::Point pt {-122.3894562, 47.5849052};
+    std::string wkbHexString = writer.writeToHex(&pt);
+    EXPECT_EQ("0000000001C05E98ECD9B28E5D4047CADE2C70A153", wkbHexString);
+}
+
+
 TEST(GeoPackageLibTests, WKBWrite_Point_Srid) {
     geopackage::WKBWriter writer{geopackage::wkb::Type::EWKB, geopackage::Endian::BIG};
     geopackage::Point pt {2,4};

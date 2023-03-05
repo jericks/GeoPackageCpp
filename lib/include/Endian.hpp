@@ -3,7 +3,7 @@
 namespace geopackage {
 
     enum class Endian {
-        BIG, LITTE
+        BIG, LITTLE
     };  
 
 }
