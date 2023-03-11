@@ -30,13 +30,13 @@ namespace geopackage {
 
             void putBytes(std::vector<std::byte> value);
             
-            void putInt(int value);
+            void putInt(int32_t value);
 
             void putLong(int64_t value);
 
             void putDouble(double value);
 
-            int getInt();
+            int32_t getInt();
 
             int64_t getLong();
 

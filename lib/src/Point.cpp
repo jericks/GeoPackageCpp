@@ -7,7 +7,9 @@ namespace geopackage {
     Point::Point(double xCoord, double yCoord, double zValue, double mValue) : x(xCoord), y(yCoord), z(zValue), m(mValue) {}
 
     std::unique_ptr<Geometry> Point::clone() const  {
-        return std::make_unique<Point>(x,y);
+        auto point = std::make_unique<Point>(x,y);
+        point->setSrid(getSrid());
+        return point;
     }
 
     double Point::getX() const {

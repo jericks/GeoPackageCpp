@@ -34,6 +34,7 @@ set(GeoPackageCppLib_SOURCES
 	src/TileMatrix.cpp
 	src/TileMatrixSet.cpp
 	src/WKBWriter.cpp
+	src/WKBReader.cpp
 )
 
 add_library(GeoPackageCppLib STATIC ${GeoPackageCppLib_SOURCES})

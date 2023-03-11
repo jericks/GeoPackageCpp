@@ -26,6 +26,26 @@ namespace geopackage {
             }
         }
 
+        GeometryType getGeometryType(int value) {
+            if (value == 1) {
+                return GeometryType::POINT;
+            } else if (value == 2) {
+                return GeometryType::LINESTRING;
+            } else if (value == 3) {
+                return GeometryType::POLYGON;
+            } else if (value == 4) {
+                return GeometryType::MULTIPOINT;
+            } else if (value == 5) {
+                return GeometryType::MULTILINESTRING;
+            } else if (value == 6) {
+                return GeometryType::MULTIPOLYGON;
+            } else if (value == 7) {
+                return GeometryType::GEOMETRYCOLLECTION;
+            } else {
+                return GeometryType::GEOMETRY;
+            }
+        }
+
         GeometryType getGeometryType(std::string str) {
             if (str == "point") {
                 return GeometryType::POINT;

@@ -5,7 +5,9 @@ namespace geopackage {
     MultiPoint::MultiPoint(std::vector<Point> pts) : points(pts) { }
 
     std::unique_ptr<Geometry> MultiPoint::clone() const  {
-        return std::make_unique<MultiPoint>(points);
+        auto multiPoint = std::make_unique<MultiPoint>(points);
+        multiPoint->setSrid(getSrid());
+        return multiPoint;
     }
 
     GeometryType MultiPoint::getType() const {

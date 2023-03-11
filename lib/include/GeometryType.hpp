@@ -15,6 +15,8 @@ namespace geopackage {
 
         GeometryType getGeometryType(std::string str);
 
+        GeometryType getGeometryType(int value);
+
         int getValue(GeometryType geometryType);
 
     }

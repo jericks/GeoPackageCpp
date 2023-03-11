@@ -5,7 +5,9 @@ namespace geopackage {
     MultiPolygon::MultiPolygon(std::vector<Polygon> polys) : polygons(polys) { }
 
     std::unique_ptr<Geometry> MultiPolygon::clone() const  {
-        return std::make_unique<MultiPolygon>(polygons);
+        auto multiPolygon = std::make_unique<MultiPolygon>(polygons);
+        multiPolygon->setSrid(getSrid());
+        return multiPolygon;
     }
 
     GeometryType MultiPolygon::getType() const {

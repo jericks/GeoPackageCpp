@@ -9,7 +9,9 @@ namespace geopackage {
          for(auto & g : geometries) {
             clonedGeometries.push_back(g->clone());
          }
-        return std::make_unique<GeometryCollection>(std::move(clonedGeometries));
+        auto gc = std::make_unique<GeometryCollection>(std::move(clonedGeometries));
+        gc->setSrid(getSrid());
+        return gc;
     }
 
     GeometryType GeometryCollection::getType() const {

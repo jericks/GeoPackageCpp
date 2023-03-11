@@ -7,7 +7,9 @@ namespace geopackage {
     Polygon::Polygon(std::vector<LinearRing> rngs) : rings(rngs) {}
 
     std::unique_ptr<Geometry> Polygon::clone() const  {
-        return std::make_unique<Polygon>(rings);
+        auto polygon = std::make_unique<Polygon>(rings);
+        polygon->setSrid(getSrid());
+        return polygon;
     }
 
     GeometryType Polygon::getType() const {

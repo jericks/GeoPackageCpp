@@ -43,9 +43,11 @@ TEST(BytesTests, Bytes_GetPutInt_Big) {
   bytes.putInt(11);
   bytes.putInt(22);
   bytes.putInt(33);
+  bytes.putInt(-536870911);
   ASSERT_EQ(11, bytes.getInt());
   ASSERT_EQ(22, bytes.getInt());
   ASSERT_EQ(33, bytes.getInt());
+  ASSERT_EQ(-536870911, bytes.getInt());
 }
 
 TEST(BytesTests, Bytes_GetPutInt_Little) {

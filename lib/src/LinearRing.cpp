@@ -5,7 +5,9 @@ namespace geopackage {
     LinearRing:: LinearRing(std::vector<Point> pts) : points(pts) {}
 
     std::unique_ptr<Geometry> LinearRing::clone() const  {
-        return std::make_unique<LinearRing>(points);
+        auto ring = std::make_unique<LinearRing>(points);
+        ring->setSrid(getSrid());
+        return ring;
     }
 
     GeometryType LinearRing::getType() const {

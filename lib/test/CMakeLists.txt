@@ -1,4 +1,5 @@
 add_executable(tests 
+    BytesTest.cpp
     BoundsTest.cpp
     FeatureTest.cpp
     FieldTest.cpp
@@ -14,6 +15,7 @@ add_executable(tests
     PolygonTest.cpp
     SchemaTest.cpp
     WKBWriterTest.cpp
+    WKBReaderTest.cpp
     GeoPackageGeometryWriterTest.cpp
 )
 target_link_libraries(tests 

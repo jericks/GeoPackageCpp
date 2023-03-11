@@ -5,7 +5,9 @@ namespace geopackage {
     MultiLineString::MultiLineString(std::vector<LineString> lns) : lines(lns) { }
 
     std::unique_ptr<Geometry> MultiLineString::clone() const  {
-        return std::make_unique<MultiLineString>(lines);
+        auto multiLine = std::make_unique<MultiLineString>(lines);
+        multiLine->setSrid(getSrid());
+        return multiLine;
     }
 
     GeometryType MultiLineString::getType() const {

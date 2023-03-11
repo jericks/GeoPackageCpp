@@ -5,7 +5,9 @@ namespace geopackage {
     LineString:: LineString(std::vector<Point> pts) : points(pts) { }
 
     std::unique_ptr<Geometry> LineString::clone() const  {
-        return std::make_unique<LineString>(points);
+        auto line = std::make_unique<LineString>(points);
+        line->setSrid(getSrid());
+        return line;
     }
 
     GeometryType LineString::getType() const {
