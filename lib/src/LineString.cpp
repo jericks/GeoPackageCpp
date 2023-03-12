@@ -22,7 +22,7 @@ namespace geopackage {
         }
     }
 
-     bool LineString::isEmpty() const {
+    bool LineString::isEmpty() const {
         return points.empty();
     }
 

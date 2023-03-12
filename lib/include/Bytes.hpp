@@ -26,6 +26,8 @@ namespace geopackage {
 
             Bytes(Endian endian, std::vector<std::byte> bytes);
 
+            void setPosition(int position);
+
             void putByte(std::byte value);
 
             void putBytes(std::vector<std::byte> value);

@@ -35,6 +35,8 @@ namespace geopackage {
 
             Bounds(double minX, double minY, double maxX, double maxY);
 
+            Bounds(double minX, double minY, double minZ, double minM, double maxX, double maxY, double maxZ, double maxM);
+
             double getMinX() const;
 
             double getMinY() const;

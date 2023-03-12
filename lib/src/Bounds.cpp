@@ -6,6 +6,9 @@ namespace geopackage {
 
     Bounds::Bounds(double minX, double minY, double maxX, double maxY) : min(Point{minX, minY}), max(Point{maxX, maxY}) {}
 
+    Bounds::Bounds(double minX, double minY, double minZ, double minM, double maxX, double maxY, double maxZ, double maxM)
+        : min(Point{minX, minY, minZ, minM}), max(Point{maxX, maxY, maxZ, maxM}) {}
+
     double Bounds::getMinX() const {
         return min.getX();
     }
@@ -51,7 +54,7 @@ namespace geopackage {
     }
 
     std::ostream& operator << (std::ostream& os, const Bounds& b) {
-        os << "BOUNDS (" << b.getMinX() << ", " << b.getMinX()  << ", " << b.getMaxX() << ", " << b.getMaxY() << ")";
+        os << "BOUNDS (" << b.getMinX() << ", " << b.getMinY()  << ", " << b.getMaxX() << ", " << b.getMaxY() << ")";
         return os;
     }
 
@@ -103,31 +106,31 @@ namespace geopackage {
     }
 
     Bounds Bounds::getBounds(const std::vector<Point>& points) {
-        double minX;
-        double minY;
-        double maxX;
-        double maxY;
+        double minX = NAN;
+        double minY = NAN;
+        double maxX = NAN;
+        double maxY = NAN;
         for(auto p : points) {
-            minX = std::min(minX, p.getX());
-            maxX = std::max(maxX, p.getX());
-            minY = std::min(minY, p.getY());
-            maxY = std::max(maxY, p.getY());
+            minX = isnan(minX) ? p.getX() : std::min(minX, p.getX());
+            maxX = isnan(maxX) ? p.getX() : std::max(maxX, p.getX());
+            minY = isnan(minY) ? p.getY() : std::min(minY, p.getY());
+            maxY = isnan(maxY) ? p.getY() : std::max(maxY, p.getY());
         }
         return Bounds{minX, minY, maxX, maxY};
     }
 
     Bounds Bounds::getBounds(const std::vector<Bounds>& bounds) {
-        double minX;
-        double minY;
-        double maxX;
-        double maxY;
+        double minX = NAN;
+        double minY = NAN;
+        double maxX = NAN;
+        double maxY = NAN;
         for(auto b : bounds) {
-            minX = std::min(minX, b.getMinX());
-            maxX = std::max(maxX, b.getMaxX());
-            minY = std::min(minY, b.getMinY());
-            maxY = std::max(maxY, b.getMaxY());
+            minX = isnan(minX) ? b.getMinX() : std::min(minX, b.getMinX());
+            maxX = isnan(maxX) ? b.getMaxX() : std::max(maxX, b.getMaxX());
+            minY = isnan(minY) ? b.getMinY() : std::min(minY, b.getMinY());
+            maxY = isnan(maxY) ? b.getMaxY() : std::max(maxY, b.getMaxY());
         }
-        return Bounds{minX, minY, maxX, maxY};
+        return Bounds {minX, minY, maxX, maxY};
     }
 
 }

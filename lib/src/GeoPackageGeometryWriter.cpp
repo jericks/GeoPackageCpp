@@ -21,7 +21,7 @@ namespace geopackage {
         std::byte flagByte {0};
         // Envelope Type
         std::byte envelopeTypeByte = envelopetype::getByte(envelopeType);
-        flagByte = flagByte | (envelopeTypeByte << 1) & flag::getByte(Flag::EnvelopeIndicator);
+        flagByte = flagByte | ((envelopeTypeByte << 1) & flag::getByte(Flag::EnvelopeIndicator));
         // Binary Type
         flagByte |= flagByte | binarytype::getByte(binaryType) & flag::getByte(Flag::BinaryType);
         // Geometry Empty Type
@@ -31,7 +31,8 @@ namespace geopackage {
         flagByte = flagByte | endianByte & flag::getByte(Flag::Endianess);
         bytes.putByte(flagByte);
         // SRID
-        bytes.putInt(geometry->getSrid().empty() ? -1 : std::atoi(geometry->getSrid().c_str()));
+        int srid = geometry->getSrid().empty() ? -1 : std::atoi(geometry->getSrid().c_str());
+        bytes.putInt(srid);
         // Envelope
         if (envelopeType != EnvelopeType::NoEnvelope) {
             Bounds bounds = Bounds::getBounds(geometry);

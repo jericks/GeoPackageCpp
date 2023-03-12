@@ -6,6 +6,10 @@ namespace geopackage {
 
     Bytes::Bytes(Endian endian, std::vector<std::byte> bytes) : endian(endian), bytes(bytes) {}
 
+    void Bytes::setPosition(int pos) {
+        position = pos;
+    }
+
     void Bytes::putByte(std::byte value) {
         bytes.push_back(value);
     }

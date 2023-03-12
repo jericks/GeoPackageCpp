@@ -36,6 +36,22 @@ namespace geopackage {
             }
         }
 
+        EnvelopeType getEnvelopeType(int value) {
+            if (value == 0) {
+                return EnvelopeType::NoEnvelope;
+            } else if (value == 1) {
+                return EnvelopeType::Envelope;
+            } else if (value == 2) {
+                return EnvelopeType::EnvelopeZ;
+            } else if (value == 3) {
+                return EnvelopeType::EnvelopeM;
+            } else if (value == 4) {
+                return EnvelopeType::EnvelopeZM;
+            } else {
+                return EnvelopeType::NoEnvelope;
+            }
+        } 
+
         std::byte getByte(EnvelopeType envelopeType) {
             if (envelopeType == EnvelopeType::NoEnvelope) {
                 return std::byte{0};
@@ -51,9 +67,24 @@ namespace geopackage {
                 return std::byte{};
             }
         }
-    }
 
-    
+        bool hasM(EnvelopeType envelopeType) {
+            if (envelopeType == EnvelopeType::EnvelopeM || envelopeType == EnvelopeType::EnvelopeZM) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        bool hasZ(EnvelopeType envelopeType) {
+            if (envelopeType == EnvelopeType::EnvelopeZ || envelopeType == EnvelopeType::EnvelopeZM) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+    }
 
     std::ostream& operator << (std::ostream& os, const EnvelopeType& envelopeType) {
         os << envelopetype::toString(envelopeType);

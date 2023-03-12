@@ -14,7 +14,13 @@ namespace geopackage {
 
         int getValue(EnvelopeType envelopeType);
 
+        EnvelopeType getEnvelopeType(int value);
+
         std::byte getByte(EnvelopeType envelopeType);
+
+        bool hasM(EnvelopeType envelopeType);
+
+        bool hasZ(EnvelopeType envelopeType);
 
     }
 

@@ -19,8 +19,6 @@ namespace geopackage {
         
         private:
 
-            std::unique_ptr<Geometry> read(Bytes& bytes);
-
             std::unique_ptr<Geometry> read(Bytes& bytes, GeometryType geometryType, Dimension dimension, std::string srid);                
 
             Point getPoint(Bytes& bytes, Dimension dimension);
@@ -42,6 +40,8 @@ namespace geopackage {
         public:
 
             std::unique_ptr<Geometry> read(std::vector<std::byte> bytes);
+
+            std::unique_ptr<Geometry> read(Bytes& bytes);
 
     };
 

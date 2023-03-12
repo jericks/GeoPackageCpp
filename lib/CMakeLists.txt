@@ -4,6 +4,7 @@ set(GeoPackageCppLib_SOURCES
 	src/GeoPackage.cpp
 	src/Bytes.cpp
 	src/GeoPackageGeometryWriter.cpp
+	src/GeoPackageGeometryReader.cpp
 	src/BinaryType.cpp
 	src/EnvelopeType.cpp
 	src/Flag.cpp
