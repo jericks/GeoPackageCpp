@@ -10,6 +10,7 @@
 #include "Feature.hpp"
 #include "GeometryColumn.hpp"
 #include "GeoPackageGeometryWriter.hpp"
+#include "GeoPackageGeometryReader.hpp"
 #include "Schema.hpp"
 #include "SpatialRef.hpp"
 #include "Tile.hpp"
@@ -31,6 +32,18 @@ namespace geopackage {
             void insertDefaultSpatialRefs();
 
             std::string getPrimaryKey(std::string tableName);
+
+            std::string getGeometryColumnName(std::string tableName);
+
+            int bindFeatureValues(SQLite::Statement& statement, Feature feature, int startIndex);
+
+            int bindFeatureValuesForUpdate(SQLite::Statement& statement, Feature feature, std::string primaryKey, int startIndex);
+
+            void bindFeatureValue(SQLite::Statement& statement, std::any value, int index);
+
+            std::vector<std::string> getColumnNames(std::string table);
+
+            Feature getFeature(SQLite::Statement& query, GeoPackageGeometryReader& reader, std::string geometryColumnName, std::string primaryKey, std::map<std::string, FieldType> fieldMap);
 
         public:
 
@@ -163,6 +176,18 @@ namespace geopackage {
             Schema getSchema(std::string name);
 
             int countFeatures(std::string name);
+
+            void updateFeature(std::string name, const Feature& f);
+
+            void setFeature(std::string name, const Feature& f);
+
+            void deleteFeature(std::string name, const Feature& f);
+
+            void deleteAllFeatures(std::string name);
+
+            std::optional<Feature> getFeature(std::string name, int id);
+
+            void features(std::string name, std::function<void(Feature& feature)> f);
 
     };
 

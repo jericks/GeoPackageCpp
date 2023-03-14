@@ -967,7 +967,7 @@ namespace geopackage {
 
     void GeoPackage::createFeatureTable(const Schema& schema) {
         std::stringstream sql;
-        sql << "CREATE TABLE " << schema.getName() << " (\n";
+        sql << "CREATE TABLE IF NOT EXISTS " << schema.getName() << " (\n";
         sql << "   " << schema.getKey() << " INTEGER PRIMARY KEY AUTOINCREMENT,\n";
         sql << "   " << schema.getGeometryField().getName() << " BLOB";
         for(const auto& fld : schema.getFields()) {
@@ -1005,28 +1005,22 @@ namespace geopackage {
             SQLite::Statement query(db, sql.str());
             query.bind(1, geometryBytes.data(), geometryBytes.size());
             int counter = 2;
-            for(const auto& attribute : feature.getAttributes()) {
-                std::any value = attribute.second;
-                if (value.type() == typeid(std::string)) {
-                    std::string stringValue = std::any_cast<std::string>(value);
-                    query.bind(counter, stringValue);
-                } else if (value.type() == typeid(double)) {
-                    double doubleValue = std::any_cast<double>(value);
-                    query.bind(counter, doubleValue);
-                } else if (value.type() == typeid(int)) {
-                    int doubleValue = std::any_cast<int>(value);
-                    query.bind(counter, doubleValue);
-                } else if (value.type() == typeid(bool)) {
-                    bool boolValue = std::any_cast<bool>(value);
-                    query.bind(counter, boolValue);
-                }
-                counter++;
-            }
+            bindFeatureValues(query, feature, counter);
             query.exec();
         }
         catch (std::exception& e) {
             std::cout << "Error adding feature " << feature << " table to " << name << ": " << e.what() << std::endl;
         }
+    }
+
+    int GeoPackage::bindFeatureValues(SQLite::Statement& statement, Feature feature, int startIndex) {
+        int counter = startIndex;
+        for(const auto& attribute : feature.getAttributes()) {
+            std::any value = attribute.second;
+            bindFeatureValue(statement, value, counter);
+            counter++;
+        }
+        return counter;
     }
 
     Schema GeoPackage::getSchema(std::string name) {
@@ -1065,6 +1059,21 @@ namespace geopackage {
         return Schema{name, key, GeometryField{geometryName, geometryType, srsId}, fields};
     }
 
+    std::vector<std::string> GeoPackage::getColumnNames(std::string table) {
+        std::vector<std::string> columnNames;
+        try {
+            SQLite::Statement query(db, "PRAGMA table_info('" + table + "') ");
+            while (query.executeStep()) {
+                std::string name = query.getColumn(1).getString();
+                columnNames.push_back(name);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting get column names for " << table << ": " << e.what() << std::endl;
+        }
+        return columnNames;
+    }
+
     std::string GeoPackage::getPrimaryKey(std::string tableName) {
         try {
             SQLite::Statement query(db, "SELECT name FROM PRAGMA_TABLE_INFO('" + tableName + "') WHERE pk = 1");
@@ -1082,10 +1091,222 @@ namespace geopackage {
         return "id";
     }
 
+    std::string GeoPackage::getGeometryColumnName(std::string tableName) {
+        std::optional<GeometryColumn> geometryColumn = getGeometryColumn(tableName);
+        if (geometryColumn.has_value()) {
+            GeometryColumn gc = geometryColumn.value();
+            return gc.getColumnName();
+        } else {
+            return "geometry";
+        }
+    }
+
     int GeoPackage::countFeatures(std::string name) {
         SQLite::Statement query(db, "select count(*) as feature_count from " + name);
         query.executeStep();
         return query.getColumn(0).getInt();    
+    }
+
+    void GeoPackage::setFeature(std::string name, const Feature& f) {
+        if (f.getId().has_value()) {
+            auto feature = getFeature(name, f.getId().value());
+            if (feature) {
+                updateFeature(name, f);
+            } else {
+                addFeature(name, f);
+            }
+        } else {
+             addFeature(name, f);
+        }
+    }
+
+    void GeoPackage::updateFeature(std::string name, const Feature& f) {
+
+        std::stringstream sql;
+
+        std::string primaryKey = getPrimaryKey(name);
+        std::string geometryColumn = getGeometryColumnName(name);
+
+        Geometry* geometry = f.getGeometry();
+        GeoPackageGeometryWriter geometryWriter{};
+        std::vector<std::byte> geometryBytes = geometryWriter.write(geometry);
+
+        sql << "UPDATE " << name  << " SET ";
+        sql << geometryColumn << " = ?";
+        for(const auto& attribute : f.getAttributes()) {
+           if (attribute.first != primaryKey) { 
+            sql << ", " << attribute.first << " = ?";
+           }
+        }
+        sql << " WHERE " << primaryKey << " =  ? ";
+
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement update(db, sql.str());
+            update.bind(1, geometryBytes.data(), geometryBytes.size());
+            int index = bindFeatureValuesForUpdate(update, f, primaryKey, 2);
+            update.bind(index, f.getId().value());
+            update.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error updating Feature " << f << ": " << e.what() << std::endl;
+        }    
+    }
+
+    int GeoPackage::bindFeatureValuesForUpdate(SQLite::Statement& statement, Feature feature, std::string primaryKey, int startIndex) {
+        int counter = startIndex;
+        for(const auto& attribute : feature.getAttributes()) {
+            std::string name = attribute.first;
+            if (name!= primaryKey) {
+                std::any value = attribute.second;
+                bindFeatureValue(statement, value, counter);
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    void GeoPackage::bindFeatureValue(SQLite::Statement& statement, std::any value, int index) {
+        if (value.type() == typeid(std::string)) {
+            std::string stringValue = std::any_cast<std::string>(value);
+            statement.bind(index, stringValue);
+        } else if (value.type() == typeid(const char*)) {
+            std::string stringValue { std::any_cast<const char*>(value) };
+            statement.bind(index, stringValue);
+        } else if (value.type() == typeid(double)) {
+            double doubleValue = std::any_cast<double>(value);
+            statement.bind(index, doubleValue);
+        } else if (value.type() == typeid(int)) {
+            int intValue = std::any_cast<int>(value);
+            statement.bind(index, intValue);
+        } else if (value.type() == typeid(bool)) {
+            bool boolValue = std::any_cast<bool>(value);
+            statement.bind(index, boolValue);
+        } 
+    }
+
+    void GeoPackage::deleteFeature(std::string name, const Feature& f) {
+        std::string primaryKey = getPrimaryKey(name);
+        std::optional<int> id = f.getId();
+        if (id.has_value()) {
+            try {
+                SQLite::Transaction transaction(db);
+                SQLite::Statement insert(db, "DELETE FROM " + name + " WHERE " + primaryKey + " = ?");
+                insert.bind(1, id.value());
+                insert.exec();
+                transaction.commit();
+            }
+            catch (std::exception& e) {
+                std::cout << "Error deleting Feature " << f << ": " << e.what() << std::endl;
+            }    
+        }
+    }
+
+    void GeoPackage::deleteAllFeatures(std::string name) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement insert(db, "DELETE FROM " + name);
+            insert.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error deleting all Features from " << name << ": " << e.what() << std::endl;
+        }    
+    }
+
+     std::optional<Feature> GeoPackage::getFeature(std::string name, int id) {
+        std::stringstream sql;
+        Schema schema = getSchema(name);
+        std::string primaryKey = schema.getKey();
+        std::vector<Field> fields = schema.getFields();
+        std::map<std::string, FieldType> fieldMap;
+        for(const auto& field : fields) {
+           fieldMap[field.getName()] = field.getType();
+        }
+        std::string geometryColumnName = schema.getGeometryField().getName();
+        GeoPackageGeometryReader reader;
+
+        sql << "SELECT ";
+        sql << primaryKey << ", " << geometryColumnName;
+        for(const auto& field : fields) {
+            sql << ", " << field.getName();
+        }
+        sql << " FROM " << name;
+        sql << " WHERE " << primaryKey << " =  ? ";   
+
+        try {
+            SQLite::Statement query(db, sql.str());
+            query.bind(1, id);
+            if (query.executeStep()) {
+                return getFeature(query, reader, geometryColumnName, primaryKey, fieldMap);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting feature for " << name << " with " << id << ": " << e.what() << std::endl;
+        }    
+        return std::nullopt;
+    }
+
+
+    Feature GeoPackage::getFeature(SQLite::Statement& query, GeoPackageGeometryReader& reader, std::string geometryColumnName, std::string primaryKey, std::map<std::string, FieldType> fieldMap) {
+        int id = -1;
+        std::optional<std::unique_ptr<Geometry>> geometry;
+        std::map<std::string, std::any> attributes;
+        for(int i = 0; i < query.getColumnCount(); ++i) {
+            std::string columnName = query.getColumnName(i);
+            if (columnName == geometryColumnName) {
+                auto blobColumn = query.getColumn(i);
+                const byte* bytes = static_cast<const byte*>(blobColumn.getBlob());
+                size_t numberOfBytes = blobColumn.getBytes();
+                std::vector<std::byte> data;
+                for(int i = 0; i<numberOfBytes; i++) {
+                    data.push_back(std::byte{bytes[i]});
+                }
+                geometry = reader.read(data);
+            } else if (columnName == primaryKey) {  
+                id = query.getColumn(i).getInt();
+            } else {
+                FieldType fieldType = fieldMap[columnName];
+                if (fieldType == FieldType::String) {
+                    attributes[columnName] = query.getColumn(i).getString();
+                } else if (fieldType == FieldType::Double) {
+                    attributes[columnName] = query.getColumn(i).getDouble();
+                } else if (fieldType == FieldType::Integer) {
+                    attributes[columnName] = query.getColumn(i).getInt();
+                } else if (fieldType == FieldType::Boolean) {
+                    attributes[columnName] = query.getColumn(i).getInt();
+                } else if (fieldType == FieldType::Blob) {
+                    attributes[columnName] = query.getColumn(i).getString();
+                } else if (fieldType == FieldType::Geometry) {
+                    attributes[columnName] = query.getColumn(i).getString();
+                }
+            }
+        }
+        return Feature{id, geometry.value()->clone(), attributes};
+    }
+
+    void GeoPackage::features(std::string name, std::function<void(Feature& feature)> func) {
+        Schema schema = getSchema(name);
+        std::string primaryKey = schema.getKey();
+        std::vector<Field> fields = schema.getFields();
+        std::map<std::string, FieldType> fieldMap;
+        for(const auto& field : fields) {
+           fieldMap[field.getName()] = field.getType();
+        }
+        std::string geometryColumnName = schema.getGeometryField().getName();
+        GeoPackageGeometryReader reader;
+
+        try {
+            SQLite::Statement query(db, "SELECT * FROM " + name);
+            while (query.executeStep()) {
+                Feature feature = getFeature(query,reader,  geometryColumnName, primaryKey, fieldMap);
+                func(feature);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting features for " << name << ": " << e.what() << std::endl;
+        }    
     }
 
 }

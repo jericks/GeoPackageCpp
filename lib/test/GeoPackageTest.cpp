@@ -146,7 +146,7 @@ TEST(GeoPackageLibTests, TileMatrixSet_ToString) {
     geopackage::TileMatrixSet tileMatrixSet{"basemap", 4326, geopackage::Bounds{-180,-90,180,90}};
     std::stringstream str;
     str << tileMatrixSet;
-    EXPECT_EQ("TILE_MATRIX_SET (tableName = basemap, srsId = 4326, bounds = BOUNDS (-180, -180, 180, 90))", str.str());
+    EXPECT_EQ("TILE_MATRIX_SET (tableName = basemap, srsId = 4326, bounds = BOUNDS (-180, -90, 180, 90))", str.str());
 }
 
 TEST(GeoPackageLibTests, GeoPackage_Add_TileMatrixSet) {
@@ -782,7 +782,7 @@ TEST(GeoPackageLibTests, Content_ToString) {
     geopackage::Content content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326};
     std::stringstream str;
     str << content;
-    EXPECT_EQ("CONTENT (tableName = cities, dataType = features, identifier = cities, description = A Layer of cities, lastChange = 2022-01-29T18:38:34.649Z, bounds = BOUNDS (-180, -180, 180, 90), srsId = 4326)", str.str());
+    EXPECT_EQ("CONTENT (tableName = cities, dataType = features, identifier = cities, description = A Layer of cities, lastChange = 2022-01-29T18:38:34.649Z, bounds = BOUNDS (-180, -90, 180, 90), srsId = 4326)", str.str());
 }
 
 TEST(GeoPackageLibTests, GeoPackage_Add_Content) {
@@ -996,6 +996,284 @@ TEST(GeoPackageLibTests, GeoPackage_Get_Schema) {
             EXPECT_EQ(geopackage::FieldType::Double, fld.getType());
         }
     }
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Feature_Update) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    // Set up
+
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+
+    geopackage::Schema schema{
+        "cities",
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    };
+    geopackage.createFeatureTable(schema);
+
+    // Add Feature
+
+    EXPECT_EQ(0, geopackage.countFeatures("cities"));
+    geopackage.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-122, 47),
+        std::map<std::string, std::any> {{"population", 737000}, {"name", std::string{"One"}}}
+    });
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
+
+    std::optional<geopackage::Feature> feature = geopackage.getFeature("cities", 1);
+    EXPECT_TRUE(feature.has_value());
+    geopackage::Feature f = feature.value();
+    EXPECT_EQ("POINT (-122 47)", f.getGeometry()->wkt());
+    EXPECT_EQ(1, f.getId().value());
+    EXPECT_EQ("One", std::any_cast<std::string>(f.getAttributes()["name"]));
+    EXPECT_EQ(737000, std::any_cast<double>(f.getAttributes()["population"]));
+
+    // Update Feature
+
+    f.setAttribute("name", "One Updated").setAttribute("population", 123);
+    f.setGeometry(std::make_unique<geopackage::Point>(-123.45, 47.59));
+    geopackage.updateFeature("cities", f);
+
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
+    std::optional<geopackage::Feature> featureUpdated = geopackage.getFeature("cities", f.getId().value());
+    EXPECT_TRUE(featureUpdated.has_value());
+    EXPECT_EQ(1, featureUpdated->getId().value());
+    EXPECT_EQ("POINT (-123.45 47.59)", featureUpdated->getGeometry()->wkt());
+    EXPECT_EQ("One Updated", std::any_cast<std::string>(featureUpdated->getAttributes()["name"]));
+    EXPECT_EQ(123, std::any_cast<double>(featureUpdated->getAttributes()["population"]));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Feature_Set) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    // Set up
+
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+
+    geopackage::Schema schema{
+        "cities",
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    };
+    geopackage.createFeatureTable(schema);
+
+    // Add Feature
+
+    EXPECT_EQ(0, geopackage.countFeatures("cities"));
+    geopackage.setFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-122, 47),
+        std::map<std::string, std::any> {{"population", 737000}, {"name", std::string{"One"}}}
+    });
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
+
+    std::optional<geopackage::Feature> feature = geopackage.getFeature("cities", 1);
+    EXPECT_TRUE(feature.has_value());
+    geopackage::Feature f = feature.value();
+    EXPECT_EQ("POINT (-122 47)", f.getGeometry()->wkt());
+    EXPECT_EQ(1, f.getId().value());
+    EXPECT_EQ("One", std::any_cast<std::string>(f.getAttributes()["name"]));
+    EXPECT_EQ(737000, std::any_cast<double>(f.getAttributes()["population"]));
+
+    // Update Feature
+
+    f.setAttribute("name", "One Updated").setAttribute("population", 123);
+    f.setGeometry(std::make_unique<geopackage::Point>(-123.45, 47.59));
+    geopackage.setFeature("cities", f);
+
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
+    std::optional<geopackage::Feature> featureUpdated = geopackage.getFeature("cities", f.getId().value());
+    EXPECT_TRUE(featureUpdated.has_value());
+    EXPECT_EQ(1, featureUpdated->getId().value());
+    EXPECT_EQ("POINT (-123.45 47.59)", featureUpdated->getGeometry()->wkt());
+    EXPECT_EQ("One Updated", std::any_cast<std::string>(featureUpdated->getAttributes()["name"]));
+    EXPECT_EQ(123, std::any_cast<double>(featureUpdated->getAttributes()["population"]));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Feature_Get) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+
+    geopackage::Schema schema{
+        "cities",
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    };
+    geopackage.createFeatureTable(schema);
+
+    EXPECT_EQ(0, geopackage.countFeatures("cities"));
+    geopackage.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-122, 47),
+        std::map<std::string, std::any> {{"population", 737000}, {"name", std::string{"One"}}}
+    });
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
+
+    std::optional<geopackage::Feature> feature = geopackage.getFeature("cities", 1);
+    EXPECT_TRUE(feature.has_value());
+    EXPECT_EQ("POINT (-122 47)", feature->getGeometry()->wkt());
+    EXPECT_EQ("One", std::any_cast<std::string>(feature->getAttributes()["name"]));
+    EXPECT_EQ(737000, std::any_cast<double>(feature->getAttributes()["population"]));
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Feature_GetAll) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+
+    geopackage::Schema schema{
+        "cities",
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    };
+    geopackage.createFeatureTable(schema);
+
+    EXPECT_EQ(0, geopackage.countFeatures("cities"));
+    geopackage.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-122, 47),
+        std::map<std::string, std::any> {{"population", 737000}, {"name", std::string{"One"}}}
+    });
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
+    geopackage.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-123, 48),
+        std::map<std::string, std::any> {{"population", 123}, {"name", std::string{"Two"}}}
+    });
+    EXPECT_EQ(2, geopackage.countFeatures("cities"));
+
+    int counter = 0;    
+    geopackage.features("cities", [&](geopackage::Feature& f) {
+        counter++;
+    });
+    EXPECT_EQ(2, counter);
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Feature_Delete) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    // Set up
+
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+
+    geopackage::Schema schema{
+        "cities",
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    };
+    geopackage.createFeatureTable(schema);
+
+    // Add
+
+    EXPECT_EQ(0, geopackage.countFeatures("cities"));
+    geopackage.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-122, 47),
+        std::map<std::string, std::any> {{"population", 737000}, {"name", std::string{"One"}}}
+    });
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
+    
+    geopackage.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-123, 48),
+        std::map<std::string, std::any> {{"population", 123}, {"name", std::string{"Two"}}}
+    });
+    EXPECT_EQ(2, geopackage.countFeatures("cities"));
+
+    // Delete
+    geopackage.deleteFeature("cities", geopackage.getFeature("cities", 1).value());
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
+    geopackage.deleteFeature("cities", geopackage.getFeature("cities", 2).value());
+    EXPECT_EQ(0, geopackage.countFeatures("cities"));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Feature_DeleteAll) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    // Set up
+
+    geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+
+    geopackage::Schema schema{
+        "cities",
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    };
+    geopackage.createFeatureTable(schema);
+
+    // Add
+
+    EXPECT_EQ(0, geopackage.countFeatures("cities"));
+    geopackage.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-122, 47),
+        std::map<std::string, std::any> {{"population", 737000}, {"name", std::string{"One"}}}
+    });
+    EXPECT_EQ(1, geopackage.countFeatures("cities"));
+    
+    geopackage.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-123, 48),
+        std::map<std::string, std::any> {{"population", 123}, {"name", std::string{"Two"}}}
+    });
+    EXPECT_EQ(2, geopackage.countFeatures("cities"));
+
+    // Delete
+    geopackage.deleteAllFeatures("cities");
+    EXPECT_EQ(0, geopackage.countFeatures("cities"));
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
