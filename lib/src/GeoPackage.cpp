@@ -971,7 +971,7 @@ namespace geopackage {
         sql << "   " << schema.getKey() << " INTEGER PRIMARY KEY AUTOINCREMENT,\n";
         sql << "   " << schema.getGeometryField().getName() << " BLOB";
         for(const auto& fld : schema.getFields()) {
-           sql << ",\n   " << fld.getName() << " " << fld.getType();
+           sql << ",\n   " << fld.getName() << " " << fieldtype::getDatabaseType(fld.getType());
         }
         sql << "\n)\n";
         try {
@@ -1044,6 +1044,7 @@ namespace geopackage {
             while (query.executeStep()) {
                 std::string name = query.getColumn(1).getString();
                 std::string type = query.getColumn(2).getString();
+                std::cout << name << " is a " << type << "\n";
                 int primaryKey = query.getColumn(5).getInt();
                 if (primaryKey == 1) {
                     key = name;

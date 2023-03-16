@@ -4,6 +4,7 @@
 #include "Command.hpp"
 #include "ListCommand.hpp"
 #include "CreateCommand.hpp"
+#include "RandomFeaturesCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -17,6 +18,9 @@ int main(int argc, char *argv[]) {
 
     CreateCommand createCommand(&app);
     commands.add(&createCommand);
+
+    RandomFeaturesCommand randomFeaturesCommand(&app);
+    commands.add(&randomFeaturesCommand);
 
     CLI11_PARSE(app, argc, argv);
 

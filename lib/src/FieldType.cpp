@@ -11,17 +11,17 @@ namespace geopackage {
 
         std::string toString(FieldType fieldType) {
             if (fieldType == FieldType::Integer) {
-                return "integer";
+                return "Integer";
             } else if (fieldType == FieldType::String) {
-                return "string";
+                return "String";
             } else if (fieldType == FieldType::Double) {
-                return "double";
+                return "Double";
             } else if (fieldType == FieldType::Boolean) {
-                return "boolean";
+                return "Boolean";
             } else if (fieldType == FieldType::Blob) {
-                return "blob";
+                return "Blob";
             } else if (fieldType == FieldType::Geometry) {
-                return "geometry";
+                return "Geometry";
             } else {
                 return "";
             }
@@ -46,17 +46,17 @@ namespace geopackage {
         }
 
         FieldType getFieldType(std::string str) {
-            if (str == "integer") {
+            if (str == "integer" || str == "INTEGER") {
                 return FieldType::Integer;
             } else if (str == "geometry") {
                 return FieldType::Geometry;
-            } else if (str == "string") {
+            } else if (str == "string" || str == "TEXT") {
                 return FieldType::String;
-            } else if (str == "double") {
+            } else if (str == "double" || str == "REAL") {
                 return FieldType::Double;
-            } else if (str == "boolean") {
+            } else if (str == "boolean" || str == "BOOLEAN") {
                 return FieldType::Boolean;
-            } else if (str == "blob") {
+            } else if (str == "blob" || str == "BLOB") {
                 return FieldType::Blob;
             } else {
                 return FieldType::String;

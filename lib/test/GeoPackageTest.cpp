@@ -993,6 +993,7 @@ TEST(GeoPackageLibTests, GeoPackage_Get_Schema) {
             EXPECT_EQ(geopackage::FieldType::String, fld.getType());
         } else {
             EXPECT_EQ("population", fld.getName());
+            std::cout << fld.getName() << " is a " << fld.getType() <<"\n";
             EXPECT_EQ(geopackage::FieldType::Double, fld.getType());
         }
     }

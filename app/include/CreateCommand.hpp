@@ -21,6 +21,5 @@ class CreateCommand : public Command {
     private:
 
         CreateOptions options;
-
-        Commands* commands;
+        
 };
