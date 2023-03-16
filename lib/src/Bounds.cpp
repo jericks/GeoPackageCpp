@@ -54,7 +54,31 @@ namespace geopackage {
     }
 
     std::ostream& operator << (std::ostream& os, const Bounds& b) {
-        os << "BOUNDS (" << b.getMinX() << ", " << b.getMinY()  << ", " << b.getMaxX() << ", " << b.getMaxY() << ")";
+        os << "BOUNDS ";
+        Dimension dim = b.getDimension();
+        if (dim == Dimension::ThreeMeasured) {
+            os << "ZM";
+        } else if (dim == Dimension::Three) {
+            os << "Z";
+        } else if (dim == Dimension::TwoMeasured) {
+            os << "M";
+        }
+        os << "(";
+        os << b.getMinX() << ", " << b.getMinY();
+        if (dimension::hasZ(dim)) {
+            os << ", " << b.getMinZ();
+        }
+        if (dimension::hasM(dim)) {
+            os << ", " << b.getMinM();
+        }
+        os << ", " << b.getMaxX() << ", " << b.getMaxY();
+        if (dimension::hasZ(dim)) {
+            os << ", " << b.getMaxZ();
+        }
+        if (dimension::hasM(dim)) {
+            os << ", " << b.getMaxM();
+        }
+        os << ")";
         return os;
     }
 
@@ -131,6 +155,19 @@ namespace geopackage {
             maxY = isnan(maxY) ? b.getMaxY() : std::max(maxY, b.getMaxY());
         }
         return Bounds {minX, minY, maxX, maxY};
+    }
+
+    Bounds Bounds::xy(double minX, double minY, double maxX, double maxY) {
+        return Bounds{minX, minY, maxX, maxY};
+    }
+    Bounds Bounds::xym(double minX, double minY, double minM, double maxX, double maxY, double maxM) {
+        return Bounds{minX, minY, NAN, minM, maxX, maxY, NAN, maxM};
+    }
+    Bounds Bounds::xyz(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+        return Bounds{minX, minY, minZ, NAN, maxX, maxY, maxZ, NAN};
+    }
+    Bounds Bounds::xyzm(double minX, double minY, double minZ, double minM, double maxX, double maxY, double maxZ, double maxM) {
+        return Bounds{minX, minY, minZ, minM, maxX, maxY, maxZ, maxM};
     }
 
 }

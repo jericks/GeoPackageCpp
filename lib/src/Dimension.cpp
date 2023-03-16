@@ -18,6 +18,14 @@ namespace geopackage {
             }
         }
 
+        bool hasZ(Dimension dimension) {
+            return dimension == Dimension::Three || dimension == Dimension::ThreeMeasured;
+        }
+
+        bool hasM(Dimension dimension) {
+            return dimension == Dimension::TwoMeasured || dimension == Dimension::ThreeMeasured;
+        }
+
     }
 
     std::ostream& operator << (std::ostream& os, const Dimension& dimension) {

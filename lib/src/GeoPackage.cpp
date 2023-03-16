@@ -1044,7 +1044,6 @@ namespace geopackage {
             while (query.executeStep()) {
                 std::string name = query.getColumn(1).getString();
                 std::string type = query.getColumn(2).getString();
-                std::cout << name << " is a " << type << "\n";
                 int primaryKey = query.getColumn(5).getInt();
                 if (primaryKey == 1) {
                     key = name;

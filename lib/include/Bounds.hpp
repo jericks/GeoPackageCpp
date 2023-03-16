@@ -14,7 +14,6 @@
 #include "GeometryCollection.hpp"
 #include "MultiLineString.hpp"
 
-
 namespace geopackage {
 
     class Bounds {
@@ -58,6 +57,11 @@ namespace geopackage {
             std::unique_ptr<Polygon> toPolygon() const;
 
             static Bounds getBounds(Geometry* geometry);
+
+            static Bounds xy(double minX, double minY, double maxX, double maxY);
+            static Bounds xym(double minX, double minY, double minM, double maxX, double maxY, double maxM);
+            static Bounds xyz(double minX, double minY, double minZ, double maxX, double maxY, double maxZ);
+            static Bounds xyzm(double minX, double minY, double minZ, double minM, double maxX, double maxY, double maxZ, double maxM);
 
     };
 
