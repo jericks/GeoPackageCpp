@@ -69,7 +69,7 @@ namespace geopackage {
                 CONSTRAINT pk_ttm PRIMARY KEY (table_name, zoom_level),
                 CONSTRAINT fk_tmm_table_name FOREIGN KEY (table_name) REFERENCES gpkg_contents(table_name)
             );)");
-            db.exec(R"(CREATE TABLE gpkg_extensions (
+            db.exec(R"(CREATE TABLE IF NOT EXISTS gpkg_extensions (
                 table_name TEXT,
                 column_name TEXT,
                 extension_name TEXT NOT NULL,

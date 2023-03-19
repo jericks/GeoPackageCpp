@@ -1,4 +1,5 @@
 add_executable(tests 
+    BinaryTypeTest.cpp
     BytesTest.cpp
     BoundsTest.cpp
     FeatureTest.cpp

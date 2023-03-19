@@ -64,3 +64,20 @@ Create an new GeoPackage file.
 % geopackage-cli create -f data.gpkg
 ```
 
+Create a Feature layer with Random Points.
+
+```bash
+% geopackage-cli random-features -f data.gpkg -l points -n 100
+```
+
+List spatial references.
+
+```bash
+% geopackage-cli spatialref-list -f data.gpkg
+```
+
+Get spatial references by SRS ID
+
+```bash
+% geopackage-cli spatialref-get -f data.gpkg -s 4326
+```

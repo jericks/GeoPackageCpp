@@ -6,7 +6,7 @@
 #include "ListCommand.hpp"
 #include "gtest/gtest.h"
 
-TEST(GeoPackageCliTests, list_test) {
+TEST(GeoPackageCliTests, List) {
   
   CLI::App app{"GeoPackageCPP CLI"};  
 

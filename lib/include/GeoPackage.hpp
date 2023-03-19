@@ -29,8 +29,6 @@ namespace geopackage {
 
             void createTables(); 
 
-            void insertDefaultSpatialRefs();
-
             std::string getPrimaryKey(std::string tableName);
 
             std::string getGeometryColumnName(std::string tableName);
@@ -68,6 +66,8 @@ namespace geopackage {
             std::optional<SpatialRef> getSpatialRef(int srsId);   
 
             void spatialRefs(std::function<void(SpatialRef& s)> f);
+
+            void insertDefaultSpatialRefs();
 
             // Content
 

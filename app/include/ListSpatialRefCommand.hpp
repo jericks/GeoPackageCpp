@@ -7,23 +7,21 @@
 #include "GeoPackage.hpp"
 
 
-class RandomFeaturesOptions {
+class ListSpatialRefOptions {
     public:
         std::string fileName;
-        std::string layerName;
-        int numberOfFeatures;
 };
 
-class RandomFeaturesCommand : public Command {
+class ListSpatialRefCommand : public Command {
 
     public:
 
-        RandomFeaturesCommand(CLI::App* app);
+        ListSpatialRefCommand(CLI::App* app);
 
         void execute(std::istream& istream, std::ostream& ostream);
 
     private:
 
-        RandomFeaturesOptions options;
+        ListSpatialRefOptions options;
 
 };

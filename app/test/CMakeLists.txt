@@ -1,6 +1,9 @@
 add_executable(cli_tests 
     ListCommandTest.cpp
     CreateCommandTest.cpp
+    ListSpatialRefCommandTest.cpp
+    GetSpatialRefCommandTest.cpp
+    RandomFeaturesCommandtest.cpp
 )
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib
