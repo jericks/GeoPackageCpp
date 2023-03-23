@@ -3,10 +3,13 @@
 #include "Commands.hpp"
 #include "Command.hpp"
 #include "ListCommand.hpp"
-#include "GetSpatialRefCommand.hpp"
-#include "ListSpatialRefCommand.hpp"
 #include "CreateCommand.hpp"
 #include "RandomFeaturesCommand.hpp"
+
+#include "CreateSpatialRefCommand.hpp"
+#include "GetSpatialRefCommand.hpp"
+#include "ListSpatialRefCommand.hpp"
+
 
 int main(int argc, char *argv[]) {
 
@@ -20,6 +23,9 @@ int main(int argc, char *argv[]) {
 
     CreateCommand createCommand(&app);
     commands.add(&createCommand);
+
+    CreateSpatialRefCommand createSpatialRefCommand(&app);
+    commands.add(&createSpatialRefCommand);
 
     GetSpatialRefCommand getSpatialRefCommand(&app);
     commands.add(&getSpatialRefCommand);

@@ -81,3 +81,5 @@ Get spatial references by SRS ID
 ```bash
 % geopackage-cli spatialref-get -f data.gpkg -s 4326
 ```
+
+app/geopackage-cli spatialref-create -f data.gpkg -n 2927 -s 2927 -o EPSG -i 2927 -d 2927 -c 2927

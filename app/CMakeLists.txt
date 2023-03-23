@@ -5,6 +5,7 @@ add_library(GeoPackageCppAppLib STATIC
 	src/Commands.cpp
 	src/ListCommand.cpp
 	src/CreateCommand.cpp
+	src/CreateSpatialRefCommand.cpp
 	src/ListSpatialRefCommand.cpp
 	src/GetSpatialRefCommand.cpp
 	src/RandomFeaturesCommand.cpp
