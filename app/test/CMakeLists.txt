@@ -2,6 +2,7 @@ add_executable(cli_tests
     ListCommandTest.cpp
     CreateCommandTest.cpp
     CreateSpatialRefCommandTest.cpp
+    DeleteSpatialRefCommandTest.cpp
     ListSpatialRefCommandTest.cpp
     GetSpatialRefCommandTest.cpp
     RandomFeaturesCommandtest.cpp

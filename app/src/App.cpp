@@ -7,6 +7,7 @@
 #include "RandomFeaturesCommand.hpp"
 
 #include "CreateSpatialRefCommand.hpp"
+#include "DeleteSpatialRefCommand.hpp"
 #include "GetSpatialRefCommand.hpp"
 #include "ListSpatialRefCommand.hpp"
 
@@ -26,6 +27,9 @@ int main(int argc, char *argv[]) {
 
     CreateSpatialRefCommand createSpatialRefCommand(&app);
     commands.add(&createSpatialRefCommand);
+
+    DeleteSpatialRefCommand deleteSpatialRefCommand(&app);
+    commands.add(&deleteSpatialRefCommand);
 
     GetSpatialRefCommand getSpatialRefCommand(&app);
     commands.add(&getSpatialRefCommand);
