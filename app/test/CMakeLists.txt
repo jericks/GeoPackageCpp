@@ -1,11 +1,11 @@
 add_executable(cli_tests 
     ListCommandTest.cpp
     CreateCommandTest.cpp
-    CreateSpatialRefCommandTest.cpp
-    DeleteSpatialRefCommandTest.cpp
-    ListSpatialRefCommandTest.cpp
-    GetSpatialRefCommandTest.cpp
     RandomFeaturesCommandtest.cpp
+    spatialref/CreateSpatialRefCommandTest.cpp
+    spatialref/DeleteSpatialRefCommandTest.cpp
+    spatialref/ListSpatialRefCommandTest.cpp
+    spatialref/GetSpatialRefCommandTest.cpp
 )
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib

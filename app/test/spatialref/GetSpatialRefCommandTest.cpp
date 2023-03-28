@@ -3,25 +3,24 @@
 #include "CLI/CLI.hpp"
 #include "Command.hpp"
 #include "Commands.hpp"
-#include "DeleteSpatialRefCommand.hpp"
+#include "spatialref/GetSpatialRefCommand.hpp"
 #include "gtest/gtest.h"
 
-TEST(GeoPackageCliTests, DeleteSpatialRefCommand) {
+TEST(GeoPackageCliTests, GetSpatialRefCommand) {
   
   const std::string fileName = "data.gpkg";
   geopackage::GeoPackage gpkg { fileName };
   gpkg.insertDefaultSpatialRefs();
   EXPECT_TRUE(std::filesystem::exists(fileName));
-  EXPECT_TRUE(gpkg.getSpatialRef(4326).has_value());
   
   CLI::App app{"GeoPackageCPP CLI"};  
 
   Commands commands;
-  DeleteSpatialRefCommand cmd{&app};
+  GetSpatialRefCommand cmd{&app};
   commands.add(&cmd);
 
   int argc = 6;
-  char const *argv[6] = {"geopackage-cli", "spatialref-delete", "-f", "data.gpkg", "-s", "4326"};
+  char const *argv[6] = {"geopackage-cli", "spatialref-get", "-f", "data.gpkg", "-s", "4326"};
 
   app.parse(argc, argv);
 
@@ -30,6 +29,9 @@ TEST(GeoPackageCliTests, DeleteSpatialRefCommand) {
 
   cmd.execute(instream, outstream);
 
-  EXPECT_FALSE(gpkg.getSpatialRef(4326).has_value());
+  std::string result = outstream.str();
+  ASSERT_NE(std::string::npos, result.find("4326"));
+
+
   EXPECT_TRUE(std::filesystem::remove(fileName));
 }

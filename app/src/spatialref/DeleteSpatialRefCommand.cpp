@@ -1,4 +1,4 @@
-#include "DeleteSpatialRefCommand.hpp"
+#include "spatialref/DeleteSpatialRefCommand.hpp"
 
 DeleteSpatialRefCommand::DeleteSpatialRefCommand(CLI::App* app): Command ("spatialref-delete") {
     CLI::App* cmd = app->add_subcommand("spatialref-delete", "Delete spatial reference by SRS ID");

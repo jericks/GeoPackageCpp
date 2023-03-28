@@ -1,4 +1,4 @@
-#include "GetSpatialRefCommand.hpp"
+#include "spatialref/GetSpatialRefCommand.hpp"
 
 GetSpatialRefCommand::GetSpatialRefCommand(CLI::App* app): Command ("spatialref-get") {
     CLI::App* cmd = app->add_subcommand("spatialref-get", "Get spatial reference by SRS ID");

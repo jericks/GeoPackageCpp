@@ -1,4 +1,4 @@
-#include "CreateSpatialRefCommand.hpp"
+#include "spatialref/CreateSpatialRefCommand.hpp"
 
 CreateSpatialRefCommand::CreateSpatialRefCommand(CLI::App* app): Command ("spatialref-create") {
     CLI::App* cmd = app->add_subcommand("spatialref-create", "Create a spatial reference");

@@ -6,10 +6,10 @@
 #include "CreateCommand.hpp"
 #include "RandomFeaturesCommand.hpp"
 
-#include "CreateSpatialRefCommand.hpp"
-#include "DeleteSpatialRefCommand.hpp"
-#include "GetSpatialRefCommand.hpp"
-#include "ListSpatialRefCommand.hpp"
+#include "spatialref/CreateSpatialRefCommand.hpp"
+#include "spatialref/DeleteSpatialRefCommand.hpp"
+#include "spatialref/GetSpatialRefCommand.hpp"
+#include "spatialref/ListSpatialRefCommand.hpp"
 
 
 int main(int argc, char *argv[]) {

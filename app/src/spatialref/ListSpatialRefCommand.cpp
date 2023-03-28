@@ -1,4 +1,4 @@
-#include "ListSpatialRefCommand.hpp"
+#include "spatialref/ListSpatialRefCommand.hpp"
 
 ListSpatialRefCommand::ListSpatialRefCommand(CLI::App* app): Command ("spatialref-list") {
     CLI::App* cmd = app->add_subcommand("spatialref-list", "List spatial references");
