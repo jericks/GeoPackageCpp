@@ -93,3 +93,46 @@ Delete spatial references by SRS ID
 ```bash
 % geopackage-cli spatialref-delete -f data.gpkg -s 4326
 ```
+
+List contents
+
+```bash
+% geopackage-cli content-list -f data.gpkg
+```
+
+```
+Name: states
+Data Type: features
+Identifier: states
+Description: states
+Bounds: BOUNDS (0, 0, 0, 0)
+SRS ID: 4326
+
+Name: world
+Data Type: tiles
+Identifier: world
+Description: world
+Bounds: BOUNDS (-179.99, -89.99, 179.99, 89.99)
+SRS ID: 4326
+```
+
+Get contents
+
+```bash
+% geopackage-cli content-get -f data.gpkg -n states
+```
+
+```
+Name: states
+Data Type: features
+Identifier: states
+Description: states
+Bounds: BOUNDS (0, 0, 0, 0)
+SRS ID: 4326
+```
+
+Delete contents
+
+```bash
+% geopackage-cli content-delete -f data.gpkg -n states
+```

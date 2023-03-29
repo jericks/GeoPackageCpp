@@ -11,6 +11,9 @@
 #include "spatialref/GetSpatialRefCommand.hpp"
 #include "spatialref/ListSpatialRefCommand.hpp"
 
+#include "content/ListContentCommand.hpp"
+#include "content/GetContentCommand.hpp"
+#include "content/DeleteContentCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -25,6 +28,11 @@ int main(int argc, char *argv[]) {
     CreateCommand createCommand(&app);
     commands.add(&createCommand);
 
+    RandomFeaturesCommand randomFeaturesCommand(&app);
+    commands.add(&randomFeaturesCommand);
+
+    // SpatialRef
+
     CreateSpatialRefCommand createSpatialRefCommand(&app);
     commands.add(&createSpatialRefCommand);
 
@@ -37,8 +45,16 @@ int main(int argc, char *argv[]) {
     ListSpatialRefCommand listSpatialRefCommand(&app);
     commands.add(&listSpatialRefCommand);
 
-    RandomFeaturesCommand randomFeaturesCommand(&app);
-    commands.add(&randomFeaturesCommand);
+    // Content
+
+    ListContentCommand listContentCommand(&app);
+    commands.add(&listContentCommand);
+
+    GetContentCommand getContentCommand(&app);
+    commands.add(&getContentCommand);
+
+    DeleteContentCommand deleteContentCommand(&app);
+    commands.add(&deleteContentCommand);
 
     CLI11_PARSE(app, argc, argv);
 
