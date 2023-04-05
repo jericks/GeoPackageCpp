@@ -170,4 +170,15 @@ namespace geopackage {
         return Bounds{minX, minY, minZ, minM, maxX, maxY, maxZ, maxM};
     }
 
+    Bounds Bounds::fromString(std::string str) {
+        std::vector<double> coordinates;
+        std::stringstream coordinateStream(str);
+        while(coordinateStream.good()) {
+            std::string coordinateStr;
+            getline(coordinateStream, coordinateStr, ','); 
+            coordinates.push_back(std::atof(coordinateStr.c_str()));
+        }
+        return Bounds{coordinates[0], coordinates[1], coordinates[2], coordinates[3]};
+    }
+
 }

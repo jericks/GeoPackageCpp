@@ -161,3 +161,10 @@ TEST(BoundsTest, Bounds_getBounds_GeometryCollection) {
   str << b;
   ASSERT_EQ("BOUNDS (1, 1, 14, 15)", str.str());
 }
+
+TEST(BoundsTest, Bounds_fromString) {
+  geopackage::Bounds b = geopackage::Bounds::fromString("-180,-90,180,90");
+  std::stringstream str;
+  str << b;
+  ASSERT_EQ("BOUNDS (-180, -90, 180, 90)", str.str());
+}

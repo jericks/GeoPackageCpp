@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include "Dimension.hpp"
-
 #include "Point.hpp"
 #include "Polygon.hpp"
 #include "Geometry.hpp"
@@ -59,10 +59,14 @@ namespace geopackage {
             static Bounds getBounds(Geometry* geometry);
 
             static Bounds xy(double minX, double minY, double maxX, double maxY);
-            static Bounds xym(double minX, double minY, double minM, double maxX, double maxY, double maxM);
-            static Bounds xyz(double minX, double minY, double minZ, double maxX, double maxY, double maxZ);
-            static Bounds xyzm(double minX, double minY, double minZ, double minM, double maxX, double maxY, double maxZ, double maxM);
 
+            static Bounds xym(double minX, double minY, double minM, double maxX, double maxY, double maxM);
+            
+            static Bounds xyz(double minX, double minY, double minZ, double maxX, double maxY, double maxZ);
+            
+            static Bounds xyzm(double minX, double minY, double minZ, double minM, double maxX, double maxY, double maxZ, double maxM);
+            
+            static Bounds fromString(std::string str);
     };
 
     std::ostream& operator << (std::ostream& os, const Bounds& bounds);
