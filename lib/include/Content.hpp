@@ -2,6 +2,9 @@
 
 #include <string>
 #include <iostream>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
 #include "Bounds.hpp"
 #include "DataType.hpp"
 
@@ -18,10 +21,14 @@ namespace geopackage {
             std::string lastChange;
             Bounds bounds;
             int srsId;
+
+            static std::string now();
                 
         public:
 
             Content(std::string tableName, DataType dataType, std::string identifier, std::string description, std::string lastChange, Bounds bounds, int srsId);
+
+            Content(std::string tableName, DataType dataType, std::string identifier, std::string description, Bounds bounds, int srsId);
 
             std::string getTableName() const;
 
