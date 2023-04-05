@@ -18,7 +18,6 @@ void CreateContentCommand::execute(std::istream& istream, std::ostream& ostream)
         geopackage::datatype::getDataType(options.dataType),
         options.identifier,
         options.description,
-        "", // Last Change @TODO Fix me
         geopackage::Bounds::fromString(options.bounds),
         options.srsId
     });

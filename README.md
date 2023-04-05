@@ -140,6 +140,5 @@ Delete contents
 Create contents
 
 ```bash
-% geopackage-cli content-create -f data.gpkg -n cities -i cities -t features -d
- Cities -b "-180,-90,180,90" -s 4326
+% geopackage-cli content-create -f data.gpkg -n cities -i cities -t features -d Cities -b "-180,-90,180,90" -s 4326
 ```
