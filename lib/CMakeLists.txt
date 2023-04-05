@@ -36,6 +36,7 @@ set(GeoPackageCppLib_SOURCES
 	src/TileMatrixSet.cpp
 	src/WKBWriter.cpp
 	src/WKBReader.cpp
+	src/WKTReader.cpp
 )
 
 add_library(GeoPackageCppLib STATIC ${GeoPackageCppLib_SOURCES})
@@ -44,6 +45,6 @@ target_include_directories(GeoPackageCppLib
 	PUBLIC include SQLiteCpp::SQLiteCpp
 	PRIVATE src
 )
-target_link_libraries(GeoPackageCppLib SQLiteCpp::SQLiteCpp)
+target_link_libraries(GeoPackageCppLib SQLiteCpp::SQLiteCpp cpp-peglib::cpp-peglib)
 
 add_subdirectory(test)

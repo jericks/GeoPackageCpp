@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 find_package(SQLiteCpp REQUIRED)
 find_package(CLI11 REQUIRED)
 find_package(GTest REQUIRED)
+find_package(cpp-peglib REQUIRED)
 
 enable_testing()
 add_subdirectory(lib)
