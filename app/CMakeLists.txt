@@ -6,6 +6,7 @@ add_library(GeoPackageCppAppLib STATIC
 	src/ListCommand.cpp
 	src/CreateCommand.cpp
 	src/RandomFeaturesCommand.cpp
+	src/content/CreateContentCommand.cpp
 	src/content/ListContentCommand.cpp
 	src/content/GetContentCommand.cpp
 	src/content/DeleteContentCommand.cpp

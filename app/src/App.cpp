@@ -11,6 +11,7 @@
 #include "spatialref/GetSpatialRefCommand.hpp"
 #include "spatialref/ListSpatialRefCommand.hpp"
 
+#include "content/CreateContentCommand.hpp"
 #include "content/ListContentCommand.hpp"
 #include "content/GetContentCommand.hpp"
 #include "content/DeleteContentCommand.hpp"
@@ -46,6 +47,9 @@ int main(int argc, char *argv[]) {
     commands.add(&listSpatialRefCommand);
 
     // Content
+
+    CreateContentCommand createContentCommand(&app);
+    commands.add(&createContentCommand);
 
     ListContentCommand listContentCommand(&app);
     commands.add(&listContentCommand);

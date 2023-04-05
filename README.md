@@ -136,3 +136,10 @@ Delete contents
 ```bash
 % geopackage-cli content-delete -f data.gpkg -n states
 ```
+
+Create contents
+
+```bash
+% geopackage-cli content-create -f data.gpkg -n cities -i cities -t features -d
+ Cities -b "-180,-90,180,90" -s 4326
+```

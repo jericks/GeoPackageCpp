@@ -2,6 +2,7 @@ add_executable(cli_tests
     ListCommandTest.cpp
     CreateCommandTest.cpp
     RandomFeaturesCommandtest.cpp
+    content/CreateContentCommandTest.cpp
     content/ListContentCommandTest.cpp
     content/GetContentCommandTest.cpp
     content/DeleteContentCommandTest.cpp
