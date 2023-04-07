@@ -142,3 +142,9 @@ Create contents
 ```bash
 % geopackage-cli content-create -f data.gpkg -n cities -i cities -t features -d Cities -b "-180,-90,180,90" -s 4326
 ```
+
+List Geometry Columns
+
+```bash
+% geopackage-cli geometrycolumn-list -f data.gpkg
+```

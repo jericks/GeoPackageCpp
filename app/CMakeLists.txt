@@ -14,6 +14,8 @@ add_library(GeoPackageCppAppLib STATIC
 	src/spatialref/DeleteSpatialRefCommand.cpp
 	src/spatialref/ListSpatialRefCommand.cpp
 	src/spatialref/GetSpatialRefCommand.cpp
+
+	src/geometryColumn/ListGeometryColumnCommand.cpp
 )
 target_include_directories(GeoPackageCppAppLib PUBLIC "include" "../lib/include" CLI11::CLI11)
 target_compile_features(GeoPackageCppAppLib PUBLIC cxx_std_17)

@@ -16,6 +16,8 @@
 #include "content/GetContentCommand.hpp"
 #include "content/DeleteContentCommand.hpp"
 
+#include "geometryColumn/ListGeometryColumnCommand.hpp"
+
 int main(int argc, char *argv[]) {
 
     CLI::App app{"GeoPackage CLI"};
@@ -59,6 +61,12 @@ int main(int argc, char *argv[]) {
 
     DeleteContentCommand deleteContentCommand(&app);
     commands.add(&deleteContentCommand);
+
+    // Geometry Column
+
+    ListGeometryColumnCommand listGeometryColumnCommand(&app);
+    commands.add(&listGeometryColumnCommand);
+
 
     CLI11_PARSE(app, argc, argv);
 
