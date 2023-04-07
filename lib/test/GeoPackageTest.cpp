@@ -489,7 +489,7 @@ TEST(GeoPackageLibTests, GeometryColumn_ToString) {
     geopackage::GeometryColumn geometryColumn {"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false};
     std::stringstream str;
     str << geometryColumn;
-    EXPECT_EQ("GEOMETRYCOLUMN (tableName = cities, columnName = the_geom, geometryType = point, srsId = 4326, hasZ = 1, hasM = 0)", str.str());
+    EXPECT_EQ("GEOMETRYCOLUMN (tableName = cities, columnName = the_geom, geometryType = Point, srsId = 4326, hasZ = 1, hasM = 0)", str.str());
 }
 
 TEST(GeoPackageLibTests, GeoPackage_Add_GeometryColumn) {

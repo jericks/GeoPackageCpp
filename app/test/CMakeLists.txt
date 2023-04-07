@@ -14,6 +14,7 @@ add_executable(cli_tests
     spatialref/GetSpatialRefCommandTest.cpp
 
     geometryColumn/ListGeometryColumnCommandTest.cpp
+    geometryColumn/GetGeometryColumnCommandTest.cpp
 )
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib

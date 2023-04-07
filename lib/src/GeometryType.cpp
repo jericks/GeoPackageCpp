@@ -6,23 +6,23 @@ namespace geopackage {
 
         std::string toString(GeometryType geometryType) {
             if (geometryType == GeometryType::POINT) {
-                return "point";
+                return "Point";
             } else if (geometryType == GeometryType::LINESTRING) {
-                return "linestring";
+                return "LineString";
             } else if (geometryType == GeometryType::LINEARRING) {
-                return "linearring";
+                return "LinearRing";
             } else if (geometryType == GeometryType::POLYGON) {
-                return "polygon";
+                return "Polygon";
             } else if (geometryType == GeometryType::MULTIPOINT) {
-                return "multipoint";
+                return "MultiPoint";
             } else if (geometryType == GeometryType::MULTILINESTRING) {
-                return "multilinestring";
+                return "MultiLineString";
             } else if (geometryType == GeometryType::MULTIPOLYGON) {
-                return "multipolygon";
+                return "MultiPolygon";
             } else if (geometryType == GeometryType::GEOMETRYCOLLECTION) {
-                return "geometrycollection";
+                return "GeometryCollection";
             } else {
-                return "geometry";
+                return "Geometry";
             }
         }
 
@@ -47,6 +47,7 @@ namespace geopackage {
         }
 
         GeometryType getGeometryType(std::string str) {
+            std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::tolower(c); });
             if (str == "point") {
                 return GeometryType::POINT;
             } else if (str == "linestring") {

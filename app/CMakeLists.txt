@@ -5,17 +5,21 @@ add_library(GeoPackageCppAppLib STATIC
 	src/Commands.cpp
 	src/ListCommand.cpp
 	src/CreateCommand.cpp
+	# Feature
 	src/RandomFeaturesCommand.cpp
+	# Content
 	src/content/CreateContentCommand.cpp
 	src/content/ListContentCommand.cpp
 	src/content/GetContentCommand.cpp
 	src/content/DeleteContentCommand.cpp
+	# Spatial Reference
 	src/spatialref/CreateSpatialRefCommand.cpp
 	src/spatialref/DeleteSpatialRefCommand.cpp
 	src/spatialref/ListSpatialRefCommand.cpp
 	src/spatialref/GetSpatialRefCommand.cpp
-
+	# Geometry Column
 	src/geometryColumn/ListGeometryColumnCommand.cpp
+	src/geometryColumn/GetGeometryColumnCommand.cpp
 )
 target_include_directories(GeoPackageCppAppLib PUBLIC "include" "../lib/include" CLI11::CLI11)
 target_compile_features(GeoPackageCppAppLib PUBLIC cxx_std_17)

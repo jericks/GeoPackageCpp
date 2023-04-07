@@ -70,6 +70,8 @@ Create a Feature layer with Random Points.
 % geopackage-cli random-features -f data.gpkg -l points -n 100
 ```
 
+**Spatial Reference Commands**
+
 List spatial references.
 
 ```bash
@@ -93,6 +95,8 @@ Delete spatial references by SRS ID
 ```bash
 % geopackage-cli spatialref-delete -f data.gpkg -s 4326
 ```
+
+**Content Commands**
 
 List contents
 
@@ -143,8 +147,41 @@ Create contents
 % geopackage-cli content-create -f data.gpkg -n cities -i cities -t features -d Cities -b "-180,-90,180,90" -s 4326
 ```
 
+**Geometry Columns Commands**
+
 List Geometry Columns
 
 ```bash
 % geopackage-cli geometrycolumn-list -f data.gpkg
+```
+
+```
+Name: rivers
+Column: the_geom
+Geometry Type: MultiLineString
+SRS ID: 4326
+Has Z: false
+Has M: false
+
+Name: states
+Column: the_geom
+Geometry Type: MultiPolygon
+SRS ID: 4326
+Has Z: false
+Has M: false
+```
+
+Get a Geometry Column
+
+```bash
+% geopackage-cli geometrycolumn-get -f data.gpkg -n cities
+```
+
+```
+Name: cities
+Column: geom
+Geometry Type: Point
+SRS ID: 4326
+Has Z: false
+Has M: false
 ```
