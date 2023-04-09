@@ -185,3 +185,9 @@ SRS ID: 4326
 Has Z: false
 Has M: false
 ```
+
+Delete a Geometry Column
+
+```bash
+% geopackage-cli geometrycolumn-delete -f data.gpkg -n cities
+```
