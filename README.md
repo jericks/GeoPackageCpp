@@ -191,3 +191,9 @@ Delete a Geometry Column
 ```bash
 % geopackage-cli geometrycolumn-delete -f data.gpkg -n cities
 ```
+
+Create a Geometry Column
+
+```bash
+@ geopackage-cli geometrycolumn-create -f data.gpkg -n cities -c geometry -g Point -s 4326 -z false -m false
+```

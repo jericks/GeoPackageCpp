@@ -19,6 +19,7 @@
 #include "geometryColumn/ListGeometryColumnCommand.hpp"
 #include "geometryColumn/GetGeometryColumnCommand.hpp"
 #include "geometryColumn/DeleteGeometryColumnCommand.hpp"
+#include "geometryColumn/CreateGeometryColumnCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -71,6 +72,9 @@ int main(int argc, char *argv[]) {
 
     GetGeometryColumnCommand getGeometryColumnCommand(&app);
     commands.add(&getGeometryColumnCommand);
+
+    CreateGeometryColumnCommand createGeometryColumnCommand(&app);
+    commands.add(&createGeometryColumnCommand);
 
     DeleteGeometryColumnCommand deleteGeometryColumnCommand(&app);
     commands.add(&deleteGeometryColumnCommand);

@@ -16,6 +16,7 @@ add_executable(cli_tests
     geometryColumn/ListGeometryColumnCommandTest.cpp
     geometryColumn/GetGeometryColumnCommandTest.cpp
     geometryColumn/DeleteGeometryColumnCommandTest.cpp
+    geometryColumn/CreateGeometryColumnCommandTest.cpp
 )
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib
