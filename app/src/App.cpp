@@ -21,6 +21,8 @@
 #include "geometryColumn/DeleteGeometryColumnCommand.hpp"
 #include "geometryColumn/CreateGeometryColumnCommand.hpp"
 
+#include "extension/ListExtensionCommand.hpp"
+
 int main(int argc, char *argv[]) {
 
     CLI::App app{"GeoPackage CLI"};

@@ -22,6 +22,8 @@ add_library(GeoPackageCppAppLib STATIC
 	src/geometryColumn/GetGeometryColumnCommand.cpp
 	src/geometryColumn/DeleteGeometryColumnCommand.cpp
 	src/geometryColumn/CreateGeometryColumnCommand.cpp
+	# Extension
+	src/extension/ListExtensionCommand.cpp
 )
 target_include_directories(GeoPackageCppAppLib PUBLIC "include" "../lib/include" CLI11::CLI11)
 target_compile_features(GeoPackageCppAppLib PUBLIC cxx_std_17)

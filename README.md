@@ -197,3 +197,25 @@ Create a Geometry Column
 ```bash
 @ geopackage-cli geometrycolumn-create -f data.gpkg -n cities -c geometry -g Point -s 4326 -z false -m false
 ```
+
+**Extension**
+
+List Extensions
+
+```bash
+@ geopackage-cli extensions-list -f data.gpkg
+```
+
+```
+Name: line_index
+Column Name: index
+Extension Name: Line Index
+Definition: R-TREE
+Scope: read-write
+
+Name: point_index
+Column Name: index
+Extension Name: Point Index
+Definition: R-TREE
+Scope: read-write
+```
