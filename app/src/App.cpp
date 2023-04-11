@@ -22,6 +22,7 @@
 #include "geometryColumn/CreateGeometryColumnCommand.hpp"
 
 #include "extension/ListExtensionCommand.hpp"
+#include "extension/GetExtensionCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -80,6 +81,14 @@ int main(int argc, char *argv[]) {
 
     DeleteGeometryColumnCommand deleteGeometryColumnCommand(&app);
     commands.add(&deleteGeometryColumnCommand);
+
+    // Extenssion
+
+    ListExtensionCommand listExtensionCommand(&app);
+    commands.add(&listExtensionCommand);
+
+    GetExtensionCommand getExtensionCommand(&app);
+    commands.add(&getExtensionCommand);
 
     CLI11_PARSE(app, argc, argv);
 

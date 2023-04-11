@@ -219,3 +219,17 @@ Extension Name: Point Index
 Definition: R-TREE
 Scope: read-write
 ```
+
+Get an Extension
+
+```bash
+@ geopackage-cli extensions-get -f data.gpkg -n line_index
+```
+
+```
+Name: line_index
+Column Name: index
+Extension Name: Line Index
+Definition: R-TREE
+Scope: read-write
+```

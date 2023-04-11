@@ -19,6 +19,7 @@ add_executable(cli_tests
     geometryColumn/CreateGeometryColumnCommandTest.cpp
     # Extension
     extension/ListExtensionCommandTest.cpp
+    extension/GetExtensionCommandTest.cpp
 )
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib
