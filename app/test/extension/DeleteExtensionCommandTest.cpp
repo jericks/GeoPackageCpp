@@ -3,26 +3,28 @@
 #include "CLI/CLI.hpp"
 #include "Command.hpp"
 #include "Commands.hpp"
-#include "extension/GetExtensionCommand.hpp"
+#include "extension/DeleteExtensionCommand.hpp"
 #include "gtest/gtest.h"
 
-TEST(GeoPackageCliTests, GetExtensionCommand) {
+TEST(GeoPackageCliTests, DeleteExtensionCommand) {
   
   const std::string fileName = "data.gpkg";
   geopackage::GeoPackage gpkg { fileName };
   EXPECT_TRUE(std::filesystem::exists(fileName));
-
+  
   gpkg.addExtension(geopackage::Extension{"point_index", "index", "Point Index", "R-TREE", geopackage::Scope::READ_WRITE});
   gpkg.addExtension(geopackage::Extension{"line_index", "index", "Line Index", "R-TREE", geopackage::Scope::READ_WRITE});
-  
+  EXPECT_TRUE(gpkg.getExtension("Point Index").has_value());
+  EXPECT_TRUE(gpkg.getExtension("Line Index").has_value());
+
   CLI::App app{"GeoPackageCPP CLI"};  
 
   Commands commands;
-  GetExtensionCommand cmd{&app};
+  DeleteExtensionCommand cmd{&app};
   commands.add(&cmd);
 
   int argc = 6;
-  char const *argv[6] = {"geopackage-cli", "extension-get", "-f", "data.gpkg", "-n", "Point Index"};
+  char const *argv[6] = {"geopackage-cli", "extension-delete", "-f", "data.gpkg", "-n", "Point Index"};
 
   app.parse(argc, argv);
 
@@ -31,9 +33,7 @@ TEST(GeoPackageCliTests, GetExtensionCommand) {
 
   cmd.execute(instream, outstream);
 
-  std::string result = outstream.str();
-  ASSERT_NE(std::string::npos, result.find("point_index"));
-  ASSERT_NE(std::string::npos, result.find("Point Index"));
-
+  EXPECT_FALSE(gpkg.getExtension("Point Index").has_value());
+  EXPECT_TRUE(gpkg.getExtension("Line Index").has_value());
   EXPECT_TRUE(std::filesystem::remove(fileName));
 }

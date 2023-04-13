@@ -223,7 +223,7 @@ Scope: read-write
 Get an Extension
 
 ```bash
-@ geopackage-cli extensions-get -f data.gpkg -n line_index
+@ geopackage-cli extensions-get -f data.gpkg -n "Line Index"
 ```
 
 ```
@@ -232,4 +232,10 @@ Column Name: index
 Extension Name: Line Index
 Definition: R-TREE
 Scope: read-write
+```
+
+Delete an Extension
+
+```bash
+@ geopackage-cli extensions-delete -f data.gpkg -n "Line Index"
 ```

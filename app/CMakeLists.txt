@@ -25,6 +25,7 @@ add_library(GeoPackageCppAppLib STATIC
 	# Extension
 	src/extension/ListExtensionCommand.cpp
 	src/extension/GetExtensionCommand.cpp
+	src/extension/DeleteExtensionCommand.cpp
 )
 target_include_directories(GeoPackageCppAppLib PUBLIC "include" "../lib/include" CLI11::CLI11)
 target_compile_features(GeoPackageCppAppLib PUBLIC cxx_std_17)
