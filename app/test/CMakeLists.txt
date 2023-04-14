@@ -21,6 +21,7 @@ add_executable(cli_tests
     extension/ListExtensionCommandTest.cpp
     extension/GetExtensionCommandTest.cpp
     extension/DeleteExtensionCommandTest.cpp
+    extension/CreateExtensionCommandTest.cpp
 )
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib

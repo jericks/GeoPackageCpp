@@ -203,7 +203,7 @@ Create a Geometry Column
 List Extensions
 
 ```bash
-@ geopackage-cli extensions-list -f data.gpkg
+@ geopackage-cli extension-list -f data.gpkg
 ```
 
 ```
@@ -223,7 +223,7 @@ Scope: read-write
 Get an Extension
 
 ```bash
-@ geopackage-cli extensions-get -f data.gpkg -n "Line Index"
+@ geopackage-cli extension-get -f data.gpkg -n "Line Index"
 ```
 
 ```
@@ -237,5 +237,11 @@ Scope: read-write
 Delete an Extension
 
 ```bash
-@ geopackage-cli extensions-delete -f data.gpkg -n "Line Index"
+@ geopackage-cli extension-delete -f data.gpkg -n "Line Index"
+```
+
+Create an Extension
+
+```bash
+@ geopackage-cli extension-create -f data.gpkg -e "Line Index" -n "index" -c "r_tree" -d "Spatial Index" -s "read-write"
 ```

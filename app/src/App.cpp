@@ -24,6 +24,7 @@
 #include "extension/ListExtensionCommand.hpp"
 #include "extension/GetExtensionCommand.hpp"
 #include "extension/DeleteExtensionCommand.hpp"
+#include "extension/CreateExtensionCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -93,6 +94,9 @@ int main(int argc, char *argv[]) {
 
     DeleteExtensionCommand deleteExtensionCommand(&app);
     commands.add(&deleteExtensionCommand);
+
+    CreateExtensionCommand createExtensionCommand(&app);
+    commands.add(&createExtensionCommand);
 
     CLI11_PARSE(app, argc, argv);
 
