@@ -18,6 +18,7 @@ add_executable(tests
     WKBWriterTest.cpp
     WKBReaderTest.cpp
     WKTReaderTest.cpp
+    WKTWriterTest.cpp
     GeoPackageGeometryReaderTest.cpp
     GeoPackageGeometryWriterTest.cpp
 )

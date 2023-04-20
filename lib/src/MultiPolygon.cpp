@@ -27,41 +27,7 @@ namespace geopackage {
     }
 
     std::string MultiPolygon::wkt() const {
-        std::stringstream str;
-        str << "MULTIPOLYGON ";
-        if (std::size(polygons) == 0) {
-           str << " EMPTY";     
-        } else {
-            str << "(";
-            bool firstPolygon = true;
-            for(auto p : polygons) {
-                if (firstPolygon != true) {
-                    str << ", ";
-                }
-                firstPolygon = false;
-                str << "(";
-                bool firstRing = true;
-                for(auto r : p.getLinearRings()) {
-                    if (firstRing != true) {
-                        str << ", ";
-                    }
-                    firstRing = false;
-                    str << "(";
-                    bool firstTime = true;
-                    for(auto p : r.getPoints()) {
-                        if (firstTime != true) {
-                            str << ", ";
-                        }
-                        firstTime = false;
-                        str << p.getX() << " " << p.getY();
-                    }
-                    str << ")";
-                }
-                str << ")";
-            }
-        }
-        str <<  ")";
-        return str.str();
+       return WKTWriter{}.write(this);
     }
 
     std::vector<Polygon> MultiPolygon::getPolygons() const {

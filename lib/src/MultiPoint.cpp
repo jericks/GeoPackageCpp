@@ -27,23 +27,7 @@ namespace geopackage {
     }
 
     std::string MultiPoint::wkt() const {
-        std::stringstream str;
-        str << "MULTIPOINT ";
-        if (std::size(points) == 0) {
-            str <<  "EMPTY";
-        } else {
-            str <<  "(";
-            bool firstTime = true;
-            for(auto p : points) {
-                if (firstTime != true) {
-                    str << ", ";
-                }
-                firstTime = false;
-                str << p.getX() << " " << p.getY();
-            }
-            str <<  ")";
-        }
-        return str.str();
+        return WKTWriter{}.write(this);
     }
 
     std::vector<Point> MultiPoint::getPoints() const {

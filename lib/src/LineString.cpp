@@ -27,23 +27,7 @@ namespace geopackage {
     }
 
     std::string LineString::wkt() const {
-        std::stringstream str;
-        str << "LINESTRING ";
-        if (std::size(points) == 0) {
-            str << "EMPTY";
-        } else {
-            str << "(";
-            bool firstTime = true;
-            for(auto p : points) {
-                if (firstTime != true) {
-                    str << ", ";
-                }
-                firstTime = false;
-                str << p.getX() << " " << p.getY();
-            }
-            str <<  ")";
-        }
-        return str.str();
+        return WKTWriter{}.write(this);
     }
 
     std::vector<Point> LineString::getPoints() const {

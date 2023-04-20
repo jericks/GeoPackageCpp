@@ -25,32 +25,7 @@ namespace geopackage {
     }
 
     std::string Polygon::wkt() const {
-        std::stringstream str;
-        str << "POLYGON ";
-        if (std::size(rings) == 0) {
-            str << "EMPTY";    
-        } else {
-            str << "(";
-            bool firstLinearRing = true;
-            for(auto r : rings) {
-                if (firstLinearRing != true) {
-                    str << ", ";
-                }
-                firstLinearRing = false;
-                str << "(";
-                bool firstTime = true;
-                for(auto p : r.getPoints()) {
-                    if (firstTime != true) {
-                        str << ", ";
-                    }
-                    firstTime = false;
-                    str << p.getX() << " " << p.getY();
-                }
-                str << ")";
-            }
-            str <<  ")";
-        }
-        return str.str();
+        return WKTWriter{}.write(this);
     }
 
     bool Polygon::isEmpty() const {

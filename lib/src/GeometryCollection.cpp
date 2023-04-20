@@ -31,23 +31,7 @@ namespace geopackage {
     }
 
     std::string GeometryCollection::wkt() const {
-        std::stringstream str;
-        str << "GEOMETRYCOLLECTION ";
-        if (std::size(geometries) == 0) {
-            str <<  "EMPTY";
-        } else {
-            str <<  "(";
-            bool firstTime = true;
-            for(auto & g : geometries) {
-                if (firstTime != true) {
-                    str << ", ";
-                }
-                firstTime = false;
-                str << g->wkt();
-            }
-            str <<  ")";
-        }
-        return str.str();
+        return WKTWriter{}.write(this);
     }
 
     std::vector<std::unique_ptr<Geometry>>&  GeometryCollection::getGeometries() {

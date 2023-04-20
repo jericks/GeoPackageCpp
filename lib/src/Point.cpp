@@ -49,31 +49,7 @@ namespace geopackage {
     }
 
     std::string Point::wkt() const {
-        std::stringstream str;
-        if (isnan(x) && isnan(y)) {
-            str << "POINT EMPTY";
-        } else {
-            str << "POINT ";
-            if (!isnan(z) && !isnan(m)) {
-                str << "ZM ";    
-            } else if (!isnan(z)) {
-                str << "Z ";    
-            } else if (!isnan(m)) {
-                str << "M ";    
-            }
-            str << "(";
-            str << x << " ";
-            str << y;
-            if (!isnan(z)) {
-                str << " " << z;
-            }
-            if (!isnan(m)) {
-                str << " " << m;
-            }
-            str << ")";
-            
-        }
-        return str.str();
+        return WKTWriter{}.write(this);
     }
 
     Point Point::xy(double x, double y) {

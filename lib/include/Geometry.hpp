@@ -5,6 +5,7 @@
 #include <memory>
 #include "GeometryType.hpp"
 #include "Dimension.hpp"
+#include "WKTWriter.hpp"
 
 namespace geopackage {
 
