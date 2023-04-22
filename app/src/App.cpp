@@ -26,6 +26,8 @@
 #include "extension/DeleteExtensionCommand.hpp"
 #include "extension/CreateExtensionCommand.hpp"
 
+#include "tileMatrixSet/ListTileMatrixSetCommand.hpp"
+
 int main(int argc, char *argv[]) {
 
     CLI::App app{"GeoPackage CLI"};
@@ -97,6 +99,11 @@ int main(int argc, char *argv[]) {
 
     CreateExtensionCommand createExtensionCommand(&app);
     commands.add(&createExtensionCommand);
+
+    // Tile Matrix Set
+
+    ListTileMatrixSetCommand listTileMatrixSetCommand(&app);
+    commands.add(&listTileMatrixSetCommand);
 
     CLI11_PARSE(app, argc, argv);
 

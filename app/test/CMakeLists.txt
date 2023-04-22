@@ -22,7 +22,9 @@ add_executable(cli_tests
     extension/GetExtensionCommandTest.cpp
     extension/DeleteExtensionCommandTest.cpp
     extension/CreateExtensionCommandTest.cpp
-)
+    # Tile Matrix Set
+    tileMatrixSet/ListTileMatrixSetCommandTest.cpp
+)   
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib
     SQLiteCpp::SQLiteCpp

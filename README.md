@@ -245,3 +245,21 @@ Create an Extension
 ```bash
 @ geopackage-cli extension-create -f data.gpkg -e "Line Index" -n "index" -c "r_tree" -d "Spatial Index" -s "read-write"
 ```
+
+**Tile Matrix Set**
+
+List Tile Matrix Sets
+
+```bash
+@ geopackage-cli tilematrixset-list -f data.gpkg
+```
+
+```
+Name: world
+SRS ID: 4326
+Bounds: BOUNDS (-179.99, -89.99, 179.99, 89.99)
+
+Name: world_mercator
+SRS ID: 3857
+Bounds: BOUNDS (-2.00364e+07, -2.00375e+07, 2.00364e+07, 2.00375e+07)
+```
