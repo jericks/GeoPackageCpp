@@ -27,6 +27,7 @@
 #include "extension/CreateExtensionCommand.hpp"
 
 #include "tileMatrixSet/ListTileMatrixSetCommand.hpp"
+#include "tileMatrixSet/GetTileMatrixSetCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -104,6 +105,9 @@ int main(int argc, char *argv[]) {
 
     ListTileMatrixSetCommand listTileMatrixSetCommand(&app);
     commands.add(&listTileMatrixSetCommand);
+
+    GetTileMatrixSetCommand getTileMatrixSetCommand(&app);
+    commands.add(&getTileMatrixSetCommand);
 
     CLI11_PARSE(app, argc, argv);
 

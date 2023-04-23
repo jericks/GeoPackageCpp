@@ -263,3 +263,15 @@ Name: world_mercator
 SRS ID: 3857
 Bounds: BOUNDS (-2.00364e+07, -2.00375e+07, 2.00364e+07, 2.00375e+07)
 ```
+
+Get a Tile Matrix Set
+
+```bash
+@ geopackage-cli tilematrixset-get -f data.gpkg -n world
+```
+
+```
+Name: world
+SRS ID: 4326
+Bounds: BOUNDS (-179.99, -89.99, 179.99, 89.99)
+```
