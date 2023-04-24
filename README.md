@@ -275,3 +275,9 @@ Name: world
 SRS ID: 4326
 Bounds: BOUNDS (-179.99, -89.99, 179.99, 89.99)
 ```
+
+Create a Tile Matrix Set
+
+```bash
+@ geopackage-cli tilematrixset-create -f data.gpkg -n world -s 4326 -b -180,-90,180,90 
+```

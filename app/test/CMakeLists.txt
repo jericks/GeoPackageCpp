@@ -25,6 +25,7 @@ add_executable(cli_tests
     # Tile Matrix Set
     tileMatrixSet/ListTileMatrixSetCommandTest.cpp
     tileMatrixSet/GetTileMatrixSetCommandTest.cpp
+    tileMatrixSet/CreateTileMatrixSetCommandTest.cpp
 )   
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib
