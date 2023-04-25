@@ -29,6 +29,7 @@
 #include "tileMatrixSet/ListTileMatrixSetCommand.hpp"
 #include "tileMatrixSet/GetTileMatrixSetCommand.hpp"
 #include "tileMatrixSet/CreateTileMatrixSetCommand.hpp"
+#include "tileMatrixSet/DeleteTileMatrixSetCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -112,6 +113,9 @@ int main(int argc, char *argv[]) {
 
     CreateTileMatrixSetCommand createTileMatrixSetCommand(&app);
     commands.add(&createTileMatrixSetCommand);
+
+    DeleteTileMatrixSetCommand deleteTileMatrixSetCommand(&app);
+    commands.add(&deleteTileMatrixSetCommand);
 
     CLI11_PARSE(app, argc, argv);
 

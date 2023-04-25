@@ -281,3 +281,9 @@ Create a Tile Matrix Set
 ```bash
 @ geopackage-cli tilematrixset-create -f data.gpkg -n world -s 4326 -b -180,-90,180,90 
 ```
+
+Delete a Tile Matrix Set
+
+```bash
+@ geopackage-cli tilematrixset-delete -f data.gpkg -n world
+```
