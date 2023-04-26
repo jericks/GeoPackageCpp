@@ -287,3 +287,29 @@ Delete a Tile Matrix Set
 ```bash
 @ geopackage-cli tilematrixset-delete -f data.gpkg -n world
 ```
+
+**Tile Matrix**
+
+```bash
+@ geopackage-cli tilematrix-list -f data.gpkg
+```
+
+```
+Table Name: world
+Zoom Level: 0
+Matrix Size: SIZE (2, 1)
+Tile Size: SIZE (256, 256)
+Pixel Size: SIZE (0.703125, 0.703125)
+
+Table Name: world
+Zoom Level: 1
+Matrix Size: SIZE (4, 2)
+Tile Size: SIZE (256, 256)
+Pixel Size: SIZE (0.351562, 0.351562)
+
+Table Name: world
+Zoom Level: 2
+Matrix Size: SIZE (8, 4)
+Tile Size: SIZE (256, 256)
+Pixel Size: SIZE (0.175781, 0.175781)
+```
