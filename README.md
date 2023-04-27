@@ -329,3 +329,24 @@ Matrix Size: SIZE (8, 4)
 Tile Size: SIZE (256, 256)
 Pixel Size: SIZE (0.175781, 0.175781)
 ```
+
+Create a Tile Matrix
+
+```bash
+@ geopackage-cli tilematrix-create -f data.gpkg -n world -z 2 -m 2,1, -t 256,256 -p 0.703125,0.703125
+```
+
+Delete a Tile Matrix
+
+By table name and zoom level
+
+```bash
+@ geopackage-cli tilematrix-delete -f data.gpkg -n basemap -z 1
+```
+
+By table name
+
+```bash
+@ geopackage-cli tilematrix-delete -f data.gpkg -n basemap
+```
+

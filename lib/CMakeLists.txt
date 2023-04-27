@@ -30,6 +30,7 @@ set(GeoPackageCppLib_SOURCES
 	src/Polygon.cpp
 	src/Schema.cpp
 	src/Scope.cpp
+	src/Size.cpp
 	src/SpatialRef.cpp
 	src/Tile.cpp
 	src/TileMatrix.cpp

@@ -33,6 +33,8 @@
 
 #include "tileMatrix/ListTileMatrixCommand.hpp"
 #include "tileMatrix/GetTileMatrixCommand.hpp"
+#include "tileMatrix/CreateTileMatrixCommand.hpp"
+#include "tileMatrix/DeleteTileMatrixCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -128,6 +130,11 @@ int main(int argc, char *argv[]) {
     GetTileMatrixCommand getTileMatrixCommand(&app);
     commands.add(&getTileMatrixCommand);
 
+    CreateTileMatrixCommand createTileMatrixCommand(&app);
+    commands.add(&createTileMatrixCommand);
+
+    DeleteTileMatrixCommand deleteTileMatrixCommand(&app);
+    commands.add(&deleteTileMatrixCommand);
 
     CLI11_PARSE(app, argc, argv);
 

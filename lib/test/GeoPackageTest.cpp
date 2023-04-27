@@ -14,26 +14,6 @@ TEST(GeoPackageLibTests, GeoPackage_Create) {
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
 
-// Size
-
-TEST(GeoPackageLibTests, Size_Int_Create) {
-    geopackage::Size<int> intSize {10,12};
-    EXPECT_EQ(10, intSize.getWidth());
-    EXPECT_EQ(12, intSize.getHeight());
-    std::stringstream str;
-    str << intSize;
-    EXPECT_EQ("SIZE (10, 12)", str.str());
-}
-
-TEST(GeoPackageLibTests, Size_Double_Create) {
-    geopackage::Size<double> size {1.2,3.4};
-    EXPECT_EQ(1.2, size.getWidth());
-    EXPECT_EQ(3.4, size.getHeight());
-    std::stringstream str;
-    str << size;
-    EXPECT_EQ("SIZE (1.2, 3.4)", str.str());
-}
-
 // SpatialRef
 
 TEST(GeoPackageLibTests, SpatialRef_ToString) {

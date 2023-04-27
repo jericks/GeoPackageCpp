@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <vector>
 
 namespace geopackage {
 
@@ -26,7 +28,17 @@ namespace geopackage {
                 return height;
             }
 
+            
+
     };
+
+    namespace size {
+
+
+        Size<double> fromDoubleString(std::string str);
+
+        Size<int> fromIntString(std::string str);
+    }
 
     template<class T>
     std::ostream& operator << (std::ostream& os, const Size<T>& s) {

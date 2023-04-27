@@ -21,6 +21,7 @@ add_executable(tests
     WKTWriterTest.cpp
     GeoPackageGeometryReaderTest.cpp
     GeoPackageGeometryWriterTest.cpp
+    SizeTest.cpp
 )
 target_link_libraries(tests 
     GeoPackageCppLib
