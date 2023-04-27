@@ -34,6 +34,7 @@ add_library(GeoPackageCppAppLib STATIC
 	src/tileMatrixSet/DeleteTileMatrixSetCommand.cpp
 	# TileMatrix
 	src/tileMatrix/ListTileMatrixCommand.cpp
+	src/tileMatrix/GetTileMatrixCommand.cpp
 )
 target_include_directories(GeoPackageCppAppLib PUBLIC "include" "../lib/include" CLI11::CLI11)
 target_compile_features(GeoPackageCppAppLib PUBLIC cxx_std_17)
