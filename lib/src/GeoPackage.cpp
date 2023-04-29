@@ -963,6 +963,92 @@ namespace geopackage {
     
     }
 
+    void GeoPackage::createGlobalGeodeticTileLayer(std::string name, int tileSize, int maxZoomLevel) {
+        int srsId = 4326;
+        Bounds bounds = Bounds::getGeodeticBounds();
+        
+        // Spatial Reference
+        if (!getSpatialRef(srsId).has_value()) {
+            addSpatialRef(SpatialRef{
+                "WGS84", 4326, 
+                "EPSG", 4326,
+                R"(GEOGCS["WGS 84", DATUM["World Geodetic System 1984", SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]], PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH], AUTHORITY["EPSG","4326"]])", 
+                "longitude/latitude coordinates in decimal degrees on the WGS 84 spheroid');)" 
+            });
+        }
+
+        // Content
+        setContent(Content{
+            name, DataType::TILES, name, name, bounds, srsId
+        });
+
+        // TileMatrixSet
+        setTileMatrixSet(TileMatrixSet{ name, srsId, bounds });
+        
+        // TileMatrix
+        for(int z = 0; z < maxZoomLevel; z++) {
+            int col = std::pow(2, z + 1);
+            int row = std::pow(2, z);
+            double res = 0.703125 / std::pow(2, z);
+            setTileMatrix(TileMatrix{name, z, Size<int>{col, row}, Size<int>{tileSize, tileSize}, Size<double>{res, res} });
+        }
+
+        // Table
+        createTileTable(name);
+    }
+
+    void GeoPackage::createGlobalMercatorTileLayer(std::string name, int tileSize, int maxZoomLevel) {
+        int srsId = 3857;
+        Bounds bounds = Bounds::getMercatorBounds();
+        
+        // Spatial Reference
+        if (!getSpatialRef(srsId).has_value()) {
+            addSpatialRef(SpatialRef{
+                "EPSG:3857", 3857, 
+                "EPSG", 3857,
+                R"(PROJCS["WGS 84 / Pseudo-Mercator", GEOGCS["WGS 84", 
+                    DATUM["World Geodetic System 1984", 
+                    SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], 
+                    AUTHORITY["EPSG","6326"]], 
+                    PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], 
+                    UNIT["degree", 0.017453292519943295], 
+                    AXIS["Geodetic longitude", EAST], 
+                    AXIS["Geodetic latitude", NORTH], 
+                    AUTHORITY["EPSG","4326"]], 
+                PROJECTION["Popular Visualisation Pseudo Mercator", AUTHORITY["EPSG","1024"]], 
+                PARAMETER["semi_minor", 6378137.0], 
+                PARAMETER["latitude_of_origin", 0.0], 
+                PARAMETER["central_meridian", 0.0], 
+                PARAMETER["scale_factor", 1.0], 
+                PARAMETER["false_easting", 0.0], 
+                PARAMETER["false_northing", 0.0], 
+                UNIT["m", 1.0], 
+                AXIS["Easting", EAST], 
+                AXIS["Northing", NORTH], 
+                AUTHORITY["EPSG","3857"]]])", 
+                "Web Mercator" 
+            });
+        }
+
+        // Content
+        setContent(Content{
+            name, DataType::TILES, name, name, bounds, srsId
+        });
+
+        // TileMatrixSet
+        setTileMatrixSet(TileMatrixSet{ name, srsId, bounds });
+        
+        // TileMatrix
+        for(int z = 0; z < maxZoomLevel; z++) {
+            int n = std::pow(2, z);
+            double res = 156412.0 / n;
+            setTileMatrix(TileMatrix{name, z, Size<int>{n, n}, Size<int>{tileSize, tileSize}, Size<double>{res, res} });
+        }
+
+        // Table
+        createTileTable(name);
+    }
+
     // Feature
 
     void GeoPackage::createFeatureTable(const Schema& schema) {

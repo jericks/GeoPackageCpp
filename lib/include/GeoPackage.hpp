@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <cmath>
 #include "SQLiteCpp/SQLiteCpp.h"
 #include "Content.hpp"
 #include "DataType.hpp"
@@ -166,6 +167,10 @@ namespace geopackage {
             std::optional<Tile> getTile(std::string name, int z, int c, int r);    
 
             void tiles(std::string name, int zoom, std::function<void(Tile& t)> f);
+
+            void createGlobalGeodeticTileLayer(std::string name, int tileSize, int maxZoomLevel);
+
+            void createGlobalMercatorTileLayer(std::string name, int tileSize, int maxZoomLevel);
 
             // Feature
 
