@@ -168,3 +168,27 @@ TEST(BoundsTest, Bounds_fromString) {
   str << b;
   ASSERT_EQ("BOUNDS (-180, -90, 180, 90)", str.str());
 }
+
+TEST(BoundsTests,  Bounds_getGeodeticBounds) {
+  geopackage::Bounds b = geopackage::Bounds::getGeodeticBounds();
+  ASSERT_EQ(-180, b.getMinX());
+  ASSERT_EQ(-90, b.getMinY());
+  ASSERT_TRUE(isnan(b.getMinZ()));
+  ASSERT_TRUE(isnan(b.getMinM()));
+  ASSERT_EQ(180, b.getMaxX());
+  ASSERT_EQ(90, b.getMaxY());
+  ASSERT_TRUE(isnan(b.getMaxZ()));
+  ASSERT_TRUE(isnan(b.getMaxM()));
+}
+
+TEST(BoundsTests,  Bounds_getMercatorBounds) {
+  geopackage::Bounds b = geopackage::Bounds::getMercatorBounds();
+  ASSERT_EQ(-20037508.3427892, b.getMinX());
+  ASSERT_EQ(-20037508.3427892, b.getMinY());
+  ASSERT_TRUE(isnan(b.getMinZ()));
+  ASSERT_TRUE(isnan(b.getMinM()));
+  ASSERT_EQ(20037508.3427892, b.getMaxX());
+  ASSERT_EQ(20037508.3427892, b.getMaxY());
+  ASSERT_TRUE(isnan(b.getMaxZ()));
+  ASSERT_TRUE(isnan(b.getMaxM()));
+}

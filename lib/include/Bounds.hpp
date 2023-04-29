@@ -67,6 +67,10 @@ namespace geopackage {
             static Bounds xyzm(double minX, double minY, double minZ, double minM, double maxX, double maxY, double maxZ, double maxM);
             
             static Bounds fromString(std::string str);
+
+            static Bounds getGeodeticBounds();
+
+            static Bounds getMercatorBounds();
     };
 
     std::ostream& operator << (std::ostream& os, const Bounds& bounds);
