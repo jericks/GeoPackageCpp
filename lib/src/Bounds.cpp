@@ -181,4 +181,12 @@ namespace geopackage {
         return Bounds{coordinates[0], coordinates[1], coordinates[2], coordinates[3]};
     }
 
+    Bounds Bounds::getGeodeticBounds() {
+        return Bounds{-180,-90,180,90};
+    }
+
+    Bounds Bounds::getMercatorBounds() {
+        return Bounds{-20037508.3427892,-20037508.3427892,20037508.3427892,20037508.3427892};
+    }
+
 }

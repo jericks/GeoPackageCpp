@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include <sstream>
 
-TEST(GeoPackageLibTests, schema_create_test) {
+TEST(SchemaTests, schema_create_test) {
   geopackage::Schema schema { "points", "id", geopackage::GeometryField{"geom", geopackage::GeometryType::POINT, 4326}, std::vector<geopackage::Field> { 
       geopackage::Field {"name", geopackage::FieldType::String},
       geopackage::Field {"value", geopackage::FieldType::Double}, 

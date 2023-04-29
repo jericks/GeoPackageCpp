@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 #include <sstream>
 
-TEST(GeoPackageLibTests, GeometryCollection_Create_Test) {
+TEST(GeometryCollectionTests, GeometryCollection_Create_Test) {
    std::vector<std::unique_ptr<geopackage::Geometry>> geoms;
    geoms.push_back(geopackage::Point {4,5}.clone());
    geoms.push_back(geopackage::LineString {{geopackage::Point{1,1}, geopackage::Point{5,5}}}.clone());

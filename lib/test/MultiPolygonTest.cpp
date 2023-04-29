@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include <sstream>
 
-TEST(GeoPackageLibTests, multipolygon_create_test) {
+TEST(MultiPolygonTests, multipolygon_create_test) {
   geopackage::MultiPolygon multiPolygon {{ 
     geopackage::Polygon {{geopackage::LinearRing {{{0,0}, {0, 10}, {10,10}, {10, 0}, {0,0}}} }},
     geopackage::Polygon {{geopackage::LinearRing {{{20,20}, {20, 30}, {30,30}, {30, 20}, {20,20}}} }}
@@ -12,7 +12,7 @@ TEST(GeoPackageLibTests, multipolygon_create_test) {
   ASSERT_EQ("POLYGON ((20 20, 20 30, 30 30, 30 20, 20 20))", multiPolygon.getPolygons()[1].wkt());
 }
 
-TEST(GeoPackageLibTests, multipolygon_wkt_test) {
+TEST(MultiPolygonTests, multipolygon_wkt_test) {
   geopackage::MultiPolygon multiPolygon {{ 
     geopackage::Polygon {{geopackage::LinearRing {{{0,0}, {0, 10}, {10,10}, {10, 0}, {0,0}}} }},
     geopackage::Polygon {{geopackage::LinearRing {{{20,20}, {20, 30}, {30,30}, {30, 20}, {20,20}}} }}
@@ -20,7 +20,7 @@ TEST(GeoPackageLibTests, multipolygon_wkt_test) {
   ASSERT_EQ("MULTIPOLYGON (((0 0, 0 10, 10 10, 10 0, 0 0)), ((20 20, 20 30, 30 30, 30 20, 20 20)))", multiPolygon.wkt());
 }
 
-TEST(GeoPackageLibTests, multipolygon_clone_test) {
+TEST(MultiPolygonTests, multipolygon_clone_test) {
   geopackage::MultiPolygon multiPolygon {{ 
     geopackage::Polygon {{geopackage::LinearRing {{{0,0}, {0, 10}, {10,10}, {10, 0}, {0,0}}} }},
     geopackage::Polygon {{geopackage::LinearRing {{{20,20}, {20, 30}, {30,30}, {30, 20}, {20,20}}} }}
@@ -32,7 +32,7 @@ TEST(GeoPackageLibTests, multipolygon_clone_test) {
   ASSERT_EQ("POLYGON ((20 20, 20 30, 30 30, 30 20, 20 20))", clonedMultiPolygon.getPolygons()[1].wkt());
 }
 
-TEST(GeoPackageLibTests, multipolygon_tostring_test) {
+TEST(MultiPolygonTests, multipolygon_tostring_test) {
   std::stringstream str;
   geopackage::MultiPolygon multiPolygon {{ 
     geopackage::Polygon {{geopackage::LinearRing {{{0,0}, {0, 10}, {10,10}, {10, 0}, {0,0}}} }},

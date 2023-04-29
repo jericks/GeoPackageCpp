@@ -3,7 +3,7 @@
 #include "gtest/gtest.h"
 #include <sstream>
 
-TEST(GeoPackageLibTests, polygon_create_test) {
+TEST(PolygonTests, polygon_create_test) {
   geopackage::LinearRing ring {{{0,0}, {0, 10}, {10,10}, {10, 0}, {0,0}}};
   geopackage::Polygon polygon {{ring}};
   ASSERT_EQ(1, std::size(polygon.getLinearRings()));
@@ -16,13 +16,13 @@ TEST(GeoPackageLibTests, polygon_create_test) {
   ASSERT_EQ(0, polygon.getLinearRings()[0].getPoints()[4].getY());
 }
 
-TEST(GeoPackageLibTests, polygon_wkt_test) {
+TEST(PolygonTests, polygon_wkt_test) {
   geopackage::LinearRing ring {{{0,0}, {0, 10}, {10,10}, {10, 0}, {0,0}}};
   geopackage::Polygon polygon {{ring}};
   ASSERT_EQ("POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))", polygon.wkt());
 }
 
-TEST(GeoPackageLibTests, polygon_clone_test) {
+TEST(PolygonTests, polygon_clone_test) {
   geopackage::LinearRing ring {{{0,0}, {0, 10}, {10,10}, {10, 0}, {0,0}}};
   geopackage::Polygon polygon {{ring}};
   std::unique_ptr<geopackage::Geometry> clonedGeometry = polygon.clone();
@@ -37,7 +37,7 @@ TEST(GeoPackageLibTests, polygon_clone_test) {
   ASSERT_EQ(0, clonedPolygon.getLinearRings()[0].getPoints()[4].getY());
 }
 
-TEST(GeoPackageLibTests, polygon_tostring_test) {
+TEST(PolygonTests, polygon_tostring_test) {
   std::stringstream str;
   geopackage::LinearRing ring {{{0,0}, {0, 10}, {10,10}, {10, 0}, {0,0}}};
   geopackage::Polygon polygon {{ring}};

@@ -3,7 +3,7 @@
 #include "gtest/gtest.h"
 #include <sstream>
 
-TEST(GeoPackageLibTests, feature_create_test) {
+TEST(FeatureTests, feature_create_test) {
   std::unique_ptr<geopackage::Geometry> geom = std::make_unique<geopackage::Point>(1.2, 3.4);
   std::map<std::string, std::any> attr = {{"id", 1}, {"name", std::string{"One"}}};
   geopackage::Feature f {std::move(geom), attr};
@@ -12,7 +12,7 @@ TEST(GeoPackageLibTests, feature_create_test) {
   ASSERT_EQ("One", std::any_cast<std::string>(f.getAttributes()["name"]));
 }
 
-TEST(GeoPackageLibTests, feature_tostring_test) {
+TEST(FeatureTests, feature_tostring_test) {
   std::stringstream str;
   std::unique_ptr<geopackage::Geometry> geom = std::make_unique<geopackage::Point>(1.2, 3.4);
   std::map<std::string, std::any> attr = {{"id", 1}, {"name", std::string{"One"}}};

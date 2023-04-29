@@ -756,6 +756,44 @@ TEST(GeoPackageLibTests, GeoPackage_Tiles_For_Zoom) {
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
 
+TEST(GeoPackageLibTests, Tile_CreateGlobalGeodeticTileLayer) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.createGlobalGeodeticTileLayer("tiles", 256, 19);
+
+    EXPECT_TRUE(gpkg.getSpatialRef(4326).has_value());
+    EXPECT_TRUE(gpkg.getContent("tiles").has_value());
+    EXPECT_TRUE(gpkg.getTileMatrixSet("tiles").has_value());
+    int c = 0;
+    gpkg.tileMatrices("tiles", [&](geopackage::TileMatrix& t) {
+        c++;
+    });
+    EXPECT_EQ(19, c);
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, Tile_CreateGlobalMercatorTileLayer) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.createGlobalMercatorTileLayer("tiles", 512, 12);
+
+    EXPECT_TRUE(gpkg.getSpatialRef(3857).has_value());
+    EXPECT_TRUE(gpkg.getContent("tiles").has_value());
+    EXPECT_TRUE(gpkg.getTileMatrixSet("tiles").has_value());
+    int c = 0;
+    gpkg.tileMatrices("tiles", [&](geopackage::TileMatrix& t) {
+        c++;
+    });
+    EXPECT_EQ(12, c);
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
 // Content
 
 TEST(GeoPackageLibTests, Content_ToString) {

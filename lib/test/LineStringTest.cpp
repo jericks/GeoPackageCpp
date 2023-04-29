@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 #include <sstream>
 
-TEST(GeoPackageLibTests, line_create_test) {
+TEST(LineStringTests, line_create_test) {
   geopackage::Point pt1 {1,1};
   geopackage::Point pt2 {5,5};
   geopackage::LineString line {{pt1, pt2}};
@@ -15,12 +15,12 @@ TEST(GeoPackageLibTests, line_create_test) {
   ASSERT_EQ(5, line.getPoints()[1].getY());
 }
 
-TEST(GeoPackageLibTests, line_wkt_test) {
+TEST(LineStringTests, line_wkt_test) {
   geopackage::LineString line {{geopackage::Point {1,1}, geopackage::Point {5,5}}};
   ASSERT_EQ("LINESTRING (1 1, 5 5)", line.wkt());
 }
 
-TEST(GeoPackageLibTests, line_clone_test) {
+TEST(LineStringTests, line_clone_test) {
   geopackage::Point pt1 {1,1};
   geopackage::Point pt2 {5,5};
   geopackage::LineString line {{pt1, pt2}};
@@ -33,7 +33,7 @@ TEST(GeoPackageLibTests, line_clone_test) {
   ASSERT_EQ(5, clonedLineString.getPoints()[1].getY());
 }
 
-TEST(GeoPackageLibTests, line_tostring_test) {
+TEST(LineStringTests, line_tostring_test) {
   std::stringstream str;
   geopackage::LineString line {{geopackage::Point {1,1}, geopackage::Point {5,5}}};
   str << line;
