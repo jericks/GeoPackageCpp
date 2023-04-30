@@ -350,3 +350,10 @@ By table name
 @ geopackage-cli tilematrix-delete -f data.gpkg -n basemap
 ```
 
+**Tile**
+
+Create a Tile table.
+
+```bash
+@ geopackage-cli tiletable-create -f data.gpkg -n world
+```

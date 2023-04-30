@@ -36,6 +36,8 @@
 #include "tileMatrix/CreateTileMatrixCommand.hpp"
 #include "tileMatrix/DeleteTileMatrixCommand.hpp"
 
+#include "tile/CreateTileTableCommand.hpp"
+
 int main(int argc, char *argv[]) {
 
     CLI::App app{"GeoPackage CLI"};
@@ -135,6 +137,11 @@ int main(int argc, char *argv[]) {
 
     DeleteTileMatrixCommand deleteTileMatrixCommand(&app);
     commands.add(&deleteTileMatrixCommand);
+
+    // Tile
+
+    CreateTileTableCommand createTileTableCommand(&app);
+    commands.add(&createTileTableCommand);
 
     CLI11_PARSE(app, argc, argv);
 
