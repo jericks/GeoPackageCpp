@@ -357,3 +357,21 @@ Create a Tile table.
 ```bash
 @ geopackage-cli tiletable-create -f data.gpkg -n world
 ```
+
+Add or Update a Tile.
+
+```bash
+@ geopackage-cli tile-set -f data.gpkg -n world -z 0 -c 0 -r 0 -i 0.jpeg
+```
+
+Delete a Tile.
+
+```bash
+@ geopackage-cli tile-delete -f data.gpkg -n world -z 0 -c 0 -r 0
+```
+
+Get a Tile.
+
+```bash
+@ geopackage-cli tile-get -f data.gpkg -n world -z 0 -c 0 -r 0 -o 0.jpeg
+```

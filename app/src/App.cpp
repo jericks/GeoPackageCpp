@@ -37,6 +37,9 @@
 #include "tileMatrix/DeleteTileMatrixCommand.hpp"
 
 #include "tile/CreateTileTableCommand.hpp"
+#include "tile/GetTileCommand.hpp"
+#include "tile/SetTileCommand.hpp"
+#include "tile/DeleteTileCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -142,6 +145,15 @@ int main(int argc, char *argv[]) {
 
     CreateTileTableCommand createTileTableCommand(&app);
     commands.add(&createTileTableCommand);
+
+    GetTileCommand getTileCommand(&app);
+    commands.add(&getTileCommand);
+
+    SetTileCommand setTileCommand(&app);
+    commands.add(&setTileCommand);
+
+    DeleteTileCommand deleteTileCommand(&app);
+    commands.add(&deleteTileCommand);
 
     CLI11_PARSE(app, argc, argv);
 
