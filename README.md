@@ -358,6 +358,18 @@ Create a Tile table.
 @ geopackage-cli tiletable-create -f data.gpkg -n world
 ```
 
+Create a Geodetic Tile Layer.
+
+```bash
+@ geopackage-cli tile-geodetic-create -f data.gpkg -n world -s 256 -z 12
+```
+
+Create a Mercator Tile Layer.
+
+```bash
+@ geopackage-cli tile-mercator-create -f data.gpkg -n world -s 256 -z 19
+```
+
 Add or Update a Tile.
 
 ```bash

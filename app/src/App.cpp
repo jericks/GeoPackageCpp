@@ -40,6 +40,8 @@
 #include "tile/GetTileCommand.hpp"
 #include "tile/SetTileCommand.hpp"
 #include "tile/DeleteTileCommand.hpp"
+#include "tile/CreateGeodeticTileLayerCommand.hpp"
+#include "tile/CreateMercatorTileLayerCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -154,6 +156,12 @@ int main(int argc, char *argv[]) {
 
     DeleteTileCommand deleteTileCommand(&app);
     commands.add(&deleteTileCommand);
+
+    CreateGeodeticTileLayerCommand createGeodeticTileLayerCommand(&app);
+    commands.add(&createGeodeticTileLayerCommand);
+
+    CreateMercatorTileLayerCommand createMercatorTileLayerCommand(&app);
+    commands.add(&createMercatorTileLayerCommand);
 
     CLI11_PARSE(app, argc, argv);
 

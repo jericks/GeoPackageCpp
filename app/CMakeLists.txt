@@ -42,6 +42,8 @@ add_library(GeoPackageCppAppLib STATIC
 	src/tile/GetTileCommand.cpp
 	src/tile/SetTileCommand.cpp
 	src/tile/DeleteTileCommand.cpp
+	src/tile/CreateGeodeticTileLayerCommand.cpp
+	src/tile/CreateMercatorTileLayerCommand.cpp
 )
 target_include_directories(GeoPackageCppAppLib PUBLIC "include" "../lib/include" CLI11::CLI11)
 target_compile_features(GeoPackageCppAppLib PUBLIC cxx_std_17)
