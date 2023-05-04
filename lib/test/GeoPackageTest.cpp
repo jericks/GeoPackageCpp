@@ -794,6 +794,44 @@ TEST(GeoPackageLibTests, Tile_CreateGlobalMercatorTileLayer) {
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
 
+TEST(GeoPackageLibTests, exportTilesToDirectory) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.createTileTable("tiles");
+    gpkg.addTile("tiles",geopackage::Tile(0,0,0,"../../../data/tms/0/0/0.jpeg"));
+    gpkg.addTile("tiles",geopackage::Tile(1,0,0,"../../../data/tms/1/0/0.jpeg"));
+    gpkg.addTile("tiles",geopackage::Tile(1,0,1,"../../../data/tms/1/0/1.jpeg"));
+    gpkg.addTile("tiles",geopackage::Tile(1,1,0,"../../../data/tms/1/1/0.jpeg"));
+    gpkg.addTile("tiles",geopackage::Tile(1,1,1,"../../../data/tms/1/1/1.jpeg"));
+
+    gpkg.exportTilesToDirectory("tiles", "jpeg", "tms");
+    EXPECT_TRUE(std::filesystem::exists("tms/0/0/0.jpeg"));
+    EXPECT_TRUE(std::filesystem::exists("tms/1/0/0.jpeg"));
+    EXPECT_TRUE(std::filesystem::exists("tms/1/0/1.jpeg"));
+    EXPECT_TRUE(std::filesystem::exists("tms/1/1/0.jpeg"));
+    EXPECT_TRUE(std::filesystem::exists("tms/1/1/1.jpeg"));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, loadTilesFromDirectory) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.createTileTable("tiles");
+    gpkg.loadTilesFromDirectory("tiles", "../../../data/tms");
+    EXPECT_TRUE(gpkg.getTile("tiles", 0,0,0));
+    EXPECT_TRUE(gpkg.getTile("tiles",1,0,0));
+    EXPECT_TRUE(gpkg.getTile("tiles",1,0,1));
+    EXPECT_TRUE(gpkg.getTile("tiles",1,1,0));
+    EXPECT_TRUE(gpkg.getTile("tiles",1,1,1));
+    
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
 // Content
 
 TEST(GeoPackageLibTests, Content_ToString) {

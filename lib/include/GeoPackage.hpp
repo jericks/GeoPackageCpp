@@ -4,6 +4,11 @@
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <vector>
+#include <fstream>
+#include <functional>
+#include <filesystem>
+#include <optional>
 #include "SQLiteCpp/SQLiteCpp.h"
 #include "Content.hpp"
 #include "DataType.hpp"
@@ -43,6 +48,8 @@ namespace geopackage {
             std::vector<std::string> getColumnNames(std::string table);
 
             Feature getFeature(SQLite::Statement& query, GeoPackageGeometryReader& reader, std::string geometryColumnName, std::string primaryKey, std::map<std::string, FieldType> fieldMap);
+
+            bool isImage(std::string extension);
 
         public:
 
@@ -171,6 +178,10 @@ namespace geopackage {
             void createGlobalGeodeticTileLayer(std::string name, int tileSize, int maxZoomLevel);
 
             void createGlobalMercatorTileLayer(std::string name, int tileSize, int maxZoomLevel);
+
+            void loadTilesFromDirectory(std::string name, std::string directory);
+
+            void exportTilesToDirectory(std::string name, std::string format, std::string directory);
 
             // Feature
 

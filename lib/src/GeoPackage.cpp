@@ -963,6 +963,41 @@ namespace geopackage {
     
     }
 
+    void GeoPackage::exportTilesToDirectory(std::string name, std::string format, std::string directory) {
+        std::filesystem::path dir = directory;
+        std::filesystem::create_directories(dir);
+        const int minZoom = getMinZoom(name);
+        const int maxZoom = getMaxZoom(name);
+        for(int z = minZoom; z <= maxZoom; ++z) {
+            std::string zoomDir = directory + "/" + std::to_string(z);
+            std::filesystem::create_directories(zoomDir);   
+            tiles(name, z, [&](Tile& t) {
+               std::string tileDir = zoomDir + "/" + std::to_string(t.column);
+               std::filesystem::create_directories(tileDir);
+               t.save(tileDir + "/" + std::to_string(t.row) + "." + format);
+            });
+        } 
+    }
+
+    void GeoPackage::loadTilesFromDirectory(std::string name, std::string directory) {
+        for (auto& dirEntry: std::filesystem::recursive_directory_iterator(directory)) {
+            if (dirEntry.is_regular_file()) {
+                std::filesystem::path file = dirEntry.path();
+                if (isImage(file.extension())) {
+                    int z = std::stoi(file.parent_path().parent_path().stem());
+                    int c = std::stoi(file.parent_path().stem());
+                    int r = std::stoi(file.filename().stem());
+                    const Tile t {z,c,r,std::filesystem::absolute(file)};
+                    addTile(name, t);
+                }
+            }
+        }
+    }
+
+    bool GeoPackage::isImage(std::string extension) {
+        return extension == ".jpeg" || extension == ".jpg" || extension == ".png";
+    }
+
     void GeoPackage::createGlobalGeodeticTileLayer(std::string name, int tileSize, int maxZoomLevel) {
         int srsId = 4326;
         Bounds bounds = Bounds::getGeodeticBounds();
