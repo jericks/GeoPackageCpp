@@ -387,3 +387,16 @@ Get a Tile.
 ```bash
 @ geopackage-cli tile-get -f data.gpkg -n world -z 0 -c 0 -r 0 -o 0.jpeg
 ```
+
+Export Tiles to a Directory
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Tile layer name          | Yes      |
+| -d   | Output directory         | Yes      |
+| -m   | Image format (jpeg, png) | Yes      |
+
+```bash
+@ geopackage-cli tiles-export -f data.gpkg -n world -d world -m jpeg
+```

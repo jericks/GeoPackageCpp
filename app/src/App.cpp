@@ -42,6 +42,7 @@
 #include "tile/DeleteTileCommand.hpp"
 #include "tile/CreateGeodeticTileLayerCommand.hpp"
 #include "tile/CreateMercatorTileLayerCommand.hpp"
+#include "tile/ExportTilesCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -162,6 +163,9 @@ int main(int argc, char *argv[]) {
 
     CreateMercatorTileLayerCommand createMercatorTileLayerCommand(&app);
     commands.add(&createMercatorTileLayerCommand);
+
+    ExportTilesCommand exportTilesCommand(&app);
+    commands.add(&exportTilesCommand);
 
     CLI11_PARSE(app, argc, argv);
 
