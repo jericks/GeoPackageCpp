@@ -400,3 +400,15 @@ Export Tiles to a Directory
 ```bash
 @ geopackage-cli tiles-export -f data.gpkg -n world -d world -m jpeg
 ```
+
+Import Tiles from a Directory
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Tile layer name          | Yes      |
+| -d   | Input directory          | Yes      |
+
+```bash
+@ geopackage-cli tiles-import -f data.gpkg -n world -d tiles
+```

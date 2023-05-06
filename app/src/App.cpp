@@ -43,6 +43,7 @@
 #include "tile/CreateGeodeticTileLayerCommand.hpp"
 #include "tile/CreateMercatorTileLayerCommand.hpp"
 #include "tile/ExportTilesCommand.hpp"
+#include "tile/ImportTilesCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -166,6 +167,9 @@ int main(int argc, char *argv[]) {
 
     ExportTilesCommand exportTilesCommand(&app);
     commands.add(&exportTilesCommand);
+
+    ImportTilesCommand importTilesCommand(&app);
+    commands.add(&importTilesCommand);
 
     CLI11_PARSE(app, argc, argv);
 
