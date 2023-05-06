@@ -354,11 +354,23 @@ By table name
 
 Create a Tile table.
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Tile layer name          | Yes      |
+
 ```bash
 @ geopackage-cli tiletable-create -f data.gpkg -n world
 ```
 
 Create a Geodetic Tile Layer.
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Tile layer name          | Yes      |
+| -s   | Tile Size (256,512)      | Yes      |
+| -z   | Max Zoom Level           | Yes      |
 
 ```bash
 @ geopackage-cli tile-geodetic-create -f data.gpkg -n world -s 256 -z 12
@@ -366,11 +378,27 @@ Create a Geodetic Tile Layer.
 
 Create a Mercator Tile Layer.
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Tile layer name          | Yes      |
+| -s   | Tile Size (256,512)      | Yes      |
+| -z   | Max Zoom Level           | Yes      |
+
 ```bash
 @ geopackage-cli tile-mercator-create -f data.gpkg -n world -s 256 -z 19
 ```
 
 Add or Update a Tile.
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Tile layer name          | Yes      |
+| -z   | Zoom Level               | Yes      |
+| -c   | Column                   | Yes      |
+| -r   | Row                      | Yes      |
+| -i   | Input file               | Yes      |
 
 ```bash
 @ geopackage-cli tile-set -f data.gpkg -n world -z 0 -c 0 -r 0 -i 0.jpeg
@@ -378,11 +406,28 @@ Add or Update a Tile.
 
 Delete a Tile.
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Tile layer name          | Yes      |
+| -z   | Zoom Level               | Yes      |
+| -c   | Column                   | Yes      |
+| -r   | Row                      | Yes      |
+
 ```bash
 @ geopackage-cli tile-delete -f data.gpkg -n world -z 0 -c 0 -r 0
 ```
 
 Get a Tile.
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Tile layer name          | Yes      |
+| -z   | Zoom Level               | Yes      |
+| -c   | Column                   | Yes      |
+| -r   | Row                      | Yes      |
+| -o   | Output file              | Yes      |
 
 ```bash
 @ geopackage-cli tile-get -f data.gpkg -n world -z 0 -c 0 -r 0 -o 0.jpeg
@@ -411,4 +456,29 @@ Import Tiles from a Directory
 
 ```bash
 @ geopackage-cli tiles-import -f data.gpkg -n world -d tiles
+```
+
+Tile Information
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Tile layer name          | Yes      |
+
+```bash
+@ geopackage-cli tile-info -f data.gpkg -n world
+```
+
+```
+Information
+Name: world
+Description: world
+SRS ID: 4326
+Bounds: BOUNDS (-179.99, -89.99, 179.99, 89.99)
+
+Tiles
+0 = 2
+1 = 8
+2 = 32
+3 = 128
 ```

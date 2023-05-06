@@ -44,6 +44,7 @@
 #include "tile/CreateMercatorTileLayerCommand.hpp"
 #include "tile/ExportTilesCommand.hpp"
 #include "tile/ImportTilesCommand.hpp"
+#include "tile/InfoTileCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -170,6 +171,9 @@ int main(int argc, char *argv[]) {
 
     ImportTilesCommand importTilesCommand(&app);
     commands.add(&importTilesCommand);
+
+    InfoTileCommand infoTileCommand(&app);
+    commands.add(&infoTileCommand);
 
     CLI11_PARSE(app, argc, argv);
 

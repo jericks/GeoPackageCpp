@@ -41,6 +41,7 @@ add_executable(cli_tests
     tile/CreateGeodeticTileLayerCommandTest.cpp
     tile/ExportTilesCommandTest.cpp
     tile/ImportTilesCommandTest.cpp
+    tile/InfoTileCommandTest.cpp
 )   
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib
