@@ -60,11 +60,21 @@ Options:
 
 Create an new GeoPackage file.
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+
 ```bash
 % geopackage-cli create -f data.gpkg
 ```
 
 Create a Feature layer with Random Points.
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -l   | Tile layer name          | Yes      |
+| -n   | Number of points         | Yes      |
 
 ```bash
 % geopackage-cli random-features -f data.gpkg -l points -n 100
@@ -74,11 +84,20 @@ Create a Feature layer with Random Points.
 
 List spatial references.
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+
 ```bash
 % geopackage-cli spatialref-list -f data.gpkg
 ```
 
 Get spatial references by SRS ID
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -s   | SRS ID                   | Yes      |
 
 ```bash
 % geopackage-cli spatialref-get -f data.gpkg -s 4326
@@ -86,11 +105,26 @@ Get spatial references by SRS ID
 
 Create a new spatial reference
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | SRS Name                 | Yes      |
+| -s   | SRS ID                   | Yes      |
+| -o   | Organization Name        | Yes      |
+| -i   | Organization ID          | Yes      |
+| -c   | Description              | Yes      |
+| -d   | Definition               | Yes      |
+
 ```bash
 geopackage-cli spatialref-create -f data.gpkg -n "EPSG:2927" -s 2927 -o EPSG -i 2927 -c "Washington State Plane South" -d 'PROJCS["NAD83(HARN) / Washington South (ftUS)",GEOGCS["NAD83(HARN)",DATUM["NAD83_High_Accuracy_Reference_Network",SPHEROID["GRS 1980",6378137,298.257222101],TOWGS84[-0.991,1.9072,0.5129,-1.25033E-07,-4.6785E-08,-5.6529E-08,0]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4152"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["latitude_of_origin",45.3333333333333],PARAMETER["central_meridian",-120.5],PARAMETER["standard_parallel_1",47.3333333333333],PARAMETER["standard_parallel_2",45.8333333333333],PARAMETER["false_easting",1640416.667],PARAMETER["false_northing",0],UNIT["US survey foot",0.304800609601219],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","2927"]]'
 ```
 
 Delete spatial references by SRS ID
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -s   | SRS ID                   | Yes      |
 
 ```bash
 % geopackage-cli spatialref-delete -f data.gpkg -s 4326
@@ -99,6 +133,10 @@ Delete spatial references by SRS ID
 **Content Commands**
 
 List contents
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
 
 ```bash
 % geopackage-cli content-list -f data.gpkg
@@ -122,6 +160,11 @@ SRS ID: 4326
 
 Get contents
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Name                     | Yes      |
+
 ```bash
 % geopackage-cli content-get -f data.gpkg -n states
 ```
@@ -136,6 +179,11 @@ SRS ID: 4326
 ```
 
 Delete contents
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Name                     | Yes      |
 
 ```bash
 % geopackage-cli content-delete -f data.gpkg -n states
@@ -481,4 +529,19 @@ Tiles
 1 = 8
 2 = 32
 3 = 128
+```
+
+List Tile Layers
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+
+```bash
+@ geopackage-cli tile-list -f data.gpkg
+```
+
+```
+world
+tiles
 ```

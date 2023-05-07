@@ -34,6 +34,7 @@ add_executable(cli_tests
     tileMatrix/DeleteTileMatrixCommandTest.cpp
     # Tile
     tile/CreateTileTableCommandTest.cpp
+    tile/ListTilesCommandTest.cpp
     tile/GetTileCommandTest.cpp
     tile/SetTileCommandTest.cpp
     tile/DeleteTileCommandTest.cpp

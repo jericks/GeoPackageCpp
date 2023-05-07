@@ -39,6 +39,7 @@ add_library(GeoPackageCppAppLib STATIC
 	src/tileMatrix/DeleteTileMatrixCommand.cpp
 	# Tile
 	src/tile/CreateTileTableCommand.cpp
+	src/tile/ListTilesCommand.cpp
 	src/tile/GetTileCommand.cpp
 	src/tile/SetTileCommand.cpp
 	src/tile/DeleteTileCommand.cpp
