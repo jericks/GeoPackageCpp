@@ -3,7 +3,7 @@
 #include "CLI/CLI.hpp"
 #include "Command.hpp"
 #include "Commands.hpp"
-#include "RandomFeaturesCommand.hpp"
+#include "feature/RandomFeaturesCommand.hpp"
 #include "gtest/gtest.h"
 
 TEST(GeoPackageCliTests, RandomFeaturesCommand) {

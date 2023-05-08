@@ -5,8 +5,6 @@ add_library(GeoPackageCppAppLib STATIC
 	src/Commands.cpp
 	src/ListCommand.cpp
 	src/CreateCommand.cpp
-	# Feature
-	src/RandomFeaturesCommand.cpp
 	# Content
 	src/content/CreateContentCommand.cpp
 	src/content/ListContentCommand.cpp
@@ -48,6 +46,9 @@ add_library(GeoPackageCppAppLib STATIC
 	src/tile/ExportTilesCommand.cpp
 	src/tile/ImportTilesCommand.cpp
 	src/tile/InfoTileCommand.cpp
+	# Feature
+	src/feature/RandomFeaturesCommand.cpp
+	src/feature/ListFeatureLayersCommand.cpp
 )
 target_include_directories(GeoPackageCppAppLib PUBLIC "include" "../lib/include" CLI11::CLI11)
 target_compile_features(GeoPackageCppAppLib PUBLIC cxx_std_17)

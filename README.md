@@ -68,18 +68,6 @@ Create an new GeoPackage file.
 % geopackage-cli create -f data.gpkg
 ```
 
-Create a Feature layer with Random Points.
-
-| Flag | Description              | Required |
-| ---- | ------------------------ | -------- |
-| -f   | GeoPackage file name     | Yes      |
-| -l   | Tile layer name          | Yes      |
-| -n   | Number of points         | Yes      |
-
-```bash
-% geopackage-cli random-features -f data.gpkg -l points -n 100
-```
-
 **Spatial Reference Commands**
 
 List spatial references.
@@ -191,6 +179,15 @@ Delete contents
 
 Create contents
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Name                     | Yes      |
+| -t   | Type (Features or Tiles) | Yes      |
+| -d   | Identifier               | Yes      |
+| -b   | Bounds                   | Yes      |
+| -s   | SRS ID                   | Yes      |
+
 ```bash
 % geopackage-cli content-create -f data.gpkg -n cities -i cities -t features -d Cities -b "-180,-90,180,90" -s 4326
 ```
@@ -198,6 +195,10 @@ Create contents
 **Geometry Columns Commands**
 
 List Geometry Columns
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
 
 ```bash
 % geopackage-cli geometrycolumn-list -f data.gpkg
@@ -221,6 +222,11 @@ Has M: false
 
 Get a Geometry Column
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Name                     | Yes      |
+
 ```bash
 % geopackage-cli geometrycolumn-get -f data.gpkg -n cities
 ```
@@ -236,11 +242,26 @@ Has M: false
 
 Delete a Geometry Column
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Name                     | Yes      |
+
 ```bash
 % geopackage-cli geometrycolumn-delete -f data.gpkg -n cities
 ```
 
 Create a Geometry Column
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Table Name               | Yes      |
+| -c   | Column Name              | Yes      |
+| -g   | Geometry Type            | Yes      |
+| -s   | SRS ID                   | Yes      |
+| -z   | Has Z                    | Yes      |
+| -m   | Has M                    | Yes      |
 
 ```bash
 @ geopackage-cli geometrycolumn-create -f data.gpkg -n cities -c geometry -g Point -s 4326 -z false -m false
@@ -249,6 +270,10 @@ Create a Geometry Column
 **Extension**
 
 List Extensions
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
 
 ```bash
 @ geopackage-cli extension-list -f data.gpkg
@@ -270,6 +295,11 @@ Scope: read-write
 
 Get an Extension
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Name                     | Yes      |
+
 ```bash
 @ geopackage-cli extension-get -f data.gpkg -n "Line Index"
 ```
@@ -284,11 +314,25 @@ Scope: read-write
 
 Delete an Extension
 
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Name                     | Yes      |
+
 ```bash
 @ geopackage-cli extension-delete -f data.gpkg -n "Line Index"
 ```
 
 Create an Extension
+
+| Flag | Description                    | Required |
+| ---- | ------------------------------ | -------- |
+| -f   | GeoPackage file name           | Yes      |
+| -n   | Table Name                     | Yes      |
+| -e   | Extension Name                 | Yes      |
+| -c   | Column Name                    | Yes      |
+| -d   | Definition                     | Yes      |
+| -s   | Scope (read-write, write-only) | Yes      |
 
 ```bash
 @ geopackage-cli extension-create -f data.gpkg -e "Line Index" -n "index" -c "r_tree" -d "Spatial Index" -s "read-write"
@@ -297,6 +341,10 @@ Create an Extension
 **Tile Matrix Set**
 
 List Tile Matrix Sets
+
+| Flag | Description                    | Required |
+| ---- | ------------------------------ | -------- |
+| -f   | GeoPackage file name           | Yes      |
 
 ```bash
 @ geopackage-cli tilematrixset-list -f data.gpkg
@@ -314,6 +362,11 @@ Bounds: BOUNDS (-2.00364e+07, -2.00375e+07, 2.00364e+07, 2.00375e+07)
 
 Get a Tile Matrix Set
 
+| Flag | Description                    | Required |
+| ---- | ------------------------------ | -------- |
+| -f   | GeoPackage file name           | Yes      |
+| -n   |  Name                          | Yes      |
+
 ```bash
 @ geopackage-cli tilematrixset-get -f data.gpkg -n world
 ```
@@ -326,11 +379,23 @@ Bounds: BOUNDS (-179.99, -89.99, 179.99, 89.99)
 
 Create a Tile Matrix Set
 
+| Flag | Description                    | Required |
+| ---- | ------------------------------ | -------- |
+| -f   | GeoPackage file name           | Yes      |
+| -n   |  Name                          | Yes      |
+| -s   |  SRS ID                        | Yes      |
+| -b   |  Bounds                        | Yes      |
+
 ```bash
 @ geopackage-cli tilematrixset-create -f data.gpkg -n world -s 4326 -b -180,-90,180,90 
 ```
 
 Delete a Tile Matrix Set
+
+| Flag | Description                    | Required |
+| ---- | ------------------------------ | -------- |
+| -f   | GeoPackage file name           | Yes      |
+| -n   |  Name                          | Yes      |
 
 ```bash
 @ geopackage-cli tilematrixset-delete -f data.gpkg -n world
@@ -339,6 +404,10 @@ Delete a Tile Matrix Set
 **Tile Matrix**
 
 List Tile Matrix entries
+
+| Flag | Description                    | Required |
+| ---- | ------------------------------ | -------- |
+| -f   | GeoPackage file name           | Yes      |
 
 ```bash
 @ geopackage-cli tilematrix-list -f data.gpkg
@@ -366,6 +435,12 @@ Pixel Size: SIZE (0.175781, 0.175781)
 
 Get Tile Matrix
 
+| Flag | Description                    | Required |
+| ---- | ------------------------------ | -------- |
+| -f   | GeoPackage file name           | Yes      |
+| -n   |  Name                          | Yes      |
+| -z   |  Zoom Level                    | Yes      |
+
 ```bash
 @ geopackage-cli tilematrix-get -f data.gpkg -n world -z 2
 ```
@@ -380,11 +455,26 @@ Pixel Size: SIZE (0.175781, 0.175781)
 
 Create a Tile Matrix
 
+| Flag | Description                    | Required |
+| ---- | ------------------------------ | -------- |
+| -f   | GeoPackage file name           | Yes      |
+| -n   |  Name                          | Yes      |
+| -z   |  Zoom Level                    | Yes      |
+| -m   |  Matrix Size                   | Yes      |
+| -t   |  Tile Size                     | Yes      |
+| -p   |  Pixel Size                    | Yes      |
+
 ```bash
-@ geopackage-cli tilematrix-create -f data.gpkg -n world -z 2 -m 2,1, -t 256,256 -p 0.703125,0.703125
+@ geopackage-cli tilematrix-create -f data.gpkg -n world -z 2 -m 2,1 -t 256,256 -p 0.703125,0.703125
 ```
 
 Delete a Tile Matrix
+
+| Flag | Description                    | Required |
+| ---- | ------------------------------ | -------- |
+| -f   | GeoPackage file name           | Yes      |
+| -n   |  Name                          | Yes      |
+| -z   |  Zoom Level                    | No       |
 
 By table name and zoom level
 
@@ -544,4 +634,34 @@ List Tile Layers
 ```
 world
 tiles
+```
+
+**Feature**
+
+Create a Feature layer with Random Points.
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -l   | Tile layer name          | Yes      |
+| -n   | Number of points         | Yes      |
+
+```bash
+% geopackage-cli random-features -f data.gpkg -l points -n 100
+```
+
+List all feature layers
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+
+```bash
+% geopackage-cli feature-list -f data.gpkg
+```
+
+```
+countries
+cities
+rivers
 ```

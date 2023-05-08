@@ -1,4 +1,4 @@
-#include "RandomFeaturesCommand.hpp"
+#include "feature/RandomFeaturesCommand.hpp"
 
 RandomFeaturesCommand::RandomFeaturesCommand(CLI::App* app): Command ("random-features") {
     CLI::App* cmd = app->add_subcommand("random-features", "Create random features");

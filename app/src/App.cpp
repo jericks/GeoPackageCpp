@@ -4,7 +4,6 @@
 #include "Command.hpp"
 #include "ListCommand.hpp"
 #include "CreateCommand.hpp"
-#include "RandomFeaturesCommand.hpp"
 
 #include "spatialref/CreateSpatialRefCommand.hpp"
 #include "spatialref/DeleteSpatialRefCommand.hpp"
@@ -46,6 +45,9 @@
 #include "tile/ExportTilesCommand.hpp"
 #include "tile/ImportTilesCommand.hpp"
 #include "tile/InfoTileCommand.hpp"
+
+#include "feature/RandomFeaturesCommand.hpp"
+#include "feature/ListFeatureLayersCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -178,6 +180,11 @@ int main(int argc, char *argv[]) {
 
     InfoTileCommand infoTileCommand(&app);
     commands.add(&infoTileCommand);
+
+    // Feature
+
+    ListFeatureLayersCommand listFeatureLayersCommand(&app);
+    commands.add(&listFeatureLayersCommand);
 
     CLI11_PARSE(app, argc, argv);
 

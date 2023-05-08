@@ -1,7 +1,9 @@
 add_executable(cli_tests 
     ListCommandTest.cpp
     CreateCommandTest.cpp
-    RandomFeaturesCommandtest.cpp
+    # Feature
+    feature/ListFeatureLayersCommandTest.cpp
+    feature/RandomFeaturesCommandTest.cpp
     # Content
     content/CreateContentCommandTest.cpp
     content/ListContentCommandTest.cpp
