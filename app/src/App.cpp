@@ -48,6 +48,7 @@
 
 #include "feature/RandomFeaturesCommand.hpp"
 #include "feature/ListFeatureLayersCommand.hpp"
+#include "feature/CountFeaturesCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -61,9 +62,6 @@ int main(int argc, char *argv[]) {
 
     CreateCommand createCommand(&app);
     commands.add(&createCommand);
-
-    RandomFeaturesCommand randomFeaturesCommand(&app);
-    commands.add(&randomFeaturesCommand);
 
     // SpatialRef
 
@@ -185,6 +183,12 @@ int main(int argc, char *argv[]) {
 
     ListFeatureLayersCommand listFeatureLayersCommand(&app);
     commands.add(&listFeatureLayersCommand);
+
+    RandomFeaturesCommand randomFeaturesCommand(&app);
+    commands.add(&randomFeaturesCommand);
+
+    CountFeaturesCommand countFeaturesCommand(&app);
+    commands.add(&countFeaturesCommand);
 
     CLI11_PARSE(app, argc, argv);
 

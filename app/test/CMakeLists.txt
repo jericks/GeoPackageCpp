@@ -1,9 +1,6 @@
 add_executable(cli_tests 
     ListCommandTest.cpp
     CreateCommandTest.cpp
-    # Feature
-    feature/ListFeatureLayersCommandTest.cpp
-    feature/RandomFeaturesCommandTest.cpp
     # Content
     content/CreateContentCommandTest.cpp
     content/ListContentCommandTest.cpp
@@ -45,6 +42,10 @@ add_executable(cli_tests
     tile/ExportTilesCommandTest.cpp
     tile/ImportTilesCommandTest.cpp
     tile/InfoTileCommandTest.cpp
+    # Feature
+    feature/ListFeatureLayersCommandTest.cpp
+    feature/RandomFeaturesCommandTest.cpp
+    feature/CountFeaturesCommandTest.cpp
 )   
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib

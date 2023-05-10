@@ -636,7 +636,7 @@ world
 tiles
 ```
 
-**Feature**
+**Feature Commands**
 
 Create a Feature layer with Random Points.
 
@@ -664,4 +664,19 @@ List all feature layers
 countries
 cities
 rivers
+```
+
+Count features
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Feature layer name       | Yes      |
+
+```bash
+% geopackage-cli feature-count -f data.gpkg -n countries
+```
+
+```
+10
 ```
