@@ -466,10 +466,10 @@ TEST(GeoPackageLibTests, GeoPackage_Extensions) {
 // Geometry Column
 
 TEST(GeoPackageLibTests, GeometryColumn_ToString) {
-    geopackage::GeometryColumn geometryColumn {"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false};
+    geopackage::GeometryColumn geometryColumn {"cities", "the_geom", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three};
     std::stringstream str;
     str << geometryColumn;
-    EXPECT_EQ("GEOMETRYCOLUMN (tableName = cities, columnName = the_geom, geometryType = Point, srsId = 4326, hasZ = 1, hasM = 0)", str.str());
+    EXPECT_EQ("GEOMETRYCOLUMN (tableName = cities, columnName = the_geom, geometryType = Point, srsId = 4326, dimension = 3D)", str.str());
 }
 
 TEST(GeoPackageLibTests, GeoPackage_Add_GeometryColumn) {
@@ -477,7 +477,7 @@ TEST(GeoPackageLibTests, GeoPackage_Add_GeometryColumn) {
     geopackage::GeoPackage gpkg { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
     std::optional<geopackage::GeometryColumn> gc = gpkg.getGeometryColumn("cities");
     EXPECT_TRUE(gc.has_value());
 
@@ -489,14 +489,14 @@ TEST(GeoPackageLibTests, GeoPackage_Update_GeometryColumn) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
     std::optional<geopackage::GeometryColumn> gc = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(gc.has_value());
     EXPECT_EQ("cities", gc.value().getTableName());
     EXPECT_EQ(1, gc.value().hasZ());
     EXPECT_EQ(0, gc.value().hasM());
 
-    geopackage.updateGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 2927, false, true});
+    geopackage.updateGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 2927, geopackage::Dimension::TwoMeasured});
     std::optional<geopackage::GeometryColumn> gc2 = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(gc2.has_value());
     EXPECT_EQ("cities", gc2.value().getTableName());
@@ -511,14 +511,14 @@ TEST(GeoPackageLibTests, GeoPackage_Set_GeometryColumn) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.setGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.setGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
     std::optional<geopackage::GeometryColumn> gc = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(gc.has_value());
     EXPECT_EQ("cities", gc.value().getTableName());
     EXPECT_EQ(1, gc.value().hasZ());
     EXPECT_EQ(0, gc.value().hasM());
 
-    geopackage.setGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 2927, false, true});
+    geopackage.setGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 2927, geopackage::Dimension::TwoMeasured});
     std::optional<geopackage::GeometryColumn> gc2 = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(gc2.has_value());
     EXPECT_EQ("cities", gc2.value().getTableName());
@@ -533,7 +533,7 @@ TEST(GeoPackageLibTests, GeoPackage_Delete_GeometryColumn) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
     std::optional<geopackage::GeometryColumn> e1 = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(e1.has_value());
     EXPECT_EQ("cities", e1.value().getTableName());
@@ -552,7 +552,7 @@ TEST(GeoPackageLibTests, GeoPackage_Get_GeometryColumn) {
 
     std::optional<geopackage::GeometryColumn> e1 = geopackage.getGeometryColumn("cities");
     EXPECT_FALSE(e1.has_value());
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
     std::optional<geopackage::GeometryColumn> e2 = geopackage.getGeometryColumn("cities");
     EXPECT_TRUE(e2.has_value());
 
@@ -564,9 +564,9 @@ TEST(GeoPackageLibTests, GeoPackage_GeometryColumns) {
     geopackage::GeoPackage geopackage { fileName };
     EXPECT_TRUE(std::filesystem::exists(fileName));
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, false, false});
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"rivers", "the_geom", geopackage::GeometryType::LINESTRING, 4326, true, false});
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"parcels", "the_geom", geopackage::GeometryType::MULTIPOLYGON, 4326, false, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "the_geom", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Two});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"rivers", "the_geom", geopackage::GeometryType::LINESTRING, 4326, geopackage::Dimension::Three});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"parcels", "the_geom", geopackage::GeometryType::MULTIPOLYGON, 4326, geopackage::Dimension::Two});
     
     int counter = 0;    
     geopackage.geometryColumns([&](geopackage::GeometryColumn& e) {
@@ -987,6 +987,29 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Table_Create) {
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
 
+TEST(GeoPackageLibTests, GeoPackage_Feature_Layer_Create) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage::Schema schema{
+        "cities",
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    };
+    geopackage::Bounds bounds = geopackage::Bounds::getGeodeticBounds();
+    geopackage.createFeatureLayer(schema, bounds);
+
+    EXPECT_TRUE(geopackage.getContent("cities"));
+    EXPECT_TRUE(geopackage.getGeometryColumn("cities"));
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
 TEST(GeoPackageLibTests, GeoPackage_Feature_Add) {
     const std::string fileName = "data.gpkg";
     geopackage::GeoPackage geopackage { fileName };
@@ -994,7 +1017,7 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Add) {
 
     geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
 
     geopackage::Schema schema{
         "cities",
@@ -1024,7 +1047,7 @@ TEST(GeoPackageLibTests, GeoPackage_Get_Schema) {
 
     geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
 
     geopackage.createFeatureTable(geopackage::Schema{
         "cities",
@@ -1065,7 +1088,7 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Update) {
 
     geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
 
     geopackage::Schema schema{
         "cities",
@@ -1121,7 +1144,7 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Set) {
 
     geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
 
     geopackage::Schema schema{
         "cities",
@@ -1175,7 +1198,7 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Get) {
 
     geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
 
     geopackage::Schema schema{
         "cities",
@@ -1210,7 +1233,7 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_GetAll) {
 
     geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
 
     geopackage::Schema schema{
         "cities",
@@ -1253,7 +1276,7 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_Delete) {
 
     geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
 
     geopackage::Schema schema{
         "cities",
@@ -1299,7 +1322,7 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_DeleteAll) {
 
     geopackage.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
 
-    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, true, false});
+    geopackage.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
 
     geopackage::Schema schema{
         "cities",

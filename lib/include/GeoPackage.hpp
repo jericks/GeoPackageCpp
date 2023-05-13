@@ -51,6 +51,8 @@ namespace geopackage {
 
             bool isImage(std::string extension);
 
+            std::string now();
+
         public:
 
             GeoPackage(std::string fileName);
@@ -186,6 +188,8 @@ namespace geopackage {
             // Feature
 
             void createFeatureTable(const Schema& schema);
+
+            void createFeatureLayer(const Schema& schema, const Bounds& bounds);
 
             void addFeature(std::string name, const Feature& feature);
 

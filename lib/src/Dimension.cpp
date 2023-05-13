@@ -26,6 +26,18 @@ namespace geopackage {
             return dimension == Dimension::TwoMeasured || dimension == Dimension::ThreeMeasured;
         }
 
+        Dimension getDimension(bool hasZ, bool hasM) {
+            if (hasZ && hasM) {
+                return Dimension::ThreeMeasured;
+            } else if (hasZ) {
+                return Dimension::Three;
+            } else if (hasM) {
+                return Dimension::TwoMeasured;
+            } else {
+                return Dimension::Two;
+            }
+        }
+
     }
 
     std::ostream& operator << (std::ostream& os, const Dimension& dimension) {

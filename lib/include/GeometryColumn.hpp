@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "GeometryType.hpp"
+#include "Dimension.hpp"
 
 namespace geopackage {
 
@@ -13,18 +14,19 @@ namespace geopackage {
             std::string columnName;
             GeometryType geometryType;
             int srsId;
-            bool z;
-            bool m;
+            Dimension dimension;
                 
         public:
 
-            GeometryColumn(std::string tableName, std::string columnName, GeometryType geometryType, int srsId, bool hasZ, bool hasM);
+            GeometryColumn(std::string tableName, std::string columnName, GeometryType geometryType, int srsId, Dimension dimension);
 
             std::string getTableName() const;
 
             std::string getColumnName() const;
 
             GeometryType getGeometryType() const;
+
+            Dimension getDimension() const;
 
             int getSrsId() const;
 

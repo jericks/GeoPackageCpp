@@ -2,8 +2,8 @@
 
 namespace geopackage {
 
-    GeometryColumn::GeometryColumn(std::string tableName, std::string columnName, GeometryType geometryType, int srsId, bool hasZ, bool hasM) :
-        tableName(tableName), columnName(columnName), geometryType(geometryType), srsId(srsId), z(hasZ), m(hasM) {}
+    GeometryColumn::GeometryColumn(std::string tableName, std::string columnName, GeometryType geometryType, int srsId, Dimension dimension) :
+        tableName(tableName), columnName(columnName), geometryType(geometryType), srsId(srsId), dimension(dimension) {}    
 
     std::string GeometryColumn::getTableName() const {
         return tableName;
@@ -21,20 +21,23 @@ namespace geopackage {
         return srsId;
     }
 
+    Dimension GeometryColumn::getDimension() const {
+        return dimension;
+    }
+
     bool GeometryColumn::hasZ() const {
-        return z;
+        return dimension::hasZ(dimension);
     }
 
     bool GeometryColumn::hasM() const {
-        return m;
+        return dimension::hasM(dimension);
     }
 
     std::ostream& operator << (std::ostream& os, const GeometryColumn& e) {
         os << "GEOMETRYCOLUMN (tableName = " << e.getTableName() << ", columnName = " << e.getColumnName() 
             << ", geometryType = " << geometrytype::toString(e.getGeometryType())  
             << ", srsId = " << e.getSrsId()  
-            << ", hasZ = " << e.hasZ()
-            << ", hasM = " << e.hasM()
+            << ", dimension = " << dimension::toString(e.getDimension())
             << ")";
         return os;
     }

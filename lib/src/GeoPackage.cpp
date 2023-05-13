@@ -460,7 +460,8 @@ namespace geopackage {
                 int srs_id = query.getColumn(3).getInt();
                 bool z = query.getColumn(4).getInt();
                 bool m = query.getColumn(5).getInt();
-                return GeometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, z, m};
+                Dimension dimension = dimension::getDimension(z, m);
+                return GeometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, dimension};
             }
         }
         catch (std::exception& e) {
@@ -479,7 +480,8 @@ namespace geopackage {
                 int srs_id = query.getColumn(3).getInt();
                 bool z = query.getColumn(4).getInt();
                 bool m = query.getColumn(5).getInt();
-                GeometryColumn geometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, z, m};
+                Dimension dimension = dimension::getDimension(z, m);
+                GeometryColumn geometryColumn{table_name, column_name, geometrytype::getGeometryType(geometry_type_name), srs_id, dimension};
                 func(geometryColumn);
             }
         }
@@ -1102,6 +1104,38 @@ namespace geopackage {
         catch (std::exception& e) {
             std::cout << "Error creating feature table for " << schema << ": " << e.what() << std::endl;
         }
+    }
+
+    std::string GeoPackage::now() {
+        using namespace std::chrono;
+        auto now = system_clock::now();
+        auto ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
+        auto timer = system_clock::to_time_t(now);
+        std::tm bt = *std::gmtime(&timer);
+        std::ostringstream oss;
+        oss << std::put_time(&bt, "%Y-%m-%dT%H:%M:%S");
+        oss << '.' << std::setfill('0') << std::setw(3) << ms.count() << "Z";
+        return oss.str();
+    }
+
+    void GeoPackage::createFeatureLayer(const Schema& schema, const Bounds& bounds) {
+        addContent(geopackage::Content{
+            schema.getName(), 
+            geopackage::DataType::FEATURES, 
+            schema.getName(), 
+            schema.getName(), 
+            now(), 
+            bounds, 
+            schema.getGeometryField().getSrsId()
+        });
+        addGeometryColumn(geopackage::GeometryColumn{
+            schema.getName(), 
+            schema.getGeometryField().getName(), 
+            schema.getGeometryField().getType(), 
+            schema.getGeometryField().getSrsId(), 
+            schema.getGeometryField().getDimension()
+        });
+        createFeatureTable(schema);
     }
 
     void GeoPackage::addFeature(std::string name, const Feature& feature) {
