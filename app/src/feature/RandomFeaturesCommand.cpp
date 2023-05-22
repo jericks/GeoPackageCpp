@@ -20,8 +20,10 @@ void RandomFeaturesCommand::execute(std::istream& istream, std::ostream& ostream
     gpkg.addGeometryColumn(geopackage::GeometryColumn{
         options.layerName, 
         "geometry", 
-        geopackage::GeometryType::POINT, 4326, true, false}
-    );
+        geopackage::GeometryType::POINT, 
+        4326, 
+        geopackage::Dimension::Two
+    });
     geopackage::Schema schema{
         options.layerName,
         "id",

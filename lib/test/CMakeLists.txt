@@ -2,6 +2,7 @@ add_executable(tests
     BinaryTypeTest.cpp
     BytesTest.cpp
     BoundsTest.cpp
+    DimensionTest.cpp
     FeatureTest.cpp
     FieldTest.cpp
     FieldTypeTest.cpp

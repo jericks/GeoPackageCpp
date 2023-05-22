@@ -12,7 +12,7 @@ TEST(GeoPackageCliTests, GetGeometryColumnCommand) {
   geopackage::GeoPackage gpkg { fileName };
   EXPECT_TRUE(std::filesystem::exists(fileName));
 
-  gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "geom", geopackage::GeometryType::POINT, 4326, false, false });
+  gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "geom", geopackage::GeometryType::POINT, 4326, geopackage::dimension::getDimension(false, false) });
   
   CLI::App app{"GeoPackageCPP CLI"};  
 

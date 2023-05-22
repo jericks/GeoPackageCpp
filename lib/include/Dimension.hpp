@@ -22,6 +22,8 @@ namespace geopackage {
 
         Dimension getDimension(bool hasZ, bool hasM);
 
+        Dimension fromString(std::string str);
+
     }
 
     std::ostream& operator << (std::ostream& os, const Dimension& dimensione);

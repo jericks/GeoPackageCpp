@@ -18,7 +18,6 @@ void CreateGeometryColumnCommand::execute(std::istream& istream, std::ostream& o
         options.columnName,
         geopackage::geometrytype::getGeometryType(options.geometryType),
         options.srsId,
-        options.z,
-        options.m
+        geopackage::dimension::getDimension(options.z, options.m)
     });
 }

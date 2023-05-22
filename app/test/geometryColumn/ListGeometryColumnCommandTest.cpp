@@ -12,8 +12,8 @@ TEST(GeoPackageCliTests, ListGeometryColumnCommand) {
   geopackage::GeoPackage gpkg { fileName };
   EXPECT_TRUE(std::filesystem::exists(fileName));
 
-  gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "geom", geopackage::GeometryType::POINT, 4326, false, false });
-  gpkg.addGeometryColumn(geopackage::GeometryColumn{"rivers", "the_geom", geopackage::GeometryType::LINESTRING, 3857, false, true });
+  gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "geom", geopackage::GeometryType::POINT, 4326, geopackage::dimension::getDimension(false, false) });
+  gpkg.addGeometryColumn(geopackage::GeometryColumn{"rivers", "the_geom", geopackage::GeometryType::LINESTRING, 3857, geopackage::dimension::getDimension(false, true) });
   
   CLI::App app{"GeoPackageCPP CLI"};  
 

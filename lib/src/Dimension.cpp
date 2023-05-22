@@ -38,6 +38,20 @@ namespace geopackage {
             }
         }
 
+        Dimension fromString(std::string str) {
+            if (str == "2D") {
+                return Dimension::Two;
+            } else if (str == "3D") {
+                return Dimension::Three;
+            } else if (str == "2DM") {
+                return Dimension::TwoMeasured;
+            } else if (str == "3DM") {
+                return Dimension::ThreeMeasured;
+            } else {
+                return Dimension::Two;
+            }
+        }
+
     }
 
     std::ostream& operator << (std::ostream& os, const Dimension& dimension) {
