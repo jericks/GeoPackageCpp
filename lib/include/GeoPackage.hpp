@@ -51,6 +51,8 @@ namespace geopackage {
 
             bool isImage(std::string extension);
 
+            bool doesTableExist(std::string name);
+
             std::string now();
 
         public:

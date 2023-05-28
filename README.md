@@ -638,12 +638,30 @@ tiles
 
 **Feature Commands**
 
+
+Create a Feature layer.
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Feature layer name       | Yes      |
+| -i   | ID Field Name            | Yes      |
+| -c   | Geometry Field Name      | Yes      |
+| -g   | Geometry Type            | Yes      |
+| -d   | Geometry Dimension       | Yes      |
+| -s   | SRS ID                   | Yes      |
+| -e   | Field (name and type)    | Yes      |
+
+```bash
+% geopackage-cli feature-create -f data.gpkg -n cities -i id -c geom -g point -d 2d -s 4326 -e name string -e population double
+```
+
 Create a Feature layer with Random Points.
 
 | Flag | Description              | Required |
 | ---- | ------------------------ | -------- |
 | -f   | GeoPackage file name     | Yes      |
-| -l   | Tile layer name          | Yes      |
+| -l   | Feature layer name       | Yes      |
 | -n   | Number of points         | Yes      |
 
 ```bash

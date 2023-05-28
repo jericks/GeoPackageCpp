@@ -49,6 +49,7 @@
 #include "feature/RandomFeaturesCommand.hpp"
 #include "feature/ListFeatureLayersCommand.hpp"
 #include "feature/CountFeaturesCommand.hpp"
+#include "feature/CreateFeatureLayerCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -180,6 +181,9 @@ int main(int argc, char *argv[]) {
     commands.add(&infoTileCommand);
 
     // Feature
+
+    CreateFeatureLayerCommand createFeatureLayerCommand(&app);
+    commands.add(&createFeatureLayerCommand);
 
     ListFeatureLayersCommand listFeatureLayersCommand(&app);
     commands.add(&listFeatureLayersCommand);

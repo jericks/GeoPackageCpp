@@ -1178,8 +1178,20 @@ namespace geopackage {
         return counter;
     }
 
+    bool GeoPackage::doesTableExist(std::string name) {
+        std::string sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + name + "';";
+        try {
+            SQLite::Statement query(db, sql);
+            return query.executeStep();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error checking for table named " << name << ": " << e.what() << std::endl;
+        }
+        return false;
+    }
+
     Schema GeoPackage::getSchema(std::string name) {
-        
+
         std::string key = "id";
         std::vector<Field> fields;
         GeometryType geometryType = GeometryType::GEOMETRY;
@@ -1195,7 +1207,7 @@ namespace geopackage {
         }
 
         try {
-            SQLite::Statement query(db, "PRAGMA table_info('" + name + "') ");
+            SQLite::Statement query(db, "SELECT * FROM pragma_table_info('" + name + "')");
             while (query.executeStep()) {
                 std::string name = query.getColumn(1).getString();
                 std::string type = query.getColumn(2).getString();
@@ -1217,7 +1229,7 @@ namespace geopackage {
     std::vector<std::string> GeoPackage::getColumnNames(std::string table) {
         std::vector<std::string> columnNames;
         try {
-            SQLite::Statement query(db, "PRAGMA table_info('" + table + "') ");
+            SQLite::Statement query(db, "SELECT * FROM pragma_table_info('" + table + "') ");
             while (query.executeStep()) {
                 std::string name = query.getColumn(1).getString();
                 columnNames.push_back(name);
