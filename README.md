@@ -698,3 +698,38 @@ Count features
 ```
 10
 ```
+
+Feature Info
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Feature layer name       | Yes      |
+
+```bash
+% geopackage-cli feature-info -f ~/Projects/geoc/src/test/resources/data.gpkg -n rivers
+```
+
+```
+Information
+-----------
+Name: rivers
+Description: rivers
+SRS ID: 4326
+Bounds: BOUNDS (0, 0, 0, 0)
+# Features: 13
+
+Geometry Column
+---------------
+Name: the_geom
+Type: MultiLineString
+Dimension: 2D
+
+Fields
+------
+Key Field: fid
+scalerank Integer
+featurecla String
+name String
+name_alt String
+```
