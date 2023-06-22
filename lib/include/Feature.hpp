@@ -6,7 +6,6 @@
 #include <any>
 #include "Geometry.hpp"
 
-
 namespace geopackage {
 
     class Feature {

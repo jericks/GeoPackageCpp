@@ -52,13 +52,17 @@ add_library(GeoPackageCppAppLib STATIC
 	src/feature/CountFeaturesCommand.cpp
 	src/feature/CreateFeatureLayerCommand.cpp
 	src/feature/InfoFeatureCommand.cpp
+	src/feature/AddFeatureCommand.cpp
 )
-target_include_directories(GeoPackageCppAppLib PUBLIC "include" "../lib/include" CLI11::CLI11)
+target_include_directories(GeoPackageCppAppLib 
+	PUBLIC "include" "../lib/include" 
+	PUBLIC CLI11::CLI11 cpp-peglib::cpp-peglib
+)
 target_compile_features(GeoPackageCppAppLib PUBLIC cxx_std_17)
-target_link_libraries(GeoPackageCppAppLib PRIVATE GeoPackageCppLib SQLiteCpp::SQLiteCpp CLI11::CLI11)
+target_link_libraries(GeoPackageCppAppLib PUBLIC GeoPackageCppLib SQLiteCpp::SQLiteCpp CLI11::CLI11 cpp-peglib::cpp-peglib)
 
 # Application
 add_executable(geopackage-cli src/App.cpp)
-target_link_libraries(geopackage-cli PRIVATE GeoPackageCppAppLib GeoPackageCppLib SQLiteCpp::SQLiteCpp CLI11::CLI11) 
+target_link_libraries(geopackage-cli PUBLIC GeoPackageCppAppLib GeoPackageCppLib SQLiteCpp::SQLiteCpp CLI11::CLI11 cpp-peglib::cpp-peglib) 
 
 add_subdirectory(test)

@@ -51,6 +51,7 @@
 #include "feature/CountFeaturesCommand.hpp"
 #include "feature/CreateFeatureLayerCommand.hpp"
 #include "feature/InfoFeatureCommand.hpp"
+#include "feature/AddFeatureCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -197,6 +198,9 @@ int main(int argc, char *argv[]) {
 
     InfoFeatureCommand infoFeatureCommand(&app);
     commands.add(&infoFeatureCommand);
+
+    AddFeatureCommand addFeatureCommand(&app);
+    commands.add(&addFeatureCommand);
 
     CLI11_PARSE(app, argc, argv);
 

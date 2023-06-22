@@ -44,7 +44,7 @@ set(GeoPackageCppLib_SOURCES
 add_library(GeoPackageCppLib STATIC ${GeoPackageCppLib_SOURCES})
 
 target_include_directories(GeoPackageCppLib
-	PUBLIC include SQLiteCpp::SQLiteCpp
+	PUBLIC include SQLiteCpp::SQLiteCpp cpp-peglib::cpp-peglib
 	PRIVATE src
 )
 target_link_libraries(GeoPackageCppLib SQLiteCpp::SQLiteCpp cpp-peglib::cpp-peglib)

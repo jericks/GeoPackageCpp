@@ -16,10 +16,6 @@
 namespace geopackage {
 
     class WKTReader {
-        
-        private:
-
-            
 
         public:
 

@@ -733,3 +733,16 @@ featurecla String
 name String
 name_alt String
 ```
+
+Feature Add
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Feature layer name       | Yes      |
+| -g   | Geometry                 | Yes      |
+| -v   | Attribute Value          | Yes      |
+
+```bash
+% geopackage-cli feature-add -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities -g "POINT(-122.3204, 47.6024)" -v name Seattle -v population 733919
+```
