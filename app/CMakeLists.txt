@@ -53,6 +53,7 @@ add_library(GeoPackageCppAppLib STATIC
 	src/feature/CreateFeatureLayerCommand.cpp
 	src/feature/InfoFeatureCommand.cpp
 	src/feature/AddFeatureCommand.cpp
+	src/feature/DeleteAllFeatureCommand.cpp
 )
 target_include_directories(GeoPackageCppAppLib 
 	PUBLIC "include" "../lib/include" 

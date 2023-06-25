@@ -746,3 +746,14 @@ Feature Add
 ```bash
 % geopackage-cli feature-add -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities -g "POINT(-122.3204, 47.6024)" -v name Seattle -v population 733919
 ```
+
+Feature Delete All
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Feature layer name       | Yes      |
+
+```bash
+% geopackage-cli feature-delete-all -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities
+```
