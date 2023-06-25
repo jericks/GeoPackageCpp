@@ -52,6 +52,8 @@
 #include "feature/CreateFeatureLayerCommand.hpp"
 #include "feature/InfoFeatureCommand.hpp"
 #include "feature/AddFeatureCommand.hpp"
+#include "feature/DeleteAllFeatureCommand.hpp"
+#include "feature/DeleteFeatureCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -201,6 +203,12 @@ int main(int argc, char *argv[]) {
 
     AddFeatureCommand addFeatureCommand(&app);
     commands.add(&addFeatureCommand);
+
+    DeleteAllFeatureCommand deleteAllFeatureCommand(&app);
+    commands.add(&deleteAllFeatureCommand);
+
+    DeleteFeatureCommand deleteFeatureCommand(&app);
+    commands.add(&deleteFeatureCommand);
 
     CLI11_PARSE(app, argc, argv);
 

@@ -757,3 +757,15 @@ Feature Delete All
 ```bash
 % geopackage-cli feature-delete-all -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities
 ```
+
+Feature Delete
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Feature layer name       | Yes      |
+| -i   | Layer ID                 | Yes      |
+
+```bash
+% geopackage-cli feature-delete -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities -i 12
+```
