@@ -783,3 +783,21 @@ Feature Delete
 ```bash
 % geopackage-cli feature-delete -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities -i 12
 ```
+
+Feature Get
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Feature layer name       | Yes      |
+| -i   | Layer ID                 | Yes      |
+
+```bash
+% geopackage-cli feature-get -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities -i 12
+```
+
+```
+Geometry: POINT (46.8163175 -100.7634965)
+name: Bismarck
+population: 73,622
+```
