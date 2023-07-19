@@ -56,6 +56,7 @@
 #include "feature/DeleteFeatureCommand.hpp"
 #include "feature/UpdateFeatureCommand.hpp"
 #include "feature/GetFeatureCommand.hpp"
+#include "feature/ListFeatureCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -217,6 +218,9 @@ int main(int argc, char *argv[]) {
 
     GetFeatureCommand getFeatureCommand(&app);
     commands.add(&getFeatureCommand);
+
+    ListFeatureCommand listFeatureCommand(&app);
+    commands.add(&listFeatureCommand);
 
     CLI11_PARSE(app, argc, argv);
 

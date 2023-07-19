@@ -53,6 +53,7 @@ add_executable(cli_tests
     feature/DeleteFeatureCommandTest.cpp
     feature/UpdateFeatureCommandTest.cpp
     feature/GetFeatureCommandTest.cpp
+    feature/ListFeatureCommandTest.cpp
 )   
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib

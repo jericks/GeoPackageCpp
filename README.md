@@ -801,3 +801,20 @@ Geometry: POINT (46.8163175 -100.7634965)
 name: Bismarck
 population: 73,622
 ```
+
+List Features
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Feature layer name       | Yes      |
+
+```bash
+% geopackage-cli features -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities
+```
+
+```
+"geometry","id","name","population"
+"POINT (-122 47)","1","One","737000"
+"POINT (-123 48)","2","Two","123"
+```
