@@ -39,6 +39,7 @@ set(GeoPackageCppLib_SOURCES
 	src/WKBReader.cpp
 	src/WKTReader.cpp
 	src/WKTWriter.cpp
+	src/LayerStyle.cpp
 )
 
 add_library(GeoPackageCppLib STATIC ${GeoPackageCppLib_SOURCES})

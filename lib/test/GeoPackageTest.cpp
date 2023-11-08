@@ -1356,3 +1356,102 @@ TEST(GeoPackageLibTests, GeoPackage_Feature_DeleteAll) {
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
+
+// Layer Style
+
+TEST(GeoPackageLibTests, GeoPackage_Add_LayerStyle) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    auto layerStyle = geopackage::LayerStyle {
+        "", "", "cities", "geom", "cities_default", "", "<sld></sld>", true, "The default cities style", "admin", ""
+    };
+
+    gpkg.addLayerStyle(layerStyle);
+    std::optional<geopackage::LayerStyle> ls = gpkg.getLayerStyle(1);
+    EXPECT_TRUE(ls.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Update_LayerStyle) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addLayerStyle(geopackage::LayerStyle {
+        "", "", "cities", "geom", "cities_default", "", "<sld></sld>", true, "The default cities style", "admin", ""
+    });
+    std::optional<geopackage::LayerStyle> s1 = geopackage.getLayerStyle(1);
+    EXPECT_TRUE(s1.has_value());
+    EXPECT_EQ("cities", s1.value().getTableName());
+
+    geopackage.updateLayerStyle(geopackage::LayerStyle {
+        1, "", "", "places", "geom", "cities_default", "", "<sld></sld>", true, "The default cities style", "admin", "", ""
+    });
+    std::optional<geopackage::LayerStyle> s2 = geopackage.getLayerStyle(1);
+    EXPECT_TRUE(s2.has_value());
+    EXPECT_EQ("places", s2.value().getTableName());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Get_LayerStyle) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    auto layerStyle = geopackage::LayerStyle {
+        "", "", "cities", "geom", "cities_default", "", "<sld></sld>", true, "The default cities style", "admin", ""
+    };
+
+    gpkg.addLayerStyle(layerStyle);
+    std::optional<geopackage::LayerStyle> ls = gpkg.getLayerStyle(1);
+    EXPECT_TRUE(ls.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Delete_LayerStyle) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    auto layerStyle = geopackage::LayerStyle {
+        "", "", "cities", "geom", "cities_default", "", "<sld></sld>", true, "The default cities style", "admin", ""
+    };
+
+    gpkg.addLayerStyle(layerStyle);
+    std::optional<geopackage::LayerStyle> ls = gpkg.getLayerStyle(1);
+    EXPECT_TRUE(ls.has_value());
+
+    gpkg.deleteLayerStyle(layerStyle);
+
+    std::optional<geopackage::LayerStyle> lsAfterDelete = gpkg.getLayerStyle(1);
+    EXPECT_TRUE(lsAfterDelete.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Get_LayerStyles) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.addLayerStyle(geopackage::LayerStyle {
+        "", "", "cities", "geom", "cities_default", "", "<sld></sld>", true, "The default cities style", "admin", ""
+    });
+    gpkg.addLayerStyle(geopackage::LayerStyle {
+        "", "", "riviers", "geom", "blue_rivers", "", "<sld></sld>", true, "The default rivers style", "admin", ""
+    });
+    
+    int counter = 0;    
+    gpkg.layerStyles([&](geopackage::LayerStyle& s) {
+        std::cout << s << "\n";
+        counter++;
+    });
+    EXPECT_EQ(2, counter);
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}

@@ -77,6 +77,21 @@ namespace geopackage {
                 scope TEXT NOT NULL,
                 CONSTRAINT ge_tce UNIQUE (table_name, column_name, extension_name)
             );)");
+            db.exec(R"(CREATE TABLE IF NOT EXISTS layer_styles ( 
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                f_table_catalog VARCHAR(256),
+                f_table_schema VARCHAR(256),
+                f_table_name VARCHAR(256),
+                f_geometry_column VARCHAR(256),
+                styleName VARCHAR(30),
+                styleQML TEXT,
+                styleSLD TEXT,
+                useAsDefault BOOLEAN,
+                description VARCHAR,
+                owner VARCHAR(30),
+                ui VARCHAR(30),
+                update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );)");
             transaction.commit();
         }
         catch (std::exception& e) {
@@ -1473,6 +1488,134 @@ namespace geopackage {
         }
         catch (std::exception& e) {
             std::cout << "Error getting features for " << name << ": " << e.what() << std::endl;
+        }    
+    }
+
+    // Layer Styles
+
+    //https://github.com/geoscript/geoscript-groovy/blob/master/src/main/groovy/geoscript/style/DatabaseStyleRepository.groovy
+
+    void GeoPackage::addLayerStyle(const LayerStyle& t) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement insert(db, "INSERT INTO layer_styles (f_table_catalog, f_table_schema, f_table_name, f_geometry_column, styleName, styleSLD, styleQML, useAsDefault, description, owner, ui) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+            insert.bind(1, t.getTableCatalog());
+            insert.bind(2, t.getTableSchema());
+            insert.bind(3, t.getTableName());
+            insert.bind(4, t.getGeometryColumn());
+            insert.bind(5, t.getStyleName());
+            insert.bind(6, t.getStyleSLD());
+            insert.bind(7, t.getStyleQML());
+            insert.bind(8, t.getUseAsDefault());
+            insert.bind(9, t.getDescription());
+            insert.bind(10, t.getOwner());
+            insert.bind(11, t.getUi());
+            insert.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error adding a SpatialRef: " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::updateLayerStyle(const LayerStyle& t) {
+        try {
+            SQLite::Database db(fileName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+            SQLite::Transaction transaction(db);
+            SQLite::Statement update(db, "UPDATE layer_styles SET f_table_catalog = ?, f_table_schema = ?, f_table_name = ?, f_geometry_column = ?, styleName = ?, styleSLD = ?, styleQML = ?, useAsDefault = ?, description = ?, owner = ?, ui = ? WHERE id = ?");
+            update.bind(1, t.getTableCatalog());
+            update.bind(2, t.getTableSchema());
+            update.bind(3, t.getTableName());
+            update.bind(4, t.getGeometryColumn());
+            update.bind(5, t.getStyleName());
+            update.bind(6, t.getStyleSLD());
+            update.bind(7, t.getStyleQML());
+            update.bind(8, t.getUseAsDefault());
+            update.bind(9, t.getDescription());
+            update.bind(10, t.getOwner());
+            update.bind(11, t.getUi());
+            update.bind(12, t.getId());
+            update.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error updating a SpatialRef: " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::setLayerStyle(const LayerStyle& s) {
+        auto layerStyle = getLayerStyle(s.getId());
+        if (layerStyle) {
+            updateLayerStyle(s);
+        } else {
+            addLayerStyle(s);
+        }
+    }
+
+    void GeoPackage::deleteLayerStyle(const LayerStyle& s) {
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement insert(db, "DELETE FROM layer_styles WHERE id = ?");
+            insert.bind(1, s.getId());
+            insert.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error deleting a LayerStyle: " << e.what() << std::endl;
+        }    
+    }
+
+    std::optional<LayerStyle> GeoPackage::getLayerStyle(int id) {
+        try {
+            SQLite::Database db(fileName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+            SQLite::Statement query(db, "SELECT id, f_table_catalog, f_table_schema, f_table_name, f_geometry_column, styleName, styleSLD,styleQML,useAsDefault, description, owner,ui,update_time FROM layer_styles WHERE id = ?");
+            query.bind(1, id);
+            if (query.executeStep()) {
+                int id = query.getColumn(0).getInt();
+                std::string tableCatalog = query.getColumn(1).getString();
+                std::string tableSchema = query.getColumn(2).getString();
+                std::string tableName = query.getColumn(3).getString();
+                std::string geometryColumn = query.getColumn(4).getString();
+                std::string styleName = query.getColumn(5).getString();
+                std::string styleSLD = query.getColumn(6).getString();
+                std::string styleQML = query.getColumn(7).getString();
+                bool useAsDefault = query.getColumn(8).getInt();
+                std::string description = query.getColumn(9).getString();
+                std::string owner = query.getColumn(10).getString();
+                std::string ui = query.getColumn(11).getString();
+                std::string updateTime = query.getColumn(12).getString();
+                return LayerStyle{id, tableCatalog, tableSchema, tableName, geometryColumn, styleName, styleQML, styleSLD, useAsDefault, description, owner, ui, updateTime };
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting a LayerStyle: " << e.what() << std::endl;
+        }    
+        return std::nullopt;
+    }
+
+    void GeoPackage::layerStyles(std::function<void(LayerStyle& s)> f) {
+        try {
+            SQLite::Statement query(db, "SELECT id,f_table_catalog, f_table_schema, f_table_name, f_geometry_column, styleName, styleSLD, styleQML, useAsDefault, description, owner, ui, update_time FROM layer_styles");
+            while (query.executeStep()) {
+                int id = query.getColumn(0).getInt();
+                std::string tableCatalog = query.getColumn(1).getString();
+                std::string tableSchema = query.getColumn(2).getString();
+                std::string tableName = query.getColumn(3).getString();
+                std::string geometryColumn = query.getColumn(4).getString();
+                std::string styleName = query.getColumn(5).getString();
+                std::string styleSLD = query.getColumn(6).getString();
+                std::string styleQML = query.getColumn(7).getString();
+                bool useAsDefault = query.getColumn(8).getInt();
+                std::string description = query.getColumn(9).getString();
+                std::string owner = query.getColumn(10).getString();
+                std::string ui = query.getColumn(11).getString();
+                std::string updateTime = query.getColumn(12).getString();
+                LayerStyle layerStyle{id, tableCatalog, tableSchema, tableName, geometryColumn, styleName, styleQML, styleSLD, useAsDefault, description, owner, ui, updateTime };
+                f(layerStyle);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting LayerStyles: " << e.what() << std::endl;
         }    
     }
 

@@ -22,6 +22,7 @@
 #include "Tile.hpp"
 #include "TileMatrix.hpp"
 #include "TileMatrixSet.hpp"
+#include "LayerStyle.hpp"
 
 namespace geopackage {
 
@@ -210,6 +211,22 @@ namespace geopackage {
             std::optional<Feature> getFeature(std::string name, int id);
 
             void features(std::string name, std::function<void(Feature& feature)> f);
+
+            // Layer Styles
+
+            void addLayerStyle(const LayerStyle& t);
+
+            void updateLayerStyle(const LayerStyle& t);
+
+            void setLayerStyle(const LayerStyle& s);
+
+            void deleteLayerStyle(const LayerStyle& s);
+
+            std::optional<LayerStyle> getLayerStyle(int id);   
+
+            // @TODO Get layerStyles for layer name
+
+            void layerStyles(std::function<void(LayerStyle& s)> f);
 
     };
 
