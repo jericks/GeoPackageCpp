@@ -54,7 +54,6 @@ TEST(GeoPackageCliTests, ListFeatureCommand) {
   cmd.execute(instream, outstream);
 
   std::string result = outstream.str();
-  std::cout << result;
   ASSERT_NE(std::string::npos, result.find("\"geometry\",\"id\",\"name\",\"population\""));
   ASSERT_NE(std::string::npos, result.find("\"POINT (-122 47)\",\"1\",\"One\",\"737000\""));
   ASSERT_NE(std::string::npos, result.find("\"POINT (-123 48)\",\"2\",\"Two\",\"123\""));
