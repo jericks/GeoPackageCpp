@@ -1493,8 +1493,6 @@ namespace geopackage {
 
     // Layer Styles
 
-    //https://github.com/geoscript/geoscript-groovy/blob/master/src/main/groovy/geoscript/style/DatabaseStyleRepository.groovy
-
     void GeoPackage::addLayerStyle(const LayerStyle& t) {
         try {
             SQLite::Transaction transaction(db);
@@ -1593,9 +1591,64 @@ namespace geopackage {
         return std::nullopt;
     }
 
+    std::optional<LayerStyle> GeoPackage::getDefaultLayerStyle(std::string name) {
+        try {
+            SQLite::Database db(fileName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+            SQLite::Statement query(db, "SELECT id, f_table_catalog, f_table_schema, f_table_name, f_geometry_column, styleName, styleSLD,styleQML,useAsDefault, description, owner,ui,update_time FROM layer_styles WHERE f_table_name = ? AND useAsDefault = true");
+            query.bind(1, name);
+            if (query.executeStep()) {
+                int id = query.getColumn(0).getInt();
+                std::string tableCatalog = query.getColumn(1).getString();
+                std::string tableSchema = query.getColumn(2).getString();
+                std::string tableName = query.getColumn(3).getString();
+                std::string geometryColumn = query.getColumn(4).getString();
+                std::string styleName = query.getColumn(5).getString();
+                std::string styleSLD = query.getColumn(6).getString();
+                std::string styleQML = query.getColumn(7).getString();
+                bool useAsDefault = query.getColumn(8).getInt();
+                std::string description = query.getColumn(9).getString();
+                std::string owner = query.getColumn(10).getString();
+                std::string ui = query.getColumn(11).getString();
+                std::string updateTime = query.getColumn(12).getString();
+                return LayerStyle{id, tableCatalog, tableSchema, tableName, geometryColumn, styleName, styleQML, styleSLD, useAsDefault, description, owner, ui, updateTime };
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting a LayerStyle: " << e.what() << std::endl;
+        }    
+        return std::nullopt;
+    }
+
     void GeoPackage::layerStyles(std::function<void(LayerStyle& s)> f) {
         try {
             SQLite::Statement query(db, "SELECT id,f_table_catalog, f_table_schema, f_table_name, f_geometry_column, styleName, styleSLD, styleQML, useAsDefault, description, owner, ui, update_time FROM layer_styles");
+            while (query.executeStep()) {
+                int id = query.getColumn(0).getInt();
+                std::string tableCatalog = query.getColumn(1).getString();
+                std::string tableSchema = query.getColumn(2).getString();
+                std::string tableName = query.getColumn(3).getString();
+                std::string geometryColumn = query.getColumn(4).getString();
+                std::string styleName = query.getColumn(5).getString();
+                std::string styleSLD = query.getColumn(6).getString();
+                std::string styleQML = query.getColumn(7).getString();
+                bool useAsDefault = query.getColumn(8).getInt();
+                std::string description = query.getColumn(9).getString();
+                std::string owner = query.getColumn(10).getString();
+                std::string ui = query.getColumn(11).getString();
+                std::string updateTime = query.getColumn(12).getString();
+                LayerStyle layerStyle{id, tableCatalog, tableSchema, tableName, geometryColumn, styleName, styleQML, styleSLD, useAsDefault, description, owner, ui, updateTime };
+                f(layerStyle);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting LayerStyles: " << e.what() << std::endl;
+        }    
+    }
+
+    void GeoPackage::layerStylesForLayer(std::string name, std::function<void(LayerStyle& s)> f) {
+        try {
+            SQLite::Statement query(db, "SELECT id, f_table_catalog, f_table_schema, f_table_name, f_geometry_column, styleName, styleSLD, styleQML, useAsDefault, description, owner, ui, update_time FROM layer_styles WHERE f_table_name = ?");
+            query.bind(1, name);
             while (query.executeStep()) {
                 int id = query.getColumn(0).getInt();
                 std::string tableCatalog = query.getColumn(1).getString();

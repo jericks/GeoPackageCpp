@@ -224,9 +224,11 @@ namespace geopackage {
 
             std::optional<LayerStyle> getLayerStyle(int id);   
 
-            // @TODO Get layerStyles for layer name
+            std::optional<LayerStyle> getDefaultLayerStyle(std::string tableName);
 
             void layerStyles(std::function<void(LayerStyle& s)> f);
+
+            void layerStylesForLayer(std::string tableName, std::function<void(LayerStyle& s)> f);
 
     };
 

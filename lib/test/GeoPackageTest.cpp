@@ -1413,6 +1413,30 @@ TEST(GeoPackageLibTests, GeoPackage_Get_LayerStyle) {
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
 
+TEST(GeoPackageLibTests, GeoPackage_Get_Default_LayerStyle) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.addLayerStyle(geopackage::LayerStyle {
+        "", "", "cities", "geom", "cities_default", "", "<sld></sld>", true, "The default cities style", "admin", ""
+    });
+    gpkg.addLayerStyle(geopackage::LayerStyle {
+        "", "", "cities", "geom", "cities_blue", "", "<sld></sld>", false, "The b clueities style", "admin", ""
+    });
+    gpkg.addLayerStyle(geopackage::LayerStyle {
+        "", "", "riviers", "geom", "rivers_blue", "", "<sld></sld>", false, "The blue rivers style", "admin", ""
+    });
+    std::optional<geopackage::LayerStyle> ls = gpkg.getDefaultLayerStyle("cities");
+    EXPECT_TRUE(ls.has_value());
+    EXPECT_EQ("cities", ls->getTableName());
+    EXPECT_EQ("cities_default", ls->getStyleName());
+
+    EXPECT_FALSE(gpkg.getDefaultLayerStyle("rivers").has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
 TEST(GeoPackageLibTests, GeoPackage_Delete_LayerStyle) {
     const std::string fileName = "data.gpkg";
     geopackage::GeoPackage gpkg { fileName };
@@ -1448,10 +1472,39 @@ TEST(GeoPackageLibTests, GeoPackage_Get_LayerStyles) {
     
     int counter = 0;    
     gpkg.layerStyles([&](geopackage::LayerStyle& s) {
-        std::cout << s << "\n";
         counter++;
     });
     EXPECT_EQ(2, counter);
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Get_LayerStyles_For_Table) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.addLayerStyle(geopackage::LayerStyle {
+        "", "", "cities", "geom", "cities_default", "", "<sld></sld>", true, "The default cities style", "admin", ""
+    });
+    gpkg.addLayerStyle(geopackage::LayerStyle {
+        "", "", "cities", "geom", "cities_red", "", "<sld></sld>", true, "The red cities style", "admin", ""
+    });
+    gpkg.addLayerStyle(geopackage::LayerStyle {
+        "", "", "rivers", "geom", "blue_rivers", "", "<sld></sld>", true, "The default rivers style", "admin", ""
+    });
+    
+    int counter = 0;    
+    gpkg.layerStylesForLayer("cities", [&](geopackage::LayerStyle& s) {
+        counter++;
+    });
+    EXPECT_EQ(2, counter);
+
+    counter = 0;    
+    gpkg.layerStylesForLayer("rivers", [&](geopackage::LayerStyle& s) {
+        counter++;
+    });
+    EXPECT_EQ(1, counter);
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
