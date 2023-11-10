@@ -58,6 +58,8 @@
 #include "feature/GetFeatureCommand.hpp"
 #include "feature/ListFeatureCommand.hpp"
 
+#include "layerStyle/ListLayerStyleCommand.hpp"
+
 int main(int argc, char *argv[]) {
 
     CLI::App app{"GeoPackage CLI"};
@@ -221,6 +223,11 @@ int main(int argc, char *argv[]) {
 
     ListFeatureCommand listFeatureCommand(&app);
     commands.add(&listFeatureCommand);
+
+    // Layer Style
+
+    ListLayerStyleCommand listLayerStyleCommand(&app);
+    commands.add(&listLayerStyleCommand);
 
     CLI11_PARSE(app, argc, argv);
 

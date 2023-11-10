@@ -818,3 +818,48 @@ List Features
 "POINT (-122 47)","1","One","737000"
 "POINT (-123 48)","2","Two","123"
 ```
+
+**Layer Style Commands**
+
+List Layer Styles
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | Layer name               | Yes      |
+
+List all Layer Styles:
+
+```bash
+% geopackage-cli layerstyle-list -f ~/Projects/geoc/src/test/resources/data.gpkg
+```
+
+```
+Name: cities
+Style Name: cities_default
+Description: The default cities style
+
+Name: cities
+Style Name: cities_red
+Description: The red cities style
+
+Name: rivers
+Style Name: blue_rivers
+Description: The default rivers style
+```
+
+List all Layer Styles for a Layer:
+
+```bash
+% geopackage-cli layerstyle-list -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities
+```
+
+``` 
+Name: cities
+Style Name: cities_default
+Description: The default cities style
+
+Name: cities
+Style Name: cities_red
+Description: The red cities style
+```
