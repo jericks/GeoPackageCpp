@@ -55,7 +55,7 @@ add_executable(cli_tests
     feature/GetFeatureCommandTest.cpp
     feature/ListFeatureCommandTest.cpp
     # LayerStyle
-    layerStyle/ListLayerStyleCommandTest.include(CPackPackageMaker)
+    layerStyle/ListLayerStyleCommandTest.cpp
 )   
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib
