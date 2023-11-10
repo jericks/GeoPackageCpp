@@ -59,6 +59,7 @@
 #include "feature/ListFeatureCommand.hpp"
 
 #include "layerStyle/ListLayerStyleCommand.hpp"
+#include "layerStyle/GetLayerStyleCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -228,6 +229,9 @@ int main(int argc, char *argv[]) {
 
     ListLayerStyleCommand listLayerStyleCommand(&app);
     commands.add(&listLayerStyleCommand);
+
+    GetLayerStyleCommand getLayerStyleCommand(&app);
+    commands.add(&getLayerStyleCommand);
 
     CLI11_PARSE(app, argc, argv);
 

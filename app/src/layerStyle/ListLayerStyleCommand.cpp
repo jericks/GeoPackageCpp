@@ -9,6 +9,7 @@ ListLayerStyleCommand::ListLayerStyleCommand(CLI::App* app): Command ("layerstyl
 void ListLayerStyleCommand::execute(std::istream& istream, std::ostream& ostream) {
     geopackage::GeoPackage gpkg {options.fileName};
     auto fn = [&](geopackage::LayerStyle& s) {
+        ostream << "ID: " << s.getId() << "\n";
         ostream << "Name: " << s.getTableName() << "\n";
         ostream << "Style Name: " << s.getStyleName() << "\n";
         ostream << "Description: " << s.getDescription() << "\n";
