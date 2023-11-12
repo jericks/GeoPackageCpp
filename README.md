@@ -871,10 +871,9 @@ Get a Layer Style by ID
 | -f   | GeoPackage file name     | Yes      |
 | -i   | ID                       | Yes      |
 
-List all Layer Styles:
 
 ```bash
-% geopackage-cli layerstyle-list -f ~/Projects/geoc/src/test/resources/data.gpkg -i 2
+% geopackage-cli layerstyle-get -f ~/Projects/geoc/src/test/resources/data.gpkg -i 2
 ```
 
 ```
@@ -909,3 +908,26 @@ SLD:
   </sld:UserLayer>
 </sld:StyledLayerDescriptor>
 ```
+
+Create a Layer Style
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -c   | Catalog                  | No       |
+| -a   | Schema                   | No       |
+| -n   | Name                     | Yes      |
+| -g   | Geometry Column          | Yes      |
+| -t   | Style Name               | Yes      |
+| -q   | Style QML                | No       |
+| -s   | Style SLD                | No       |
+| -l   | Is Default               | No       |
+| -d   | Description              | No       |
+| -o   | Owner                    | No       |
+| -u   | UI                       | No       |      
+
+
+```bash
+% geopackage-cli layerstyle-create -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities -g geom -t cities_default -d "The default cities style"
+```
+
