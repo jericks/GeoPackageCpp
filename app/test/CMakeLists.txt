@@ -58,6 +58,7 @@ add_executable(cli_tests
     layerStyle/ListLayerStyleCommandTest.cpp
     layerStyle/GetLayerStyleCommandTest.cpp
     layerStyle/CreateLayerStyleCommandTest.cpp
+    layerStyle/DeleteLayerStyleCommandTest.cpp
 )   
 target_link_libraries(cli_tests 
     GeoPackageCppAppLib

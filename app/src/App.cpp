@@ -60,6 +60,8 @@
 
 #include "layerStyle/ListLayerStyleCommand.hpp"
 #include "layerStyle/GetLayerStyleCommand.hpp"
+#include "layerStyle/CreateLayerStyleCommand.hpp"
+#include "layerStyle/DeleteLayerStyleCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -232,6 +234,13 @@ int main(int argc, char *argv[]) {
 
     GetLayerStyleCommand getLayerStyleCommand(&app);
     commands.add(&getLayerStyleCommand);
+
+    CreateLayerStyleCommand createLayerStyleCommand(&app);
+    commands.add(&createLayerStyleCommand);
+
+    DeleteLayerStyleCommand deleteLayerStyleCommand(&app);
+    commands.add(&deleteLayerStyleCommand);
+
 
     CLI11_PARSE(app, argc, argv);
 

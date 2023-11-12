@@ -931,3 +931,14 @@ Create a Layer Style
 % geopackage-cli layerstyle-create -f ~/Projects/geoc/src/test/resources/data.gpkg -n cities -g geom -t cities_default -d "The default cities style"
 ```
 
+Delete a Layer Style by ID
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -i   | ID                       | Yes      |
+
+
+```bash
+% geopackage-cli layerstyle-delete -f ~/Projects/geoc/src/test/resources/data.gpkg -i 1
+```
