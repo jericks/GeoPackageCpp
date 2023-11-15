@@ -942,3 +942,15 @@ Delete a Layer Style by ID
 ```bash
 % geopackage-cli layerstyle-delete -f ~/Projects/geoc/src/test/resources/data.gpkg -i 1
 ```
+
+Load a Style File (SLD or QML) into a Layer Style by ID
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -i   | ID                       | Yes      |
+| -s   | SLD or QML file name     | Yes      |
+
+```bash
+% geopackage-cli layerstyle-load -f ~/Projects/geoc/src/test/resources/data.gpkg -i 1 -s points.sld
+```
