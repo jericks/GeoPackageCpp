@@ -954,3 +954,15 @@ Load a Style File (SLD or QML) into a Layer Style by ID
 ```bash
 % geopackage-cli layerstyle-load -f ~/Projects/geoc/src/test/resources/data.gpkg -i 1 -s points.sld
 ```
+
+Export a Layer Style's SLD or QML to a file.
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -i   | ID                       | Yes      |
+| -s   | SLD or QML file name     | Yes      |
+
+```bash
+% geopackage-cli layerstyle-export -f ~/Projects/geoc/src/test/resources/data.gpkg -i 1 -s points.sld
+```

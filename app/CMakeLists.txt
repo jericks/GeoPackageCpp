@@ -64,6 +64,7 @@ add_library(GeoPackageCppAppLib STATIC
 	src/layerStyle/CreateLayerStyleCommand.cpp
 	src/layerStyle/DeleteLayerStyleCommand.cpp
 	src/layerStyle/LoadLayerStyleCommand.cpp
+	src/layerStyle/ExportLayerStyleCommand.cpp
 )
 target_include_directories(GeoPackageCppAppLib 
 	PUBLIC "include" "../lib/include" 

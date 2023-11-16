@@ -63,6 +63,7 @@
 #include "layerStyle/CreateLayerStyleCommand.hpp"
 #include "layerStyle/DeleteLayerStyleCommand.hpp"
 #include "layerStyle/LoadLayerStyleCommand.hpp"
+#include "layerStyle/ExportLayerStyleCommand.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -244,6 +245,9 @@ int main(int argc, char *argv[]) {
 
     LoadLayerStyleCommand loadLayerStyleCommand(&app);
     commands.add(&loadLayerStyleCommand);   
+
+    ExportLayerStyleCommand exportLayerStyleCommand(&app);
+    commands.add(&exportLayerStyleCommand);   
 
     CLI11_PARSE(app, argc, argv);
 
