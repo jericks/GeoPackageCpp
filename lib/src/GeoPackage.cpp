@@ -264,64 +264,64 @@ namespace geopackage {
 
     // Content
 
-    void GeoPackage::addContent(const Content& extension) {
+    void GeoPackage::addContent(const Content& content) {
         try {
             SQLite::Transaction transaction(db);
             SQLite::Statement insert(db, "INSERT INTO gpkg_contents (table_name, data_type, identifier, description, last_change, min_x, min_y, max_x, max_y, srs_id) VALUES (?,?,?,?,?,?,?,?,?,?)");
-            insert.bind(1, extension.getTableName());
-            insert.bind(2, datatype::toString(extension.getDataType()));
-            insert.bind(3, extension.getIdentifier());
-            insert.bind(4, extension.getDescription());
-            insert.bind(5, extension.getLastChange());
-            insert.bind(6, extension.getBounds().getMinX());
-            insert.bind(7, extension.getBounds().getMinY());
-            insert.bind(8, extension.getBounds().getMaxX());
-            insert.bind(9, extension.getBounds().getMaxY());
-            insert.bind(10, extension.getSrsId());
+            insert.bind(1, content.getTableName());
+            insert.bind(2, datatype::toString(content.getDataType()));
+            insert.bind(3, content.getIdentifier());
+            insert.bind(4, content.getDescription());
+            insert.bind(5, content.getLastChange());
+            insert.bind(6, content.getBounds().getMinX());
+            insert.bind(7, content.getBounds().getMinY());
+            insert.bind(8, content.getBounds().getMaxX());
+            insert.bind(9, content.getBounds().getMaxY());
+            insert.bind(10, content.getSrsId());
             insert.exec();
             transaction.commit();
         }
         catch (std::exception& e) {
-            std::cout << "Error adding a Content " << extension << ": " << e.what() << std::endl;
+            std::cout << "Error adding a Content " << content << ": " << e.what() << std::endl;
         }    
     }
 
-    void GeoPackage::updateContent(const Content& extension) {
+    void GeoPackage::updateContent(const Content& content) {
         try {
             SQLite::Transaction transaction(db);
             SQLite::Statement update(db, "UPDATE gpkg_contents SET data_type = ?, identifier = ?, description = ?, last_change = ?, min_x = ?, min_y = ?, max_x = ?, max_y = ?, srs_id = ? WHERE table_name = ?");
-            update.bind(1, datatype::toString(extension.getDataType()));
-            update.bind(2, extension.getIdentifier());
-            update.bind(3, extension.getDescription());
-            update.bind(4, extension.getLastChange());
-            update.bind(5, extension.getBounds().getMinX());
-            update.bind(6, extension.getBounds().getMinY());
-            update.bind(7, extension.getBounds().getMaxX());
-            update.bind(8, extension.getBounds().getMaxY());
-            update.bind(9, extension.getSrsId());
-            update.bind(10, extension.getTableName());
+            update.bind(1, datatype::toString(content.getDataType()));
+            update.bind(2, content.getIdentifier());
+            update.bind(3, content.getDescription());
+            update.bind(4, content.getLastChange());
+            update.bind(5, content.getBounds().getMinX());
+            update.bind(6, content.getBounds().getMinY());
+            update.bind(7, content.getBounds().getMaxX());
+            update.bind(8, content.getBounds().getMaxY());
+            update.bind(9, content.getSrsId());
+            update.bind(10, content.getTableName());
             update.exec();
             transaction.commit();
         }
         catch (std::exception& e) {
-            std::cout << "Error updating a Contents " << extension << ": " << e.what() << std::endl;
+            std::cout << "Error updating a Contents " << content << ": " << e.what() << std::endl;
         }    
     }
 
     void GeoPackage::setContent(const Content& e) {
-        auto extension = getContent(e.getTableName());
-        if (extension) {
+        auto content = getContent(e.getTableName());
+        if (content) {
             updateContent(e);
         } else {
             addContent(e);
         }
     }
 
-    void GeoPackage::deleteContent(const Content& extension) {
+    void GeoPackage::deleteContent(const Content& content) {
         try {
             SQLite::Transaction transaction(db);
             SQLite::Statement statement(db, "DELETE FROM gpkg_contents WHERE table_name = ?");
-            statement.bind(1, extension.getTableName());
+            statement.bind(1, content.getTableName());
             statement.exec();
             transaction.commit();
         }
@@ -442,19 +442,19 @@ namespace geopackage {
     }
 
     void GeoPackage::setGeometryColumn(const GeometryColumn& g) {
-        auto extension = getGeometryColumn(g.getTableName());
-        if (extension) {
+        auto geometryColumn = getGeometryColumn(g.getTableName());
+        if (geometryColumn) {
             updateGeometryColumn(g);
         } else {
             addGeometryColumn(g);
         }
     }
 
-    void GeoPackage::deleteGeometryColumn(const GeometryColumn& extension) {
+    void GeoPackage::deleteGeometryColumn(const GeometryColumn& geometryColumn) {
         try {
             SQLite::Transaction transaction(db);
             SQLite::Statement statement(db, "DELETE FROM gpkg_geometry_columns WHERE table_name = ?");
-            statement.bind(1, extension.getTableName());
+            statement.bind(1, geometryColumn.getTableName());
             statement.exec();
             transaction.commit();
         }
@@ -583,6 +583,27 @@ namespace geopackage {
         return std::nullopt;
     }
 
+    std::optional<Extension> GeoPackage::getExtension(std::string tableName, std::string extensionName) {
+        try {
+            SQLite::Database db(fileName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+            SQLite::Statement query(db, "SELECT table_name, column_name, extension_name, definition, scope FROM gpkg_extensions WHERE table_name = ? AND extension_name = ?");
+            query.bind(1, tableName);
+            query.bind(2, extensionName);
+            if (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string column_name = query.getColumn(1).getString();
+                std::string extension_name = query.getColumn(2).getString();
+                std::string definition = query.getColumn(3).getString();
+                std::string scope = query.getColumn(4).getString();
+                return Extension{table_name, column_name, extension_name, definition, scope::getScope(scope)};
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting a Extension: " << e.what() << std::endl;
+        }    
+        return std::nullopt;
+    }
+
     void  GeoPackage::extensions(std::function<void(Extension& s)> func) {
         try {
             SQLite::Statement query(db, "SELECT table_name, column_name, extension_name, definition, scope FROM gpkg_extensions ORDER BY extension_name");
@@ -599,6 +620,117 @@ namespace geopackage {
         catch (std::exception& e) {
             std::cout << "Error getting Extensions: " << e.what() << std::endl;
         }    
+    }
+
+    void GeoPackage::extensionsByTable(std::string tableName, std::function<void(Extension& e)> func) {
+        try {
+            SQLite::Statement query(db, "SELECT table_name, column_name, extension_name, definition, scope FROM gpkg_extensions WHERE table_name = ? ORDER BY extension_name");
+            query.bind(1, tableName);
+            while (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string column_name = query.getColumn(1).getString();
+                std::string extension_name = query.getColumn(2).getString();
+                std::string definition = query.getColumn(3).getString();
+                std::string scope = query.getColumn(4).getString();
+                Extension extension{table_name, column_name, extension_name, definition, scope::getScope(scope)};
+                func(extension);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting Extensions By Table: " << e.what() << std::endl;
+        }
+    }
+
+    void GeoPackage::extensionsByName(std::string name, std::function<void(Extension& e)> func) {
+        try {
+            SQLite::Statement query(db, "SELECT table_name, column_name, extension_name, definition, scope FROM gpkg_extensions WHERE extension_name = ? ORDER BY extension_name");
+            query.bind(1, name);
+            while (query.executeStep()) {
+                std::string table_name = query.getColumn(0).getString();
+                std::string column_name = query.getColumn(1).getString();
+                std::string extension_name = query.getColumn(2).getString();
+                std::string definition = query.getColumn(3).getString();
+                std::string scope = query.getColumn(4).getString();
+                Extension extension{table_name, column_name, extension_name, definition, scope::getScope(scope)};
+                func(extension);
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error getting Extensions By Name: " << e.what() << std::endl;
+        }
+    }
+
+    void GeoPackage::addIndexExtension(std::string tableName) {
+        std::string geometryColumnName = "geom";
+        std::optional<GeometryColumn> geometryColumn = getGeometryColumn(tableName);
+        if (geometryColumn.has_value()) {
+            GeometryColumn gc = geometryColumn.value();
+            geometryColumnName = gc.getColumnName();
+        }
+        std::string rtreeTableName = getIndexTableName(tableName);
+        std::string rtreeTableSql = "CREATE VIRTUAL TABLE IF NOT EXISTS " + rtreeTableName + " USING rtree(id, minX, maxX, minY, maxY);";
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement statement2(db, rtreeTableSql);
+            statement2.exec();
+            transaction.commit();
+            std::optional<Extension> existingExtension = getExtension(tableName,  "gpkg_rtree_index");
+            if (!existingExtension.has_value()) {
+                addExtension(Extension{tableName, geometryColumnName, "gpkg_rtree_index", "http://www.geopackage.org/spec120/#extension_rtree", Scope::WRITE_ONLY});
+            }
+        }
+        catch (std::exception& e) {
+            std::cout << "Error adding RTree Index for " << tableName << ": " << e.what() << std::endl;
+        }
+    }
+
+    void GeoPackage::addIndex(std::string tableName, int id, Bounds bounds) {
+        std::string rtreeTableName = getIndexTableName(tableName);
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement insert(db, "INSERT INTO " + rtreeTableName + " (id, minX, maxX, minY, maxY) VALUES (?,?,?,?,?)");
+            insert.bind(1, id);
+            insert.bind(2, bounds.getMinX());
+            insert.bind(3, bounds.getMaxX());
+            insert.bind(4, bounds.getMinY());
+            insert.bind(5, bounds.getMaxY());
+            insert.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error indexing " << tableName << ": " << e.what() << std::endl;
+        }   
+    }
+
+    std::string GeoPackage::getIndexTableName(std::string tableName) {
+        std::string geometryColumnName = "geom";
+        std::optional<GeometryColumn> geometryColumn = getGeometryColumn(tableName);
+        if (geometryColumn.has_value()) {
+            GeometryColumn gc = geometryColumn.value();
+            geometryColumnName = gc.getColumnName();
+        }
+        std::string rtreeTableName = "rtree_" + tableName + "_" + geometryColumnName;
+        return rtreeTableName;
+    }
+
+    void GeoPackage::indexLayer(std::string tableName) {
+        deleteIndex(tableName);
+        features(tableName, [&](geopackage::Feature& f) {
+            addIndex(tableName, f.getId().value(), Bounds::getBounds(f.getGeometry()));
+        });
+    }
+
+    void GeoPackage::deleteIndex(std::string tableName) {
+        std::string rtreeTableName = getIndexTableName(tableName);
+        try {
+            SQLite::Transaction transaction(db);
+            SQLite::Statement insert(db, "DELETE FROM " + rtreeTableName);
+            insert.exec();
+            transaction.commit();
+        }
+        catch (std::exception& e) {
+            std::cout << "Error deleting index " << tableName << ": " << e.what() << std::endl;
+        }
     }
 
     // Tile Matrix Set

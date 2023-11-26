@@ -56,6 +56,8 @@ namespace geopackage {
 
             std::string now();
 
+            std::string getIndexTableName(std::string tableName);
+
         public:
 
             GeoPackage(std::string fileName);
@@ -124,7 +126,23 @@ namespace geopackage {
 
             std::optional<Extension> getExtension(std::string extensionName);   
 
+            std::optional<Extension> getExtension(std::string tableName, std::string extensionName);
+
             void extensions(std::function<void(Extension& e)> f);
+
+            void extensionsByTable(std::string tableName, std::function<void(Extension& e)> f);
+
+            void extensionsByName(std::string tableName, std::function<void(Extension& e)> f);
+
+            // RTree Index
+
+            void addIndexExtension(std::string tableName);
+
+            void addIndex(std::string tableName, int id, Bounds bounds);
+
+            void indexLayer(std::string tableName);
+
+            void deleteIndex(std::string tableName);
 
             // Tile Matrix Set
 

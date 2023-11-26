@@ -966,3 +966,27 @@ Export a Layer Style's SLD or QML to a file.
 ```bash
 % geopackage-cli layerstyle-export -f ~/Projects/geoc/src/test/resources/data.gpkg -i 1 -s points.sld
 ```
+
+** Index **
+
+Create a RTree Index.
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | The Table Name           | Yes      |
+
+```bash
+% geopackage-cli index-create -f data.gpkg -n cities
+```
+
+Delete a RTree Index.
+
+| Flag | Description              | Required |
+| ---- | ------------------------ | -------- |
+| -f   | GeoPackage file name     | Yes      |
+| -n   | The Table Name           | Yes      |
+
+```bash
+% geopackage-cli index-delete -f data.gpkg -n cities
+```

@@ -65,6 +65,9 @@
 #include "layerStyle/LoadLayerStyleCommand.hpp"
 #include "layerStyle/ExportLayerStyleCommand.hpp"
 
+#include "index/CreateIndexCommand.hpp"
+#include "index/DeleteIndexCommand.hpp"
+
 int main(int argc, char *argv[]) {
 
     CLI::App app{"GeoPackage CLI"};
@@ -248,6 +251,15 @@ int main(int argc, char *argv[]) {
 
     ExportLayerStyleCommand exportLayerStyleCommand(&app);
     commands.add(&exportLayerStyleCommand);   
+
+    // Index
+
+    CreateIndexCommand createIndexCommand(&app);
+    commands.add(&createIndexCommand);   
+
+    DeleteIndexCommand deleteIndexCommand(&app);
+    commands.add(&deleteIndexCommand);   
+
 
     CLI11_PARSE(app, argc, argv);
 

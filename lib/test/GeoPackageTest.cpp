@@ -444,6 +444,20 @@ TEST(GeoPackageLibTests, GeoPackage_Get_Extension) {
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
 
+TEST(GeoPackageLibTests, GeoPackage_Get_Extension_Table) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    std::optional<geopackage::Extension> e1 = geopackage.getExtension("basemap", "Spatial Index");
+    EXPECT_FALSE(e1.has_value());
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Spatial Index", "R-TREE", geopackage::Scope::READ_WRITE});
+    std::optional<geopackage::Extension> e2 = geopackage.getExtension("basemap", "Spatial Index");
+    EXPECT_TRUE(e2.has_value());
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
 TEST(GeoPackageLibTests, GeoPackage_Extensions) {
     const std::string fileName = "data.gpkg";
     geopackage::GeoPackage geopackage { fileName };
@@ -459,6 +473,42 @@ TEST(GeoPackageLibTests, GeoPackage_Extensions) {
     });
     EXPECT_EQ(3, counter);
 
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Extensions_Table_Name) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addExtension(geopackage::Extension{"cities", "spatial_index", "Point Index", "R-TREE", geopackage::Scope::READ_WRITE});
+    geopackage.addExtension(geopackage::Extension{"cities", "tabular_index", "Line Index", "R-TREE", geopackage::Scope::READ_WRITE});
+    geopackage.addExtension(geopackage::Extension{"basemap", "index", "Polygon Index", "R-TREE", geopackage::Scope::WRITE_ONLY});
+    
+    int counter = 0;    
+    geopackage.extensionsByTable("cities", [&](geopackage::Extension& e) {
+        counter++;
+    });
+    EXPECT_EQ(2, counter);
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Extensions_Name) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage geopackage { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    geopackage.addExtension(geopackage::Extension{"cities", "geom", "metadata", "Metadata", geopackage::Scope::READ_WRITE});
+    geopackage.addExtension(geopackage::Extension{"cities", "geom", "attributes", "Attribute Index", geopackage::Scope::READ_WRITE});
+    geopackage.addExtension(geopackage::Extension{"basemap", "geom", "index", "R-TREE", geopackage::Scope::WRITE_ONLY});
+    
+    int counter = 0;    
+    geopackage.extensionsByName("index", [&](geopackage::Extension& e) {
+        counter++;
+    });
+    EXPECT_EQ(1, counter);
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
@@ -1505,6 +1555,90 @@ TEST(GeoPackageLibTests, GeoPackage_Get_LayerStyles_For_Table) {
         counter++;
     });
     EXPECT_EQ(1, counter);
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Add_Index_Extension) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
+
+    gpkg.addIndexExtension("cities");
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Add_Index) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
+
+    gpkg.addIndexExtension("cities");
+    gpkg.addIndex("cities", 1, geopackage::Bounds{0,0,10,10});
+    gpkg.addIndex("cities", 2, geopackage::Bounds{5,5,15,15});
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Delete_Index) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
+
+    gpkg.addIndexExtension("cities");
+    gpkg.addIndex("cities", 1, geopackage::Bounds{0,0,10,10});
+    gpkg.addIndex("cities", 2, geopackage::Bounds{5,5,15,15});
+    gpkg.deleteIndex("cities");
+
+    EXPECT_TRUE(std::filesystem::remove(fileName));
+}
+
+TEST(GeoPackageLibTests, GeoPackage_Index_Layer) {
+    const std::string fileName = "data.gpkg";
+    geopackage::GeoPackage gpkg { fileName };
+    EXPECT_TRUE(std::filesystem::exists(fileName));
+
+    // Set up
+
+    gpkg.addContent(geopackage::Content{"cities", geopackage::DataType::FEATURES, "cities", "A Layer of cities", "2022-01-29T18:38:34.649Z", geopackage::Bounds{-180,-90,180,90}, 4326});
+
+    gpkg.addGeometryColumn(geopackage::GeometryColumn{"cities", "geometry", geopackage::GeometryType::POINT, 4326, geopackage::Dimension::Three});
+
+    geopackage::Schema schema{
+        "cities",
+        "id",
+        geopackage::GeometryField{"geometry", geopackage::GeometryType::POINT, 4326},
+        std::vector{
+            geopackage::Field{"name", geopackage::FieldType::String},
+            geopackage::Field{"population", geopackage::FieldType::Double}
+        }
+    };
+    gpkg.createFeatureTable(schema);
+
+    // Add
+
+    EXPECT_EQ(0, gpkg.countFeatures("cities"));
+    gpkg.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-122, 47),
+        std::map<std::string, std::any> {{"population", 737000}, {"name", std::string{"One"}}}
+    });
+    EXPECT_EQ(1, gpkg.countFeatures("cities"));
+    
+    gpkg.addFeature("cities", geopackage::Feature{
+        std::make_unique<geopackage::Point>(-123, 48),
+        std::map<std::string, std::any> {{"population", 123}, {"name", std::string{"Two"}}}
+    });
+    EXPECT_EQ(2, gpkg.countFeatures("cities"));
+
+    gpkg.addIndexExtension("cities");
+    gpkg.indexLayer("cities");
 
     EXPECT_TRUE(std::filesystem::remove(fileName));
 }
