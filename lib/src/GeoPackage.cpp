@@ -1132,11 +1132,11 @@ namespace geopackage {
         for (auto& dirEntry: std::filesystem::recursive_directory_iterator(directory)) {
             if (dirEntry.is_regular_file()) {
                 std::filesystem::path file = dirEntry.path();
-                if (isImage(file.extension())) {
+                if (isImage(file.extension().string())) {
                     int z = std::stoi(file.parent_path().parent_path().stem());
                     int c = std::stoi(file.parent_path().stem());
                     int r = std::stoi(file.filename().stem());
-                    const Tile t {z,c,r,std::filesystem::absolute(file)};
+                    const Tile t {z,c,r,std::filesystem::absolute(file).string()};
                     addTile(name, t);
                 }
             }
