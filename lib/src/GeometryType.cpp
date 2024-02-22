@@ -1,4 +1,5 @@
 #include "GeometryType.hpp"
+#include <algorithm>
 
 namespace geopackage {
 

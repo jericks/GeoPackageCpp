@@ -4,6 +4,7 @@
 #include <memory>
 #include <map>
 #include <any>
+#include <optional>
 #include "Geometry.hpp"
 
 namespace geopackage {
